@@ -5,6 +5,7 @@
 - 根目錄已初始化 Git，baseline commit 為 `8270b19 chore: baseline cat future lab project`。
 - Figma 設計稿已建立：https://www.figma.com/design/KHTxo4D1lTXtSteplkjcCp
 - Figma `Implementation Sync` 頁記錄目前方向：未來互動動畫實驗室，加上貓耳幾何、尾巴軌跡、貓眼 HUD 等局部貓咪元素。
+- 主視覺圖片在 `cat-future-lab/assets/images/cat-lab-guide.png`，由 imagegen 生成後複製進專案。
 - OneDrive 目錄曾出現 Git lock / 權限問題，因此後續建議移到 `C:\Code\CatFutureLab` 執行。
 
 ## 1. 搬到 C:\ 的交接流程
@@ -57,6 +58,7 @@ GOOGLE_AI_MODEL=gemini-2.0-flash
 ## 5. 檔案分工
 - `cat-future-lab/index.html`：一頁式網站結構、SEO meta、JSON-LD。
 - `cat-future-lab/assets/css/styles.css`：視覺系統、RWD、focus、reduced motion。
+- `cat-future-lab/assets/images/cat-lab-guide.png`：Hero 使用的生成貓咪實驗室主視覺。
 - `cat-future-lab/assets/js/main.js`：頁面啟動與模組 orchestration。
 - `cat-future-lab/assets/js/animations.js`：Anime.js timeline、stagger、SVG path 與狀態數字動畫。
 - `cat-future-lab/assets/js/ui.js`：header、chat 與 weather UI 狀態控制。

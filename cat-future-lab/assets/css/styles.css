@@ -256,8 +256,19 @@ input {
 }
 
 .signal-panel__svg {
-  width: 100%;
+  position: absolute;
+  right: 1rem;
+  bottom: 4.8rem;
+  width: min(42%, 330px);
   aspect-ratio: 680 / 520;
+  opacity: 0.92;
+  pointer-events: none;
+}
+
+.signal-panel__image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
 }
 
 .signal-panel__grid {
@@ -579,6 +590,37 @@ input {
   color: var(--moss);
 }
 
+.report-output {
+  width: min(var(--max), 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 1rem;
+}
+
+.report-item {
+  border: 2px solid rgba(247, 242, 228, 0.82);
+  background: rgba(247, 242, 228, 0.06);
+}
+
+.report-item summary {
+  min-height: 56px;
+  padding: 1rem 1.2rem;
+  cursor: pointer;
+  font-weight: 800;
+  color: var(--moss);
+  list-style-position: inside;
+}
+
+.report-item div {
+  border-top: 1px solid rgba(247, 242, 228, 0.32);
+  padding: 0 1.2rem 1.1rem;
+}
+
+.report-item p {
+  margin: 1rem 0 0;
+  line-height: 1.8;
+}
+
 .site-footer {
   display: flex;
   justify-content: space-between;
@@ -651,6 +693,10 @@ input {
   .signal-panel {
     max-width: 680px;
   }
+
+  .signal-panel__svg {
+    width: min(48%, 280px);
+  }
 }
 
 @media (max-width: 640px) {
@@ -702,5 +748,9 @@ input {
   .site-footer {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .signal-panel__svg {
+    display: none;
   }
 }

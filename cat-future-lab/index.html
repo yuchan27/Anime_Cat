@@ -65,7 +65,8 @@
         </div>
       </div>
 
-      <figure class="signal-panel" aria-label="Cat Future Lab 動態訊號圖">
+      <figure class="signal-panel" aria-label="Cat Future Lab 貓咪實驗室主視覺">
+        <img class="signal-panel__image" src="assets/images/cat-lab-guide.png" alt="未來互動實驗室中的幾何貓咪導覽員，旁邊有資料軌道與全息控制介面">
         <svg class="signal-panel__svg" viewBox="0 0 680 520" role="img" aria-labelledby="signal-title signal-desc">
           <title id="signal-title">未來實驗室訊號板</title>
           <desc id="signal-desc">抽象貓耳形狀、尾巴軌跡和資料節點組成的動態視覺。</desc>
@@ -180,13 +181,40 @@
         <p class="eyebrow">Final Report Structure</p>
         <h2 id="report-title">報告內容對齊範本，但案例與風格完全重做。</h2>
         <p>上台可照這四段說明，從設計動機、互動技術、API 安全一路到 SEO 與無障礙驗收。</p>
+        <button class="button button--primary" type="button" data-report-download>下載期末報告 Markdown</button>
       </div>
-      <ol class="report-list">
-        <li data-reveal><strong>設計理念</strong><span>貓咪是引導符號，不是整體造型；主視覺是互動動畫實驗室。</span></li>
-        <li data-reveal><strong>動畫技術</strong><span>CSS 負責基礎狀態，Anime.js 管 timeline/stagger，Three.js 管 3D/rAF。</span></li>
-        <li data-reveal><strong>API 串接</strong><span>聊天走 server proxy；天氣 API 顯示 loading、success、fallback、error 狀態。</span></li>
-        <li data-reveal><strong>SEO 與無障礙</strong><span>語意 HTML、JSON-LD、鍵盤操作、ARIA、對比、alt/text alternative 與 reduced motion。</span></li>
-      </ol>
+      <div class="report-output" data-report-output>
+        <details class="report-item" data-reveal open>
+          <summary>01 專案摘要</summary>
+          <div>
+            <p>Cat Future Lab 是一頁式互動動畫期末作品，主視覺是未來互動實驗室。貓咪元素作為導覽符號、AI assistant、貓耳幾何、貓眼 HUD 與尾巴軌跡，不把整站做成完整貓咪主題。</p>
+          </div>
+        </details>
+        <details class="report-item" data-reveal>
+          <summary>02 動畫技術</summary>
+          <div>
+            <p>CSS 負責基礎狀態與 RWD；Anime.js 負責 Hero timeline、stagger、SVG path 與狀態動畫；Three.js 負責 Scene、Camera、Renderer、材質光照、粒子與 requestAnimationFrame。</p>
+          </div>
+        </details>
+        <details class="report-item" data-reveal>
+          <summary>03 API 串接與安全</summary>
+          <div>
+            <p>前端只呼叫本機 server routes。`POST /api/chat` 由 server proxy 讀取 Google AI Studio key；`GET /api/weather` 使用 Open-Meteo，定位拒絕時有台北座標 fallback。</p>
+          </div>
+        </details>
+        <details class="report-item" data-reveal>
+          <summary>04 Remotion 素材</summary>
+          <div>
+            <p>Remotion 作為素材產線，輸出 signal-board loop 或 still。主網站先使用 SVG poster 與生成主視覺，沒有影片輸出時仍可完整展示。</p>
+          </div>
+        </details>
+        <details class="report-item" data-reveal>
+          <summary>05 SEO / Accessibility 驗收</summary>
+          <div>
+            <p>頁面包含 title、description、canonical、Open Graph、Twitter Card 與 JSON-LD。互動元件保留鍵盤操作、focus ring、ARIA 狀態、aria-live、圖片 alt、canvas 文字摘要與 reduced motion。</p>
+          </div>
+        </details>
+      </div>
     </section>
   </main>
 

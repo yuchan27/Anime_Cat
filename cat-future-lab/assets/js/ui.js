@@ -63,6 +63,35 @@ export function initWeatherPanel() {
   });
 }
 
+export function initReportDownload() {
+  const button = document.querySelector('[data-report-download]');
+  const output = document.querySelector('[data-report-output]');
+  if (!button || !output) return;
+
+  button.addEventListener('click', () => {
+    const sections = Array.from(output.querySelectorAll('.report-item')).map((item) => {
+      const title = item.querySelector('summary')?.textContent?.trim() || '報告段落';
+      const body = item.querySelector('p')?.textContent?.trim() || '';
+      return `## ${title}\n\n${body}`;
+    });
+    const markdown = [
+      '# Cat Future Lab 期末報告',
+      '',
+      '主題：未來互動動畫實驗室，使用貓咪元素作為導覽訊號與互動記憶點。',
+      '',
+      ...sections
+    ].join('\n\n');
+
+    const blob = new Blob([markdown], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'cat-future-lab-final-report.md';
+    link.click();
+    URL.revokeObjectURL(url);
+  });
+}
+
 function setStatus(node, state, text) {
   node.dataset.state = state;
   node.textContent = text;

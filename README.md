@@ -63,6 +63,7 @@ GET  /api/weather?lat=25.033&lng=121.565
 cat-future-lab/
   index.html
   server/server.js
+  assets/images/cat-lab-guide.png
   assets/css/styles.css
   assets/js/main.js
   assets/js/animations.js
@@ -76,7 +77,7 @@ cat-future-lab/
 
 模組化備註：程式必須使用模組化結構，動畫控制、Three.js 場景、API 呼叫、UI 狀態、無障礙互動與 server routes 應依責任拆分，不要集中在單一大型檔案。
 
-視覺備註：貓咪是導覽符號與互動元素，例如貓耳幾何、尾巴軌跡、貓眼 HUD 與 meow signal；整體風格仍是未來互動動畫實驗室，不做成完整貓咪主題頁。
+視覺備註：貓咪是導覽符號與互動元素，例如生成主視覺、貓耳幾何、尾巴軌跡、貓眼 HUD 與 meow signal；整體風格仍是未來互動動畫實驗室，不做成完整貓咪主題頁。
 
 ## Figma
 
