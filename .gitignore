@@ -1,0 +1,12 @@
+.env
+cat-future-lab/.env
+node_modules/
+dist/
+build/
+out/
+coverage/
+.cache/
+*.log
+cat-future-lab/assets/remotion/*.mp4
+cat-future-lab/assets/remotion/*.webm
+cat-future-lab/assets/remotion/*.mov
