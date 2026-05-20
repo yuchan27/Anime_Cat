@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cat Future Lab | 貓咪互動動畫期末作品</title>
+  <meta name="description" content="Cat Future Lab 是一頁式網頁動畫期末作品，結合 Anime.js、Three.js、AI 聊天、即時天氣 API、SEO 與無障礙設計。">
+  <link rel="canonical" href="http://localhost:5177/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Cat Future Lab | 貓咪互動動畫期末作品">
+  <meta property="og:description" content="以貓咪為主角的未來感互動動畫網站，展示 Anime.js、Three.js、API 串接、SEO 與無障礙。">
+  <meta property="og:url" content="http://localhost:5177/">
+  <meta property="og:image" content="http://localhost:5177/assets/remotion/cat-loop-poster.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Cat Future Lab | 貓咪互動動畫期末作品">
+  <meta name="twitter:description" content="貓咪互動動畫網站，整合 Anime.js、Three.js、Server Proxy API 與 Remotion 素材規劃。">
+  <meta name="theme-color" content="#10140f">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": ["CreativeWork", "WebApplication"],
+    "name": "Cat Future Lab",
+    "inLanguage": "zh-Hant",
+    "applicationCategory": "EducationalApplication",
+    "description": "以貓咪元素為主軸的互動動畫期末作品，使用 Anime.js、Three.js、API 串接、SEO 與無障礙設計。",
+    "creator": {
+      "@type": "Person",
+      "name": "Animation Design Student"
+    }
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要內容</a>
+  <header class="site-header" data-header>
+    <a class="brand" href="#hero" aria-label="Cat Future Lab 首頁">
+      <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
+        <path d="M10 22 8 8l10 8a22 22 0 0 1 12 0l10-8-2 14a17 17 0 1 1-28 0Z" fill="currentColor"/>
+        <circle cx="18" cy="27" r="2.2" fill="#10140f"/>
+        <circle cx="30" cy="27" r="2.2" fill="#10140f"/>
+        <path d="M21 34c2 1.5 4 1.5 6 0" fill="none" stroke="#10140f" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span>Cat Future Lab</span>
+    </a>
+    <nav class="site-nav" aria-label="主要導覽">
+      <a href="#scene">互動場景</a>
+      <a href="#modules">動畫模組</a>
+      <a href="#assistant">AI 導覽</a>
+      <a href="#report">報告重點</a>
+    </nav>
+    <button class="motion-toggle" type="button" data-motion-toggle aria-pressed="false">
+      降低動態
+    </button>
+  </header>
+
+  <main id="main">
+    <section id="hero" class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy" data-animate="hero">
+        <h1 id="hero-title">Cat Future Lab</h1>
+        <p>一個用貓咪作為導覽角色的互動動畫期末作品，將第十三週的 Anime.js 與 Three.js 技術整合成可展示、可操作、可報告的一頁式網站。</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#scene">進入互動場景</a>
+          <a class="button secondary" href="#assistant">詢問貓咪導覽員</a>
+        </div>
+      </div>
+      <div class="hero-stage" aria-hidden="true">
+        <div class="kinetic-word" data-kinetic>MEOW SYSTEM ONLINE</div>
+      </div>
+    </section>
+
+    <section id="scene" class="scene-section" aria-labelledby="scene-title">
+      <div class="scene-copy" data-reveal>
+        <h2 id="scene-title">互動式 3D 貓咪場景</h2>
+        <p>滑鼠或觸控會影響貓咪視線、尾巴節奏與背景粒子。若使用者設定降低動態，場景會保留靜態視覺摘要並減少動畫。</p>
+        <div class="scene-controls" aria-label="3D 場景控制">
+          <button class="icon-button" type="button" data-scene-mode="calm" aria-pressed="true" title="安靜模式">Calm</button>
+          <button class="icon-button" type="button" data-scene-mode="play" aria-pressed="false" title="玩耍模式">Play</button>
+          <button class="icon-button" type="button" data-scene-mode="focus" aria-pressed="false" title="專注模式">Focus</button>
+        </div>
+      </div>
+      <figure class="scene-canvas-wrap" data-reveal>
+        <canvas id="cat-scene" aria-label="Three.js 互動貓咪場景"></canvas>
+        <figcaption>視覺摘要：畫面中央是一隻由幾何形狀組成的未來感貓咪，周圍有資料軌道與粒子流，對滑鼠和控制按鈕產生互動。</figcaption>
+      </figure>
+    </section>
+
+    <section id="modules" class="module-band" aria-labelledby="modules-title">
+      <div class="section-heading" data-reveal>
+        <h2 id="modules-title">動畫模組展示</h2>
+        <p>每個模組都對應期末評分項目：技術層次、視覺設計、互動回饋與可重複使用的元件思維。</p>
+      </div>
+      <div class="module-grid">
+        <article class="module-card" data-reveal>
+          <span class="module-index">01</span>
+          <h3>Anime.js 文字時間軸</h3>
+          <p>使用 stagger、timeline 與 easing 建立標題入場、按鈕回饋與資訊節奏。</p>
+        </article>
+        <article class="module-card" data-reveal>
+          <span class="module-index">02</span>
+          <h3>Three.js 空間角色</h3>
+          <p>用幾何模型建立貓咪角色，讓 canvas 成為第一視覺訊號，而不是裝飾背景。</p>
+        </article>
+        <article class="module-card" data-reveal>
+          <span class="module-index">03</span>
+          <h3>API 狀態面板</h3>
+          <p>透過 Server Proxy 連接 AI 聊天，並以即時天氣資料改變畫面狀態。</p>
+        </article>
+        <article class="module-card" data-reveal>
+          <span class="module-index">04</span>
+          <h3>Remotion 素材管線</h3>
+          <p>用 React 影片專案產出可嵌入網站的短循環素材，支援報告展示。</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="assistant" class="assistant-section" aria-labelledby="assistant-title">
+      <div class="assistant-panel" data-reveal>
+        <div>
+          <h2 id="assistant-title">AI 貓咪導覽員</h2>
+          <p>聊天請求會送到本機 server proxy，由伺服器端讀取 Google AI Studio 金鑰。未設定金鑰時會回傳安全示範文字。</p>
+        </div>
+        <form class="chat-form" data-chat-form>
+          <label for="chat-message">向導覽員提問</label>
+          <div class="chat-row">
+            <input id="chat-message" name="message" type="text" autocomplete="off" maxlength="160" placeholder="例如：這個作品用了哪些動畫技術？">
+            <button class="button primary" type="submit">送出</button>
+          </div>
+        </form>
+        <div class="chat-output" data-chat-output aria-live="polite">
+          等待你的問題。
+        </div>
+      </div>
+      <aside class="weather-panel" data-reveal aria-labelledby="weather-title">
+        <h2 id="weather-title">即時溫度 API</h2>
+        <p data-weather-status>按下按鈕後會嘗試取得定位，若拒絕定位會使用台北座標作為展示資料。</p>
+        <button class="button secondary" type="button" data-weather-button>更新天氣資料</button>
+        <dl class="weather-data" aria-live="polite">
+          <div><dt>溫度</dt><dd data-weather-temp>--</dd></div>
+          <div><dt>風速</dt><dd data-weather-wind>--</dd></div>
+          <div><dt>來源</dt><dd data-weather-source>--</dd></div>
+        </dl>
+      </aside>
+    </section>
+
+    <section id="remotion" class="remotion-strip" aria-labelledby="remotion-title">
+      <div data-reveal>
+        <h2 id="remotion-title">Remotion 素材預留區</h2>
+        <p>這個區塊會優先使用已輸出的 Remotion 影片；尚未輸出時會顯示 SVG poster 與 CSS loop，確保網站仍可完整展示。</p>
+      </div>
+      <figure class="video-placeholder" data-reveal>
+        <img src="assets/remotion/cat-loop-poster.svg" alt="Remotion 貓咪循環動畫素材預覽">
+        <figcaption>預計輸出：10 秒貓咪資料軌道循環，可用於 Hero 或上台報告開場。</figcaption>
+      </figure>
+    </section>
+
+    <section id="report" class="report-section" aria-labelledby="report-title">
+      <div class="section-heading" data-reveal>
+        <h2 id="report-title">期末報告重點</h2>
+        <p>報告時可以依序說明設計動機、技術拆解、API 安全、SEO 與無障礙驗收。</p>
+      </div>
+      <ol class="report-list">
+        <li data-reveal><strong>設計理念</strong><span>貓咪作為導覽角色，讓技術展示更有記憶點。</span></li>
+        <li data-reveal><strong>動畫技術</strong><span>CSS、Anime.js、Three.js、requestAnimationFrame 與 Intersection Observer 分工。</span></li>
+        <li data-reveal><strong>API 串接</strong><span>Server Proxy 保護 Google AI Studio key，天氣資料展示非同步流程。</span></li>
+        <li data-reveal><strong>SEO 與無障礙</strong><span>語意 HTML、JSON-LD、鍵盤操作、ARIA、對比與 reduced motion。</span></li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Cat Future Lab. Animation Design Final Project.</p>
+    <a href="#hero">回到頂端</a>
+  </footer>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.164.1/build/three.module.js",
+      "animejs": "https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.es.js"
+    }
+  }
+  </script>
+  <script type="module" src="assets/js/main.js"></script>
+</body>
+</html>

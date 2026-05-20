@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Cat Future Lab Remotion poster</title>
+  <desc id="desc">A geometric cat face surrounded by bright data tracks on a paper and ink background.</desc>
+  <rect width="1600" height="900" fill="#f4f0df"/>
+  <path d="M0 170h1600M0 330h1600M0 490h1600M0 650h1600M0 810h1600M170 0v900M330 0v900M490 0v900M650 0v900M810 0v900M970 0v900M1130 0v900M1290 0v900M1450 0v900" stroke="#10140f" stroke-opacity=".12" stroke-width="4"/>
+  <path d="M290 635 240 210l295 230c150-70 380-70 530 0l295-230-50 425c122 188-38 355-510 355S168 823 290 635Z" fill="#dce86a" stroke="#10140f" stroke-width="18" stroke-linejoin="round"/>
+  <circle cx="620" cy="585" r="42" fill="#10140f"/>
+  <circle cx="980" cy="585" r="42" fill="#10140f"/>
+  <path d="M730 715c48 40 92 40 140 0" fill="none" stroke="#10140f" stroke-width="20" stroke-linecap="round"/>
+  <path d="M190 250c300-140 920-140 1220 0" fill="none" stroke="#51d6d0" stroke-width="22" stroke-linecap="round"/>
+  <path d="M170 742c355 130 905 130 1260 0" fill="none" stroke="#f36f52" stroke-width="22" stroke-linecap="round"/>
+  <text x="800" y="115" text-anchor="middle" font-family="Chivo, Arial, sans-serif" font-size="78" font-weight="800" fill="#10140f">CAT FUTURE LAB</text>
+  <text x="800" y="836" text-anchor="middle" font-family="Chivo, Arial, sans-serif" font-size="36" font-weight="700" fill="#10140f">REMOTION LOOP MATERIAL</text>
+</svg>

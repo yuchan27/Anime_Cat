@@ -1,0 +1,20 @@
+{
+  "name": "cat-future-lab-remotion",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render:loop": "remotion render src/index.ts CatLoop ../assets/remotion/cat-loop.mp4",
+    "still": "remotion still src/index.ts CatLoop --frame=90 --scale=0.5 ../assets/remotion/cat-loop-still.png"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.0",
+    "remotion": "^4.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}
