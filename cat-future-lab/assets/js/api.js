@@ -1,18 +1,12 @@
 export async function askCatGuide(message) {
-  const response = await fetch('/api/chat', {
+  return requestJson('/api/chat', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
       message,
-      context: 'Cat Future Lab combines Anime.js, Three.js, weather API, Remotion material planning, SEO and accessibility.'
+      context: 'Cat Future Lab is a future interactive animation lab with cat elements as signals, built with Anime.js 3.2.2, Three.js, server proxy APIs, Remotion material planning, SEO and accessibility.'
     })
   });
-
-  if (!response.ok) {
-    throw new Error('Chat request failed');
-  }
-
-  return response.json();
 }
 
 export async function fetchWeather(lat, lng) {
@@ -20,10 +14,13 @@ export async function fetchWeather(lat, lng) {
   url.searchParams.set('lat', String(lat));
   url.searchParams.set('lng', String(lng));
 
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error('Weather request failed');
-  }
+  return requestJson(url);
+}
 
+async function requestJson(input, init) {
+  const response = await fetch(input, init);
+  if (!response.ok) {
+    throw new Error(`Request failed with ${response.status}`);
+  }
   return response.json();
 }

@@ -50,15 +50,16 @@ const handleChat = async (req, res) => {
 
     if (!apiKey) {
       return sendJson(res, 200, {
-        reply: '目前伺服器尚未設定 Google AI Studio 金鑰，所以先使用安全示範回覆。你可以問我作品理念、動畫技術或貓咪互動設計。',
+        reply: '目前伺服器尚未設定 Google AI Studio 金鑰，所以先使用安全示範回覆。這個作品是未來互動動畫實驗室，貓咪元素只作為導覽符號與訊號，不是整體貓咪網站。',
         model: 'local-fallback',
         latencyMs: Date.now() - startedAt
       });
     }
 
     const prompt = [
-      '你是期末網頁動畫作品中的貓咪導覽員。',
-      '使用繁體中文，回答要精簡、友善、聚焦於網頁動畫、SEO、無障礙與互動設計。',
+      '你是期末網頁動畫作品中的 lab assistant，帶有輕微貓咪導覽語氣。',
+      '使用繁體中文，回答要精簡、專業、聚焦於網頁動畫、SEO、無障礙與互動設計。',
+      '請強調本作品是未來互動動畫實驗室，貓咪元素是符號與互動提示，不是整體貓咪造型網站。',
       context ? `作品背景：${context}` : '',
       `使用者：${cleanMessage}`
     ].filter(Boolean).join('\n');
@@ -77,7 +78,7 @@ const handleChat = async (req, res) => {
 
     if (!upstream.ok) {
       return sendJson(res, 200, {
-        reply: 'AI 服務暫時沒有回應，我先提供備援回答：這個作品展示 Anime.js、Three.js、API 串接、SEO 與無障礙設計。',
+        reply: 'AI 服務暫時沒有回應，我先提供備援回答：這個作品展示 Anime.js、Three.js、Server Proxy API、Remotion 素材、SEO 與無障礙設計。',
         model: 'fallback-after-upstream-error',
         latencyMs: Date.now() - startedAt
       });

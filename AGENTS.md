@@ -18,7 +18,7 @@
 
 ## Current Final Project
 - Main deliverable: `cat-future-lab/`
-- Theme: cat elements plus futuristic interactive web animation.
+- Theme: futuristic interactive animation lab with cat elements as signals, guide marks, HUD details, and Remotion material; do not turn the whole site into a full cat-themed page.
 - Course emphasis: Anime.js, Three.js, CSS animation, Intersection Observer, requestAnimationFrame, semantic HTML, SEO, accessibility.
 - Code organization: program code must use a modular structure; keep animation, Three.js scene logic, API calls, accessibility behavior, and server routes separated by responsibility.
 - API approach: browser calls local server routes; secrets stay in server environment variables.

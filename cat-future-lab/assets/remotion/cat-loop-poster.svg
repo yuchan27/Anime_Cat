@@ -1,14 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
-  <title id="title">Cat Future Lab Remotion poster</title>
-  <desc id="desc">A geometric cat face surrounded by bright data tracks on a paper and ink background.</desc>
-  <rect width="1600" height="900" fill="#f4f0df"/>
-  <path d="M0 170h1600M0 330h1600M0 490h1600M0 650h1600M0 810h1600M170 0v900M330 0v900M490 0v900M650 0v900M810 0v900M970 0v900M1130 0v900M1290 0v900M1450 0v900" stroke="#10140f" stroke-opacity=".12" stroke-width="4"/>
-  <path d="M290 635 240 210l295 230c150-70 380-70 530 0l295-230-50 425c122 188-38 355-510 355S168 823 290 635Z" fill="#dce86a" stroke="#10140f" stroke-width="18" stroke-linejoin="round"/>
-  <circle cx="620" cy="585" r="42" fill="#10140f"/>
-  <circle cx="980" cy="585" r="42" fill="#10140f"/>
-  <path d="M730 715c48 40 92 40 140 0" fill="none" stroke="#10140f" stroke-width="20" stroke-linecap="round"/>
-  <path d="M190 250c300-140 920-140 1220 0" fill="none" stroke="#51d6d0" stroke-width="22" stroke-linecap="round"/>
-  <path d="M170 742c355 130 905 130 1260 0" fill="none" stroke="#f36f52" stroke-width="22" stroke-linecap="round"/>
-  <text x="800" y="115" text-anchor="middle" font-family="Chivo, Arial, sans-serif" font-size="78" font-weight="800" fill="#10140f">CAT FUTURE LAB</text>
-  <text x="800" y="836" text-anchor="middle" font-family="Chivo, Arial, sans-serif" font-size="36" font-weight="700" fill="#10140f">REMOTION LOOP MATERIAL</text>
+  <title id="title">Cat Future Lab Remotion signal poster</title>
+  <desc id="desc">A future lab signal board with cat-ear geometry, cat-eye HUD marks, orbit tracks, and scan line details.</desc>
+  <rect width="1600" height="900" fill="#f7f2e4"/>
+  <path d="M0 112h1600M0 224h1600M0 336h1600M0 448h1600M0 560h1600M0 672h1600M0 784h1600M112 0v900M224 0v900M336 0v900M448 0v900M560 0v900M672 0v900M784 0v900M896 0v900M1008 0v900M1120 0v900M1232 0v900M1344 0v900M1456 0v900" stroke="#11131f" stroke-opacity=".14" stroke-width="4"/>
+  <circle cx="800" cy="460" r="320" fill="none" stroke="#51d6d0" stroke-width="18" stroke-dasharray="42 26"/>
+  <circle cx="800" cy="460" r="420" fill="none" stroke="#f36f52" stroke-width="12" stroke-dasharray="18 42"/>
+  <path d="M285 462C480 286 640 622 800 460s320-248 515 2" fill="none" stroke="#7766d8" stroke-width="24" stroke-linecap="round"/>
+  <path d="M540 392 455 190l220 150M1060 392l85-202-220 150" fill="none" stroke="#11131f" stroke-width="24" stroke-linejoin="round"/>
+  <rect x="542" y="382" width="516" height="210" rx="32" fill="#dce86a" stroke="#11131f" stroke-width="18"/>
+  <path d="M640 486h130M830 486h130" stroke="#11131f" stroke-width="24" stroke-linecap="round"/>
+  <path d="M690 552c62 36 158 36 220 0" fill="none" stroke="#11131f" stroke-width="18" stroke-linecap="round"/>
+  <rect x="1240" width="14" height="900" fill="#51d6d0" opacity=".55"/>
+  <text x="92" y="130" font-family="Chivo, Arial, sans-serif" font-size="78" font-weight="800" fill="#11131f">CAT FUTURE LAB</text>
+  <text x="96" y="812" font-family="Chivo, Arial, sans-serif" font-size="36" font-weight="700" fill="#11131f">REMOTION LOOP MATERIAL</text>
+  <text x="1168" y="812" font-family="Chivo, Arial, sans-serif" font-size="28" font-weight="700" fill="#11131f">OPTIONAL SIGNAL ASSET</text>
 </svg>

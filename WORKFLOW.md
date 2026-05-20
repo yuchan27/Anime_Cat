@@ -2,8 +2,9 @@
 
 ## 0. 目前狀態
 - 主要作品在 `cat-future-lab/`。
-- 根目錄已初始化 Git，最近一次實作 commit 為 `022c976 Build cat future lab final project`。
+- 根目錄已初始化 Git，baseline commit 為 `8270b19 chore: baseline cat future lab project`。
 - Figma 設計稿已建立：https://www.figma.com/design/KHTxo4D1lTXtSteplkjcCp
+- Figma `Implementation Sync` 頁記錄目前方向：未來互動動畫實驗室，加上貓耳幾何、尾巴軌跡、貓眼 HUD 等局部貓咪元素。
 - OneDrive 目錄曾出現 Git lock / 權限問題，因此後續建議移到 `C:\Code\CatFutureLab` 執行。
 
 ## 1. 搬到 C:\ 的交接流程
@@ -48,16 +49,18 @@ GOOGLE_AI_MODEL=gemini-2.0-flash
 - `GET /api/weather?lat=...&lng=...` 使用 Open-Meteo；定位失敗時前端會使用台北座標展示。
 
 ## 4. 後續開發順序
-- 先確認 Figma 風格是否要調整。
-- 再更新前端視覺與互動。
+- Figma 與前端同步推進，先保持 `Implementation Sync`、`FIGMA_BRIEF.md` 與實作方向一致。
+- 更新前端視覺與互動時，維持「貓咪元素，不是整體貓咪頁」。
 - 接著設定 `.env` 測試 AI chat。
 - 最後處理 Remotion 渲染素材與 Lighthouse 驗收。
 
 ## 5. 檔案分工
 - `cat-future-lab/index.html`：一頁式網站結構、SEO meta、JSON-LD。
 - `cat-future-lab/assets/css/styles.css`：視覺系統、RWD、focus、reduced motion。
-- `cat-future-lab/assets/js/main.js`：頁面啟動、Anime.js、表單互動。
-- `cat-future-lab/assets/js/scene.js`：Three.js 貓咪場景。
+- `cat-future-lab/assets/js/main.js`：頁面啟動與模組 orchestration。
+- `cat-future-lab/assets/js/animations.js`：Anime.js timeline、stagger、SVG path 與狀態數字動畫。
+- `cat-future-lab/assets/js/ui.js`：header、chat 與 weather UI 狀態控制。
+- `cat-future-lab/assets/js/scene.js`：Three.js 抽象未來實驗場與貓咪符號。
 - `cat-future-lab/assets/js/api.js`：前端 API client。
 - `cat-future-lab/assets/js/a11y.js`：降低動態與 reveal observer。
 - `cat-future-lab/server/server.js`：靜態檔案伺服與 API proxy。
