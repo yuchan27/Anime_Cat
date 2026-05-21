@@ -26,7 +26,8 @@ function initThreeScene(canvas, THREE) {
     cyan: new THREE.MeshStandardMaterial({ color: 0x51d6d0, roughness: 0.24, metalness: 0.38 }),
     coral: new THREE.MeshStandardMaterial({ color: 0xf36f52, roughness: 0.38, metalness: 0.18 }),
     ink: new THREE.MeshStandardMaterial({ color: 0x11131f, roughness: 0.52, metalness: 0.18 }),
-    line: new THREE.MeshBasicMaterial({ color: 0xf7f2e4 })
+    line: new THREE.MeshBasicMaterial({ color: 0xf7f2e4 }),
+    ribbon: new THREE.MeshStandardMaterial({ color: 0x7766d8, roughness: 0.24, metalness: 0.22 })
   };
 
   const core = new THREE.Mesh(new THREE.IcosahedronGeometry(1.08, 1), materials.core);
@@ -79,6 +80,22 @@ function initThreeScene(canvas, THREE) {
 
   const particles = createParticleOrbit(110, materials.line, THREE);
   scene.add(particles);
+  const sparkRings = createSparkRings(THREE);
+  lab.add(sparkRings);
+
+  const ribbonCurve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(-1.9, -0.4, -1.2),
+    new THREE.Vector3(-0.5, 0.9, 0.8),
+    new THREE.Vector3(1.4, -0.2, 1.1),
+    new THREE.Vector3(2.2, 0.9, -0.4),
+    new THREE.Vector3(0.7, 1.35, -1.2),
+    new THREE.Vector3(-1.9, -0.4, -1.2)
+  ]);
+  const ribbon = new THREE.Mesh(
+    new THREE.TubeGeometry(ribbonCurve, 140, 0.042, 10, true),
+    materials.ribbon
+  );
+  lab.add(ribbon);
 
   scene.add(new THREE.HemisphereLight(0xf7f2e4, 0x11131f, 2.4));
   const key = new THREE.DirectionalLight(0xffffff, 2.8);
@@ -90,9 +107,9 @@ function initThreeScene(canvas, THREE) {
 
   const pointer = { x: 0, y: 0 };
   const modes = {
-    calm: { speed: 0.72, light: 18 },
-    play: { speed: 1.35, light: 32 },
-    focus: { speed: 0.46, light: 12 }
+    calm: { speed: 0.72, light: 18, tint: 0x7766d8 },
+    play: { speed: 1.35, light: 32, tint: 0xf36f52 },
+    focus: { speed: 0.46, light: 12, tint: 0x51d6d0 }
   };
   let activeMode = modes.calm;
 
@@ -108,6 +125,7 @@ function initThreeScene(canvas, THREE) {
   const setMode = (mode) => {
     activeMode = modes[mode] ?? modes.calm;
     accent.intensity = activeMode.light;
+    ribbon.material.color.setHex(activeMode.tint);
     updateModeButtons(mode);
   };
 
@@ -130,9 +148,21 @@ function initThreeScene(canvas, THREE) {
     lab.rotation.y += ((pointer.x * 0.28) - lab.rotation.y) * 0.045;
     lab.rotation.x += ((-pointer.y * 0.12) - lab.rotation.x) * 0.045;
     core.rotation.y += 0.007 * speed;
+    core.rotation.x += 0.0032 * speed;
     ring.rotation.z += 0.008 * speed;
     tiltedRing.rotation.z -= 0.005 * speed;
+    ribbon.rotation.y += 0.004 * speed;
+    ribbon.rotation.x = Math.sin(elapsed * activeMode.speed * 0.7) * 0.16;
     tailSignal.rotation.z = -0.9 + Math.sin(elapsed * 2.2 * activeMode.speed) * 0.22;
+    sparkRings.children.forEach((child, idx) => {
+      child.rotation.y += (0.0035 + idx * 0.0012) * speed;
+      child.rotation.x += (0.002 + idx * 0.0008) * speed;
+    });
+
+    camera.position.x += ((pointer.x * 0.58) - camera.position.x) * 0.02;
+    camera.position.y += ((1.15 + pointer.y * -0.26 + Math.sin(elapsed * 0.7) * 0.08) - camera.position.y) * 0.02;
+    camera.lookAt(0, 0, 0);
+
     antenna.children.forEach((bar, index) => {
       bar.scale.y = 0.7 + Math.sin(elapsed * activeMode.speed * 2 + index) * 0.18;
     });
@@ -142,6 +172,7 @@ function initThreeScene(canvas, THREE) {
       particle.position.x = Math.cos(particle.userData.angle) * particle.userData.radius;
       particle.position.z = Math.sin(particle.userData.angle) * particle.userData.radius;
       particle.position.y = particle.userData.baseY + Math.sin(elapsed + particle.userData.angle) * 0.18;
+      particle.scale.setScalar(0.72 + Math.sin(elapsed * 2 + particle.userData.angle * 2.1) * 0.22);
     });
 
     renderer.render(scene, camera);
@@ -170,6 +201,33 @@ function createParticleOrbit(count, material, THREE) {
     };
     group.add(particle);
   }
+
+  return group;
+}
+
+function createSparkRings(THREE) {
+  const group = new THREE.Group();
+
+  const ringA = new THREE.Mesh(
+    new THREE.TorusGeometry(2.85, 0.012, 10, 160),
+    new THREE.MeshBasicMaterial({ color: 0x51d6d0, transparent: true, opacity: 0.68 })
+  );
+  ringA.rotation.set(Math.PI / 2.5, 0.1, 0);
+  group.add(ringA);
+
+  const ringB = new THREE.Mesh(
+    new THREE.TorusGeometry(3.2, 0.008, 10, 160),
+    new THREE.MeshBasicMaterial({ color: 0xf36f52, transparent: true, opacity: 0.55 })
+  );
+  ringB.rotation.set(Math.PI / 2.2, 0.8, 0.5);
+  group.add(ringB);
+
+  const ringC = new THREE.Mesh(
+    new THREE.TorusGeometry(2.45, 0.006, 8, 120),
+    new THREE.MeshBasicMaterial({ color: 0xdce86a, transparent: true, opacity: 0.64 })
+  );
+  ringC.rotation.set(Math.PI / 2.8, -0.5, 0.2);
+  group.add(ringC);
 
   return group;
 }

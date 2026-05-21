@@ -4,7 +4,11 @@ import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = normalize(join(fileURLToPath(new URL('..', import.meta.url))));
-const port = Number(process.env.PORT || 5177);
+await loadEnvFile(join(root, '.env'));
+
+const requestedPort = Number(process.env.PORT || 5177);
+const maxPortRetries = Number(process.env.PORT_RETRY_COUNT || 20);
+const defaultModelChain = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
 
 const mimeTypes = {
   '.html': 'text/html; charset=utf-8',
@@ -12,30 +16,79 @@ const mimeTypes = {
   '.js': 'text/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
   '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
   '.mp4': 'video/mp4',
   '.webm': 'video/webm'
 };
 
-const sendJson = (res, status, payload) => {
+async function loadEnvFile(filePath) {
+  try {
+    const content = await readFile(filePath, 'utf8');
+    content.split(/\r?\n/).forEach((line) => {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) return;
+
+      const separator = trimmed.indexOf('=');
+      if (separator < 0) return;
+
+      const key = trimmed.slice(0, separator).trim();
+      const rawValue = trimmed.slice(separator + 1).trim();
+      const value = rawValue.replace(/^["']|["']$/g, '');
+      if (key) process.env[key] = value;
+    });
+  } catch (error) {
+    if (error.code !== 'ENOENT') {
+      console.warn('Failed to read .env file:', error.message);
+    }
+  }
+}
+
+function sendJson(res, status, payload) {
   res.writeHead(status, {
     'content-type': 'application/json; charset=utf-8',
     'cache-control': 'no-store'
   });
   res.end(JSON.stringify(payload));
-};
+}
 
-const readBody = async (req) => {
+function getModelChain() {
+  const configuredList = (process.env.GOOGLE_AI_MODELS || '')
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  const merged = configuredList.length
+    ? [...configuredList, ...defaultModelChain]
+    : [...defaultModelChain];
+
+  return [...new Set(merged)];
+}
+
+async function readBody(req) {
   const chunks = [];
+  let size = 0;
+
   for await (const chunk of req) {
     chunks.push(chunk);
-    if (Buffer.concat(chunks).length > 16_384) {
-      throw new Error('Request body too large');
-    }
+    size += chunk.length;
+    if (size > 16_384) throw new Error('Request body too large');
   }
-  return JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}');
-};
 
-const handleChat = async (req, res) => {
+  return JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}');
+}
+
+function handleEnvStatus(res) {
+  const chatModels = getModelChain();
+  sendJson(res, 200, {
+    hasGoogleAiKey: Boolean(process.env.GOOGLE_AI_API_KEY),
+    primaryModel: chatModels[0] || defaultModelChain[0],
+    chatModels
+  });
+}
+
+async function handleChat(req, res) {
   try {
     const startedAt = Date.now();
     const { message, context = '' } = await readBody(req);
@@ -46,58 +99,71 @@ const handleChat = async (req, res) => {
     }
 
     const apiKey = process.env.GOOGLE_AI_API_KEY;
-    const model = process.env.GOOGLE_AI_MODEL || 'gemini-2.0-flash';
+    const modelChain = getModelChain();
 
     if (!apiKey) {
       return sendJson(res, 200, {
-        reply: '目前伺服器尚未設定 Google AI Studio 金鑰，所以先使用安全示範回覆。這個作品是未來互動動畫實驗室，貓咪元素只作為導覽符號與訊號，不是整體貓咪網站。',
-        model: 'local-fallback',
+        reply: '目前伺服器尚未設定 Google AI key，因此先使用安全 fallback。你可以詢問 Anime.js、Three.js、GSAP、API 安全與無障礙設計。',
+        model: 'local-fallback-no-key',
         latencyMs: Date.now() - startedAt
       });
     }
 
     const prompt = [
-      '你是期末網頁動畫作品中的 lab assistant，帶有輕微貓咪導覽語氣。',
-      '使用繁體中文，回答要精簡、專業、聚焦於網頁動畫、SEO、無障礙與互動設計。',
-      '請強調本作品是未來互動動畫實驗室，貓咪元素是符號與互動提示，不是整體貓咪造型網站。',
-      context ? `作品背景：${context}` : '',
-      `使用者：${cleanMessage}`
+      '你是 Cat Future Lab 的導覽助理。',
+      '請用精簡、可執行、工程導向的方式回答，不要主導整體視覺風格。',
+      '請優先圍繞 Anime.js、Three.js、GSAP、Server Proxy API、Open-Meteo、Remotion。',
+      context ? `補充背景：${context}` : '',
+      `使用者提問：${cleanMessage}`
     ].filter(Boolean).join('\n');
 
-    const upstream = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`,
-      {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ role: 'user', parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.75, maxOutputTokens: 260 }
-        })
-      }
-    );
+    const modelErrors = [];
 
-    if (!upstream.ok) {
+    for (const model of modelChain) {
+      const upstream = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ role: 'user', parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0.72, maxOutputTokens: 260 }
+          })
+        }
+      );
+
+      if (!upstream.ok) {
+        modelErrors.push(`${model}:${upstream.status}`);
+        continue;
+      }
+
+      const data = await upstream.json();
+      const reply = data?.candidates?.[0]?.content?.parts?.map((part) => part.text).join('').trim();
+      if (!reply) {
+        modelErrors.push(`${model}:empty-response`);
+        continue;
+      }
+
       return sendJson(res, 200, {
-        reply: 'AI 服務暫時沒有回應，我先提供備援回答：這個作品展示 Anime.js、Three.js、Server Proxy API、Remotion 素材、SEO 與無障礙設計。',
-        model: 'fallback-after-upstream-error',
-        latencyMs: Date.now() - startedAt
+        reply,
+        model,
+        latencyMs: Date.now() - startedAt,
+        fallbackTried: modelErrors
       });
     }
 
-    const data = await upstream.json();
-    const reply = data?.candidates?.[0]?.content?.parts?.map((part) => part.text).join('')?.trim();
-
     return sendJson(res, 200, {
-      reply: reply || '我目前沒有生成到內容，但作品互動流程仍可正常展示。',
-      model,
-      latencyMs: Date.now() - startedAt
+      reply: '已嘗試多個模型但都暫時無法回應，先切回安全 fallback：本站主軸是 Anime.js 動畫、Three.js 場景、Server Proxy API 與 Remotion 素材整合。',
+      model: 'fallback-all-failed',
+      latencyMs: Date.now() - startedAt,
+      fallbackTried: modelErrors
     });
-  } catch (error) {
+  } catch {
     return sendJson(res, 500, { error: 'Chat request failed safely.' });
   }
-};
+}
 
-const handleWeather = async (req, res, url) => {
+async function handleWeather(res, url) {
   const lat = Number(url.searchParams.get('lat'));
   const lng = Number(url.searchParams.get('lng'));
 
@@ -113,9 +179,7 @@ const handleWeather = async (req, res, url) => {
     api.searchParams.set('timezone', 'auto');
 
     const upstream = await fetch(api);
-    if (!upstream.ok) {
-      throw new Error('Weather upstream failed');
-    }
+    if (!upstream.ok) throw new Error('Weather upstream failed');
 
     const data = await upstream.json();
     return sendJson(res, 200, {
@@ -126,7 +190,7 @@ const handleWeather = async (req, res, url) => {
       longitude: data?.longitude,
       source: 'open-meteo'
     });
-  } catch (error) {
+  } catch {
     return sendJson(res, 200, {
       temperature: 24,
       weatherCode: 'fallback',
@@ -136,9 +200,9 @@ const handleWeather = async (req, res, url) => {
       source: 'local-fallback'
     });
   }
-};
+}
 
-const serveStatic = async (req, res, url) => {
+async function serveStatic(req, res, url) {
   const requested = decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname);
   const safePath = normalize(join(root, requested));
 
@@ -154,22 +218,30 @@ const serveStatic = async (req, res, url) => {
       'content-type': mimeTypes[extname(safePath)] || 'application/octet-stream',
       'cache-control': 'no-cache'
     });
+    if (req.method === 'HEAD') {
+      res.end();
+      return;
+    }
     res.end(data);
-  } catch (error) {
+  } catch {
     res.writeHead(404, { 'content-type': 'text/plain; charset=utf-8' });
     res.end('Not found');
   }
-};
+}
 
 const server = createServer(async (req, res) => {
   const url = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
+
+  if (req.method === 'GET' && url.pathname === '/api/env-status') {
+    return handleEnvStatus(res);
+  }
 
   if (req.method === 'POST' && url.pathname === '/api/chat') {
     return handleChat(req, res);
   }
 
   if (req.method === 'GET' && url.pathname === '/api/weather') {
-    return handleWeather(req, res, url);
+    return handleWeather(res, url);
   }
 
   if (req.method === 'GET' || req.method === 'HEAD') {
@@ -180,6 +252,57 @@ const server = createServer(async (req, res) => {
   res.end('Method not allowed');
 });
 
-server.listen(port, () => {
-  console.log(`Cat Future Lab running at http://localhost:${port}`);
-});
+await startServerWithRetry(server, requestedPort, maxPortRetries);
+
+async function startServerWithRetry(httpServer, basePort, retries) {
+  let currentPort = basePort;
+
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    try {
+      await listenOnPort(httpServer, currentPort);
+      if (attempt > 0) {
+        console.warn(`[startup] Port ${basePort} is busy, switched to ${currentPort}.`);
+      }
+      console.log(`Cat Future Lab running at http://localhost:${currentPort}`);
+      return;
+    } catch (error) {
+      const noMoreRetries = attempt >= retries;
+      if (error?.code === 'EADDRINUSE' && !noMoreRetries) {
+        currentPort += 1;
+        continue;
+      }
+
+      if (error?.code === 'EADDRINUSE') {
+        console.error(`[startup] Ports ${basePort}-${currentPort} are all in use.`);
+        console.error('[startup] Set PORT manually or stop an existing process.');
+      } else {
+        console.error(`[startup] Failed to start server: ${error?.message || error}`);
+      }
+      process.exitCode = 1;
+      return;
+    }
+  }
+}
+
+function listenOnPort(httpServer, port) {
+  return new Promise((resolve, reject) => {
+    const onError = (error) => {
+      cleanup();
+      reject(error);
+    };
+
+    const onListening = () => {
+      cleanup();
+      resolve();
+    };
+
+    const cleanup = () => {
+      httpServer.off('error', onError);
+      httpServer.off('listening', onListening);
+    };
+
+    httpServer.once('error', onError);
+    httpServer.once('listening', onListening);
+    httpServer.listen(port);
+  });
+}

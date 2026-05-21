@@ -4,9 +4,13 @@ export async function askCatGuide(message) {
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
       message,
-      context: 'Cat Future Lab is a future interactive animation lab with cat elements as signals, built with Anime.js 3.2.2, Three.js, server proxy APIs, Remotion material planning, SEO and accessibility.'
+      context: 'Cat Future Lab is an animated cat-style interactive website with Anime.js 3.2.2, Three.js, server proxy APIs, Remotion loop material, SEO, and accessibility.'
     })
   });
+}
+
+export async function fetchEnvStatus() {
+  return requestJson('/api/env-status');
 }
 
 export async function fetchWeather(lat, lng) {

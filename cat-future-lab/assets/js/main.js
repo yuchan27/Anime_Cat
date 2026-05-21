@@ -1,13 +1,24 @@
 import { animateRevealedSection, initPageAnimations } from './animations.js';
 import { initMotionPreference, initRevealObserver } from './a11y.js';
+import { initSoundToggle } from './audio.js';
+import { initCatCursor } from './cursor.js';
+import { initGsapEffects } from './effects.js';
+import { initNotesDeck } from './notes.js';
 import { initCatScene } from './scene.js';
-import { initChatPanel, initHeader, initReportDownload, initWeatherPanel } from './ui.js';
+import { initApiStatus, initChatPanel, initHeader, initImageGallery, initLoader, initReportDownload, initWeatherPanel } from './ui.js';
 
+initLoader();
 initMotionPreference();
 initRevealObserver(animateRevealedSection);
 initHeader();
+initSoundToggle();
+initCatCursor();
 initPageAnimations();
 initCatScene();
+initApiStatus();
 initChatPanel();
 initWeatherPanel();
+initImageGallery();
+initGsapEffects();
+initNotesDeck();
 initReportDownload();
