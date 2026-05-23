@@ -5,7 +5,7 @@ import { initCatCursor } from './cursor.js';
 import { initGsapEffects } from './effects.js';
 import { initNotesDeck } from './notes.js';
 import { initCatScene } from './scene.js';
-import { initApiStatus, initChatPanel, initHeader, initImageGallery, initLoader, initReportDownload, initWeatherPanel } from './ui.js';
+import { initApiStatus, initChatPanel, initHeader, initImageGallery, initLoader, initReportDownload, initReportPptDownload, initWeatherPanel } from './ui.js';
 
 initLoader();
 initMotionPreference();
@@ -22,3 +22,4 @@ initImageGallery();
 initGsapEffects();
 initNotesDeck();
 initReportDownload();
+initReportPptDownload();

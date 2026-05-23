@@ -450,7 +450,7 @@ select {
 }
 
 .hero::before {
-  content: "MEOW SIGNAL / LAB ACTIVE / ACCESSIBLE MOTION";
+  content: "貓咪訊號 / LAB 運作中 / Accessible Motion";
   position: absolute;
   left: 0;
   right: 0;
@@ -762,17 +762,27 @@ select {
   width: min(var(--max), 100%);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   border-top: 2px solid var(--ink);
   border-left: 2px solid var(--ink);
+  border-right: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
 }
 
 .module-card {
-  min-height: 270px;
+  min-height: 252px;
   padding: 1.35rem;
   border-right: 2px solid var(--ink);
   border-bottom: 2px solid var(--ink);
   background: var(--white);
+}
+
+.module-card:nth-child(3n) {
+  border-right: 0;
+}
+
+.module-card:nth-child(n + 4) {
+  border-bottom: 0;
 }
 
 .module-card:nth-child(2) {
@@ -793,8 +803,8 @@ select {
 }
 
 .module-card h3 {
-  margin: 3rem 0 0.8rem;
-  font-size: 1.42rem;
+  margin: 2.25rem 0 0.8rem;
+  font-size: 1.34rem;
 }
 
 .module-card p,
@@ -1168,7 +1178,7 @@ select {
 
 .note-slide p {
   margin: 0;
-  max-width: 70ch;
+  max-width: 100%;
   line-height: 1.75;
 }
 
@@ -1176,6 +1186,54 @@ select {
   margin: 1rem 0 0;
   padding-left: 1.2rem;
   line-height: 1.75;
+}
+
+.note-columns {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  gap: 0.9rem;
+  align-items: start;
+}
+
+.note-panel {
+  border: 2px solid rgba(247, 242, 228, 0.32);
+  background: rgba(247, 242, 228, 0.08);
+  padding: 0.85rem 0.9rem;
+}
+
+.note-panel h4 {
+  margin: 0 0 0.65rem;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+}
+
+.note-panel ul {
+  margin: 0;
+}
+
+.note-kpi-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.note-kpi {
+  border: 2px solid rgba(247, 242, 228, 0.36);
+  background: rgba(81, 214, 208, 0.12);
+  padding: 0.75rem;
+  display: grid;
+  gap: 0.38rem;
+}
+
+.note-kpi strong {
+  font-size: 1.22rem;
+}
+
+.note-kpi span {
+  font-size: 0.9rem;
+  opacity: 0.92;
 }
 
 .report-list {
@@ -1300,6 +1358,27 @@ select {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .module-card {
+    border-right: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .module-card:nth-child(3n) {
+    border-right: 2px solid var(--ink);
+  }
+
+  .module-card:nth-child(n + 4) {
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .module-card:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .module-card:nth-child(n + 5) {
+    border-bottom: 0;
+  }
+
   .signal-panel {
     max-width: 680px;
   }
@@ -1308,6 +1387,14 @@ select {
     left: 0.7rem;
     top: 0.7rem;
     width: min(36%, 210px);
+  }
+
+  .note-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .note-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -1368,8 +1455,33 @@ select {
     grid-template-columns: 1fr;
   }
 
+  .module-card {
+    border-right: 0;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .module-card:nth-child(n + 5) {
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .module-card:last-child {
+    border-bottom: 0;
+  }
+
   .notes-deck__zoom {
     margin-left: 0;
+  }
+
+  .notes-deck__toolbar {
+    gap: 0.5rem;
+  }
+
+  .notes-deck__counter {
+    min-width: 4.6rem;
+  }
+
+  .note-kpi-grid {
+    grid-template-columns: 1fr;
   }
 
   .module-card {
@@ -1386,7 +1498,49 @@ select {
     flex-direction: column;
   }
 
-  .signal-panel__svg {
-    display: none;
-  }
+.signal-panel__svg {
+  display: none;
+}
+}
+
+/* --- Hotfix overrides for encoding drift and enhanced notes media --- */
+.hero::before {
+  content: "貓咪訊號 / LAB 運作中 / Accessible Motion";
+}
+
+[data-hero-arm-left],
+[data-hero-arm-right] {
+  transform-box: fill-box;
+  transform-origin: right center;
+}
+
+[data-hero-forearm-left],
+[data-hero-forearm-right] {
+  transform-box: fill-box;
+  transform-origin: left center;
+}
+
+.note-media {
+  margin: 1rem 0 0;
+  border: 2px solid rgba(247, 242, 228, 0.45);
+  background: rgba(247, 242, 228, 0.08);
+}
+
+.note-media img,
+.note-media video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  background: #0f1425;
+}
+
+.note-media figcaption {
+  border-top: 1px solid rgba(247, 242, 228, 0.3);
+  padding: 0.72rem 0.88rem;
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.note-media--video video {
+  max-height: 420px;
 }

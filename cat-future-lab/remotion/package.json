@@ -6,7 +6,9 @@
   "scripts": {
     "studio": "remotion studio src/index.ts",
     "render:loop": "remotion render src/index.ts CatLoop ../assets/remotion/cat-loop.mp4",
-    "still": "remotion still src/index.ts CatLoop --frame=90 --scale=0.5 ../assets/remotion/cat-loop-still.png"
+    "still": "remotion still src/index.ts CatLoop --frame=90 --scale=0.5 ../assets/remotion/cat-loop-still.png",
+    "render:process": "remotion render src/index.ts BuildProcess ../assets/remotion/build-process.mp4",
+    "still:process": "remotion still src/index.ts BuildProcess --frame=120 --scale=0.5 ../assets/remotion/build-process-still.png"
   },
   "dependencies": {
     "@remotion/cli": "^4.0.0",

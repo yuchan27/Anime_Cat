@@ -11,7 +11,7 @@ export async function initGsapEffects() {
 
   initScrollPanels(gsap);
   initParallax(gsap);
-  initFloatingCards(gsap);
+  initModuleEntrance(gsap);
   initHoverTilt(gsap);
   initHeroPointerDrift(gsap);
   initTickerPulse(gsap);
@@ -93,17 +93,26 @@ function initScrollPanels(gsap) {
   });
 }
 
-function initFloatingCards(gsap) {
+function initModuleEntrance(gsap) {
   const cards = Array.from(document.querySelectorAll('.module-card'));
-  cards.forEach((card, index) => {
-    gsap.to(card, {
-      y: index % 2 ? -6 : 6,
-      duration: 2.2 + index * 0.18,
-      repeat: -1,
-      yoyo: true,
-      ease: 'sine.inOut'
-    });
-  });
+  if (!cards.length) return;
+
+  gsap.fromTo(
+    cards,
+    { y: 22, opacity: 0 },
+    {
+      y: 0,
+      opacity: 1,
+      duration: 0.62,
+      ease: 'power2.out',
+      stagger: 0.08,
+      scrollTrigger: {
+        trigger: '#modules',
+        start: 'top 74%',
+        once: true
+      }
+    }
+  );
 }
 
 function initHoverTilt(gsap) {

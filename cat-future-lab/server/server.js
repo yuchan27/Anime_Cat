@@ -8,7 +8,11 @@ await loadEnvFile(join(root, '.env'));
 
 const requestedPort = Number(process.env.PORT || 5177);
 const maxPortRetries = Number(process.env.PORT_RETRY_COUNT || 20);
-const defaultModelChain = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+
+const fixedModelChain = [
+  'gemini-2.5-flash',
+  'gemma-4-26b-a4b-it'
+];
 
 const mimeTypes = {
   '.html': 'text/html; charset=utf-8',
@@ -54,16 +58,7 @@ function sendJson(res, status, payload) {
 }
 
 function getModelChain() {
-  const configuredList = (process.env.GOOGLE_AI_MODELS || '')
-    .split(',')
-    .map((item) => item.trim())
-    .filter(Boolean);
-
-  const merged = configuredList.length
-    ? [...configuredList, ...defaultModelChain]
-    : [...defaultModelChain];
-
-  return [...new Set(merged)];
+  return [...fixedModelChain];
 }
 
 async function readBody(req) {
@@ -83,9 +78,30 @@ function handleEnvStatus(res) {
   const chatModels = getModelChain();
   sendJson(res, 200, {
     hasGoogleAiKey: Boolean(process.env.GOOGLE_AI_API_KEY),
-    primaryModel: chatModels[0] || defaultModelChain[0],
+    primaryModel: chatModels[0],
     chatModels
   });
+}
+
+async function callGoogleModel({ model, apiKey, prompt }) {
+  const upstream = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`,
+    {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.72, maxOutputTokens: 280 }
+      })
+    }
+  );
+
+  if (!upstream.ok) return { ok: false, status: upstream.status };
+
+  const data = await upstream.json();
+  const reply = data?.candidates?.[0]?.content?.parts?.map((part) => part.text).join('').trim();
+  if (!reply) return { ok: false, status: 'empty-response' };
+  return { ok: true, reply };
 }
 
 async function handleChat(req, res) {
@@ -103,16 +119,16 @@ async function handleChat(req, res) {
 
     if (!apiKey) {
       return sendJson(res, 200, {
-        reply: '目前伺服器尚未設定 Google AI key，因此先使用安全 fallback。你可以詢問 Anime.js、Three.js、GSAP、API 安全與無障礙設計。',
+        reply: '目前伺服器尚未設定 Google AI key，因此先使用安全 fallback。你可以詢問城市觀測流程、3D 場域、城市資料面板或影像素材安排。',
         model: 'local-fallback-no-key',
         latencyMs: Date.now() - startedAt
       });
     }
 
     const prompt = [
-      '你是 Cat Future Lab 的導覽助理。',
-      '請用精簡、可執行、工程導向的方式回答，不要主導整體視覺風格。',
-      '請優先圍繞 Anime.js、Three.js、GSAP、Server Proxy API、Open-Meteo、Remotion。',
+      '你是 Cat Future Lab 城市訊號互動觀測台的導覽助理。',
+      '請用精簡、產品導向、可理解的方式回答，讓使用者覺得這是一個可用的互動網站。',
+      '聚焦城市資料、3D 場域、AI 導覽、動態影像、可用性與輕量貓咪訊號。',
       context ? `補充背景：${context}` : '',
       `使用者提問：${cleanMessage}`
     ].filter(Boolean).join('\n');
@@ -120,32 +136,14 @@ async function handleChat(req, res) {
     const modelErrors = [];
 
     for (const model of modelChain) {
-      const upstream = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`,
-        {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ role: 'user', parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.72, maxOutputTokens: 260 }
-          })
-        }
-      );
-
-      if (!upstream.ok) {
-        modelErrors.push(`${model}:${upstream.status}`);
-        continue;
-      }
-
-      const data = await upstream.json();
-      const reply = data?.candidates?.[0]?.content?.parts?.map((part) => part.text).join('').trim();
-      if (!reply) {
-        modelErrors.push(`${model}:empty-response`);
+      const result = await callGoogleModel({ model, apiKey, prompt });
+      if (!result.ok) {
+        modelErrors.push(`${model}:${result.status}`);
         continue;
       }
 
       return sendJson(res, 200, {
-        reply,
+        reply: result.reply,
         model,
         latencyMs: Date.now() - startedAt,
         fallbackTried: modelErrors
@@ -153,7 +151,7 @@ async function handleChat(req, res) {
     }
 
     return sendJson(res, 200, {
-      reply: '已嘗試多個模型但都暫時無法回應，先切回安全 fallback：本站主軸是 Anime.js 動畫、Three.js 場景、Server Proxy API 與 Remotion 素材整合。',
+      reply: '已嘗試主模型與 fallback 模型，但上游暫時無法回應，先切回安全示範回覆：本站是一個城市訊號互動觀測台，整合 3D 場域、城市天氣資料、AI 導覽與動態影像素材。',
       model: 'fallback-all-failed',
       latencyMs: Date.now() - startedAt,
       fallbackTried: modelErrors

@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cat Future Lab | Interactive Animation Site</title>
-  <meta name="description" content="Cat Future Lab combines Anime.js, Three.js, GSAP, Server Proxy APIs, and Remotion into a one-page interactive website.">
+  <title>Cat Future Lab｜城市訊號互動觀測台</title>
+  <meta name="description" content="Cat Future Lab 是一個以城市資料、3D 場域、AI 導覽與動態影像組成的互動觀測網站。">
   <link rel="canonical" href="http://localhost:5177/">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Cat Future Lab | Interactive Animation Site">
-  <meta property="og:description" content="3D scene, animation modules, city weather API, AI guide, and Remotion video material in one page.">
+  <meta property="og:title" content="Cat Future Lab｜城市訊號互動觀測台">
+  <meta property="og:description" content="把城市天氣、3D 場域、AI 導覽與動態影像整合成可探索的互動網站。">
   <meta property="og:url" content="http://localhost:5177/">
   <meta property="og:image" content="http://localhost:5177/assets/images/cat-hero-cartoon.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Cat Future Lab | Interactive Animation Site">
-  <meta name="twitter:description" content="Anime.js + Three.js + GSAP + Server Proxy API + Remotion">
+  <meta name="twitter:title" content="Cat Future Lab｜城市訊號互動觀測台">
+  <meta name="twitter:description" content="城市資料、3D 場域、AI 導覽與 Remotion 動態影像。">
   <meta name="theme-color" content="#11131f">
   <link rel="stylesheet" href="assets/css/styles.css">
   <script type="application/ld+json">
@@ -21,9 +21,9 @@
     "@context": "https://schema.org",
     "@type": ["CreativeWork", "WebApplication"],
     "name": "Cat Future Lab",
-    "inLanguage": "en",
-    "applicationCategory": "EntertainmentApplication",
-    "description": "One-page interactive website with animation-style cat elements, built with Anime.js, Three.js, GSAP, Server Proxy API, and Remotion.",
+    "inLanguage": "zh-Hant",
+    "applicationCategory": "WebApplication",
+    "description": "以動畫風格貓咪作為輔助導引的城市訊號互動觀測網站，整合 3D 場域、城市資料、AI 導覽與動態影像。",
     "creator": {
       "@type": "Person",
       "name": "yuchan"
@@ -32,12 +32,12 @@
   </script>
 </head>
 <body>
-  <div class="page-loader" data-loader aria-live="polite" aria-label="Page loading progress">
+  <div class="page-loader" data-loader aria-live="polite" aria-label="頁面載入進度">
     <div class="loader-card">
       <div class="loader-cat" aria-hidden="true">
         <span class="loader-cat__face"></span>
       </div>
-      <p>Cat signal booting</p>
+      <p>貓咪訊號載入中</p>
       <div class="rainbow-track" aria-hidden="true">
         <span data-loader-bar></span>
       </div>
@@ -58,165 +58,180 @@
     </span>
   </div>
 
-  <a class="skip-link" href="#main">Skip to content</a>
+  <a class="skip-link" href="#main">跳到主要內容</a>
 
   <header class="site-header" data-header>
-    <a class="brand" href="#hero" aria-label="Cat Future Lab home">
+    <a class="brand" href="#hero" aria-label="Cat Future Lab 首頁">
       <span class="brand-mark" aria-hidden="true"><span></span></span>
       <span>Cat Future Lab</span>
     </a>
-    <nav class="site-nav" aria-label="Primary navigation">
-      <a href="#scene">3D Scene</a>
-      <a href="#modules">Modules</a>
-      <a href="#gallery">Cat Gallery</a>
-      <a href="#assistant">API Zone</a>
-      <a href="#remotion">Remotion</a>
-      <a href="#stories">Stories</a>
-      <a href="#notes">Lab Notes</a>
+    <nav class="site-nav" aria-label="主選單">
+      <a href="#scene">3D 場域</a>
+      <a href="#modules">平台引擎</a>
+      <a href="#gallery">觀測圖像</a>
+      <a href="#assistant">城市資料</a>
+      <a href="#remotion">影像素材</a>
+      <a href="#stories">使用情境</a>
+      <a href="#notes">觀測紀錄</a>
     </nav>
-    <div class="header-actions" aria-label="Controls">
-      <button class="sound-toggle" type="button" data-sound-toggle aria-pressed="false">Enable Sound</button>
-      <button class="motion-toggle" type="button" data-motion-toggle aria-pressed="false">Reduce Motion</button>
+    <div class="header-actions" aria-label="控制列">
+      <button class="sound-toggle" type="button" data-sound-toggle aria-pressed="false">啟動音景</button>
+      <button class="motion-toggle" type="button" data-motion-toggle aria-pressed="false">降低動態</button>
     </div>
   </header>
 
   <main id="main">
     <section id="hero" class="hero" aria-labelledby="hero-title">
       <div class="hero__copy" data-animate="hero">
-        <p class="eyebrow">Interactive Cat Animation Lab</p>
+        <p class="eyebrow">城市訊號互動觀測台</p>
         <h1 id="hero-title">
-          <span class="hero-title-line">Future Animation Lab</span>
-          <span class="hero-title-line hero-title-line--sub">Guided by Cat Signals</span>
+          <span class="hero-title-line">Cat Future Lab</span>
+          <span class="hero-title-line hero-title-line--sub">把城市資料變成可探索的動態場域</span>
         </h1>
         <p class="hero__lead">
-          Cat Future Lab uses cat elements as interaction signals and guide marks, then links them to a 3D scene,
-          motion timeline, city weather data, and AI dialog. The site stays product-like, while keeping warm animated
-          storytelling in each section.
+          這是一個結合即時城市天氣、3D 訊號場、AI 導覽與動態影像的互動網站。
+          貓咪只作為溫和的觀測助手與介面訊號，讓資料探索更有辨識度但不搶走主軸。
         </p>
         <div class="hero__actions">
-          <a class="button button--primary" href="#scene">Enter 3D Lab</a>
-          <a class="button button--secondary" href="#notes">Open Lab Notes</a>
+          <a class="button button--primary" href="#scene">開始觀測</a>
+          <a class="button button--secondary" href="#notes">打開觀測紀錄</a>
         </div>
 
-        <div class="hero-signal-widget" data-reveal aria-label="Cat guide signal widget">
+        <div class="hero-signal-widget" data-reveal aria-label="貓咪導引訊號">
           <svg class="hero-signal-svg" viewBox="0 0 680 360" role="img" aria-labelledby="hero-signal-title hero-signal-desc">
-            <title id="hero-signal-title">Cat guide signal</title>
-            <desc id="hero-signal-desc">Ear geometry, signal path, and full-arm waving motion</desc>
+            <title id="hero-signal-title">貓咪導引訊號</title>
+            <desc id="hero-signal-desc">貓耳幾何、訊號軌跡、節點與整段手臂揮動動畫</desc>
+
             <path class="hero-signal-grid" d="M40 70H640M40 130H640M40 190H640M40 250H640M80 36V330M160 36V330M240 36V330M320 36V330M400 36V330M480 36V330M560 36V330" />
             <path class="hero-signal-path" data-signal-path d="M66 260 C 138 144, 218 126, 294 182 S 458 266, 616 92" />
             <path class="hero-signal-ears" d="M210 172 164 56l110 92M466 172l44-116-108 92" />
-            <circle class="hero-signal-node" cx="294" cy="182" r="15" />
-            <circle class="hero-signal-node" cx="616" cy="92" r="11" />
+
+            <circle class="hero-signal-node hero-signal-node--left" cx="294" cy="182" r="15" />
+
             <rect class="hero-signal-hud" x="214" y="160" width="246" height="84" rx="14" />
             <path class="hero-signal-eye" d="M256 202h72M350 202h72" />
 
-            <g data-hero-arm transform="translate(194 214)">
+            <g data-hero-arm-left transform="translate(194 214)">
               <rect class="hero-signal-upper-arm" x="-124" y="-12" width="106" height="24" rx="12" />
-              <g data-hero-forearm transform="translate(-116 0)">
+              <g data-hero-forearm-left transform="translate(-116 0)">
                 <rect class="hero-signal-forearm" x="-86" y="-10" width="88" height="20" rx="10" />
                 <circle class="hero-signal-paw" cx="-96" cy="0" r="14" />
               </g>
             </g>
+
+            <g data-hero-right-cluster>
+              <g data-hero-node-right transform="translate(616 92)">
+                <circle class="hero-signal-node hero-signal-node--right" cx="0" cy="0" r="11" />
+              </g>
+              <g data-hero-arm-right transform="translate(546 132)">
+                <rect class="hero-signal-upper-arm" x="-8" y="-10" width="86" height="20" rx="10" />
+                <g data-hero-forearm-right transform="translate(72 0)">
+                  <rect class="hero-signal-forearm" x="-8" y="-8" width="72" height="16" rx="8" />
+                  <circle class="hero-signal-paw" cx="74" cy="0" r="12" />
+                </g>
+              </g>
+            </g>
           </svg>
-          <p>Signal module moved away from the hero image</p>
+          <p>訊號助手只提示互動方向，主畫面仍保留給城市資料與觀測內容。</p>
         </div>
       </div>
 
-      <figure class="signal-panel" aria-label="Main cat visual">
-        <img class="signal-panel__image cartoonized" src="assets/images/cat-hero-cartoon.png" alt="Animation-style tabby cat in a futuristic lab with holographic screens.">
+      <figure class="signal-panel" aria-label="主視覺貓咪圖">
+        <img class="signal-panel__image cartoonized" src="assets/images/cat-hero-cartoon.png" alt="動畫風格虎斑貓坐在互動實驗室中。">
         <figcaption>
           <strong data-metric-value>60</strong>
-          <span>FPS target / Anime.js timeline / Three.js rAF / GSAP effects</span>
+          <span>FPS 體驗目標 / 城市資料 / 即時互動</span>
         </figcaption>
       </figure>
     </section>
 
     <section id="scene" class="scene-section" aria-labelledby="scene-title">
       <div class="section-copy" data-reveal>
-        <p class="eyebrow">Three.js Interactive Scene</p>
-        <h2 id="scene-title">Three.js core with orbit particles and mode switching</h2>
-        <p>
-          The scene combines cat-signal geometry, dual rings, particle orbits, and responsive lighting.
-          Pointer movement and mode controls shape speed, rotation, and color tone in real time.
-        </p>
-        <div class="scene-controls" aria-label="3D scene mode controls">
-          <button class="icon-button" type="button" data-scene-mode="calm" aria-pressed="true" title="Stable mode">Calm</button>
-          <button class="icon-button" type="button" data-scene-mode="play" aria-pressed="false" title="Dynamic mode">Play</button>
-          <button class="icon-button" type="button" data-scene-mode="focus" aria-pressed="false" title="Focus mode">Focus</button>
+        <p class="eyebrow">3D 城市場域</p>
+        <h2 id="scene-title">用粒子軌道呈現城市訊號流動</h2>
+        <p>核心場域把城市資料轉成幾何、光照與粒子節奏，使用者可切換穩定、動態與專注三種觀測模式。</p>
+        <div class="scene-controls" aria-label="3D 場景模式控制">
+          <button class="icon-button" type="button" data-scene-mode="calm" aria-pressed="true" title="穩定模式">穩定</button>
+          <button class="icon-button" type="button" data-scene-mode="play" aria-pressed="false" title="動態模式">動態</button>
+          <button class="icon-button" type="button" data-scene-mode="focus" aria-pressed="false" title="專注模式">專注</button>
         </div>
       </div>
       <figure class="scene-canvas-wrap" data-reveal>
-        <canvas id="cat-scene" aria-label="Three.js interactive scene"></canvas>
-        <figcaption>The canvas has text summary and keyboard-friendly controls to keep information accessible.</figcaption>
+        <canvas id="cat-scene" aria-label="城市訊號 3D 互動場域"></canvas>
+        <figcaption>3D 場域提供城市訊號的視覺化入口，旁邊保留文字摘要與鍵盤控制。</figcaption>
       </figure>
     </section>
 
     <section id="modules" class="module-band" aria-labelledby="modules-title">
       <div class="section-heading" data-reveal>
-        <p class="eyebrow">Technique Stack</p>
-        <h2 id="modules-title">Anime.js, Three.js, and GSAP working as separate modules</h2>
-        <p>Each motion layer is isolated by responsibility, so interaction tuning can evolve without one giant script.</p>
+        <p class="eyebrow">平台引擎</p>
+        <h2 id="modules-title">把視覺、資料、AI 與影像拆成可維護服務</h2>
+        <p>每個能力都有清楚責任：動態節奏、3D 場域、資料更新、導覽回覆與影像素材互不混雜。</p>
       </div>
       <div class="module-grid" data-module-grid>
         <article class="module-card" data-reveal>
           <span class="module-card__index">01</span>
-          <h3>Anime.js Timeline</h3>
-          <p>Hero intro rhythm, section reveal timing, path drawing, and micro-loop signals.</p>
+          <h3>動態節奏</h3>
+          <p>控制開場、區塊進場、訊號描邊與局部提示，讓互動更有節奏。</p>
         </article>
         <article class="module-card" data-reveal>
           <span class="module-card__index">02</span>
-          <h3>Three.js Scene</h3>
-          <p>Continuous render loop with geometry core, orbit particles, and state-driven light behavior.</p>
+          <h3>3D 場域</h3>
+          <p>用幾何核心、粒子軌道與光照模式，建立可切換的觀測空間。</p>
         </article>
         <article class="module-card" data-reveal>
           <span class="module-card__index">03</span>
-          <h3>GSAP Motion</h3>
-          <p>Scroll parallax, floating cards, hover tilt, and smooth slide transitions in the notes deck.</p>
+          <h3>滾動體驗</h3>
+          <p>處理區塊進場、視差與互動回饋，讓長頁面不只是靜態閱讀。</p>
         </article>
         <article class="module-card" data-reveal>
           <span class="module-card__index">04</span>
-          <h3>API Client</h3>
-          <p>Unified fetch contract for chat and weather routes with visible state feedback.</p>
+          <h3>資料層</h3>
+          <p>城市天氣與 AI 導覽都走同一套請求規格，讓狀態與錯誤清楚可見。</p>
         </article>
         <article class="module-card" data-reveal>
           <span class="module-card__index">05</span>
-          <h3>A11y + Motion</h3>
-          <p>Keyboard support, visible focus ring, aria-live messaging, and reduced-motion behavior.</p>
+          <h3>可用性</h3>
+          <p>鍵盤操作、焦點可見、即時狀態提示與降低動態都保留在核心流程。</p>
         </article>
         <article class="module-card" data-reveal>
           <span class="module-card__index">06</span>
-          <h3>Remotion Material</h3>
-          <p>Optional loop video slot with poster fallback so the site still works without render output.</p>
+          <h3>動態影像</h3>
+          <p>以可替換影片與 poster 建立視覺素材層，讓網站更像完整產品。</p>
         </article>
       </div>
     </section>
 
     <section id="gallery" class="gallery-section" aria-labelledby="gallery-title">
       <div class="section-heading" data-reveal>
-        <p class="eyebrow">Cat Observation Deck</p>
-        <h2 id="gallery-title">All cat visuals are now in one animation style</h2>
-        <p>Hero, observer, and weather images now follow the same illustrated direction to avoid style mismatch.</p>
+        <p class="eyebrow">觀測圖像</p>
+        <h2 id="gallery-title">貓咪是觀測助手，不是整個網站的主題包裝</h2>
+        <p>圖像系統以城市、資料與觀測情境為核心，貓咪只在關鍵畫面提供親和的導覽視角。</p>
       </div>
       <div class="gallery-layout" data-gallery>
         <figure class="gallery-preview" data-reveal>
-          <img src="assets/images/cat-observer-cartoon-wide.png" alt="Animation-style black cat looking back on a river boat in a fantasy city." data-gallery-image class="cartoonized">
-          <figcaption data-gallery-caption>Observer: reverse glance posture to create direct character interaction.</figcaption>
+          <img src="assets/images/cat-observer-cartoon-wide.png" alt="動畫風格黑貓站在小船上觀察城市。"
+            data-gallery-image class="cartoonized">
+          <figcaption data-gallery-caption>觀測視角：角色停留在畫面邊緣，讓城市訊號與環境資訊保持主角位置。</figcaption>
         </figure>
         <div class="gallery-controls" data-reveal>
-          <button class="photo-card is-active" type="button" data-gallery-card data-image="assets/images/cat-observer-cartoon-wide.png" data-caption="Observer: reverse glance posture to create direct character interaction." aria-pressed="true">
+          <button class="photo-card is-active" type="button" data-gallery-card data-image="assets/images/cat-observer-cartoon-wide.png"
+            data-caption="觀測視角：角色停留在畫面邊緣，讓城市訊號與環境資訊保持主角位置。" aria-pressed="true">
             <span>01</span>
-            <strong>Observer</strong>
-            <small>Main guide frame</small>
+            <strong>城市觀測</strong>
+            <small>導覽入口</small>
           </button>
-          <button class="photo-card" type="button" data-gallery-card data-image="assets/images/cat-weather-cartoon.png" data-caption="Weather Console: matching palette and style for the live city weather section." aria-pressed="false">
+          <button class="photo-card" type="button" data-gallery-card data-image="assets/images/cat-weather-cartoon.png"
+            data-caption="天氣控制台：讓天氣、城市與時間資料集中在同一個可讀面板。" aria-pressed="false">
             <span>02</span>
-            <strong>Weather Console</strong>
-            <small>Data story frame</small>
+            <strong>資料控制台</strong>
+            <small>城市狀態</small>
           </button>
-          <button class="photo-card" type="button" data-gallery-card data-image="assets/images/cat-hero-cartoon.png" data-caption="Hero Frame: warm lab composition for the opening scene." aria-pressed="false">
+          <button class="photo-card" type="button" data-gallery-card data-image="assets/images/cat-hero-cartoon.png"
+            data-caption="Hero 主圖：保留溫暖光感，讓平台不像冷冰冰的資料儀表板。" aria-pressed="false">
             <span>03</span>
-            <strong>Hero Frame</strong>
-            <small>Opening scene</small>
+            <strong>場域入口</strong>
+            <small>第一視覺</small>
           </button>
         </div>
       </div>
@@ -225,167 +240,262 @@
     <section id="assistant" class="assistant-section" aria-labelledby="assistant-title">
       <div class="assistant-panel" data-reveal>
         <div class="panel-heading">
-          <p class="eyebrow">Server Proxy Chat</p>
-          <h2 id="assistant-title">The AI guide explains the system, not the visual direction</h2>
-          <p>Chat requests use <code>POST /api/chat</code>. Secrets stay on the server side only.</p>
+          <p class="eyebrow">AI 城市導覽</p>
+          <h2 id="assistant-title">把城市資料、互動場域與影像內容說清楚</h2>
+          <p>對話請求走 <code>POST /api/chat</code>，由 server proxy 保護金鑰並統一回應狀態。</p>
         </div>
-        <div class="status-box status-box--subtle" data-api-status aria-live="polite">Loading API status...</div>
+        <div class="status-box status-box--subtle" data-api-status aria-live="polite">正在讀取 API 狀態...</div>
         <form class="chat-form" data-chat-form>
-          <label for="chat-message">Ask the guide</label>
+          <label for="chat-message">向導覽員提問</label>
           <div class="chat-row">
-            <input id="chat-message" name="message" type="text" autocomplete="off" maxlength="160" placeholder="Example: Explain the interaction stack in 30 seconds">
-            <button class="button button--primary" type="submit">Send</button>
+            <input id="chat-message" name="message" type="text" autocomplete="off" maxlength="180"
+              placeholder="例如：用 30 秒介紹這個城市觀測平台">
+            <button class="button button--primary" type="submit">送出</button>
           </div>
         </form>
         <div class="status-box" data-chat-output aria-live="polite" data-state="idle">
-          Ask about concepts, motion tech, SEO, or accessibility.
+          可以詢問城市觀測流程、互動設計、資料來源或導覽內容。
         </div>
       </div>
 
       <aside class="weather-panel" data-reveal aria-labelledby="weather-title">
-        <p class="eyebrow">Open-Meteo Status</p>
-        <h2 id="weather-title">Live City Weather</h2>
-        <p data-weather-status>Select a city, then request weather data.</p>
-        <label class="weather-select-label" for="weather-city">City List</label>
+        <p class="eyebrow">Open-Meteo 城市資料</p>
+        <h2 id="weather-title">選一座城市，讀取當地訊號</h2>
+        <p data-weather-status>請先選擇城市，再更新當地天氣與時間。</p>
+        <label class="weather-select-label" for="weather-city">城市選單</label>
         <div class="weather-select-wrap">
           <select id="weather-city" data-weather-city>
-            <option value="25.0330,121.5654" data-name="Taipei" data-tz="Asia/Taipei">Taipei</option>
-            <option value="24.1477,120.6736" data-name="Taichung" data-tz="Asia/Taipei">Taichung</option>
-            <option value="22.6273,120.3014" data-name="Kaohsiung" data-tz="Asia/Taipei">Kaohsiung</option>
-            <option value="35.6762,139.6503" data-name="Tokyo" data-tz="Asia/Tokyo">Tokyo</option>
-            <option value="37.5665,126.9780" data-name="Seoul" data-tz="Asia/Seoul">Seoul</option>
-            <option value="1.3521,103.8198" data-name="Singapore" data-tz="Asia/Singapore">Singapore</option>
-            <option value="40.7128,-74.0060" data-name="New York" data-tz="America/New_York">New York</option>
-            <option value="51.5072,-0.1276" data-name="London" data-tz="Europe/London">London</option>
-            <option value="48.8566,2.3522" data-name="Paris" data-tz="Europe/Paris">Paris</option>
+            <option value="25.0330,121.5654" data-name="台北" data-tz="Asia/Taipei">台北 Taipei</option>
+            <option value="24.1477,120.6736" data-name="台中" data-tz="Asia/Taipei">台中 Taichung</option>
+            <option value="22.6273,120.3014" data-name="高雄" data-tz="Asia/Taipei">高雄 Kaohsiung</option>
+            <option value="35.6762,139.6503" data-name="東京" data-tz="Asia/Tokyo">東京 Tokyo</option>
+            <option value="37.5665,126.9780" data-name="首爾" data-tz="Asia/Seoul">首爾 Seoul</option>
+            <option value="1.3521,103.8198" data-name="新加坡" data-tz="Asia/Singapore">新加坡 Singapore</option>
+            <option value="40.7128,-74.0060" data-name="紐約" data-tz="America/New_York">紐約 New York</option>
+            <option value="51.5072,-0.1276" data-name="倫敦" data-tz="Europe/London">倫敦 London</option>
+            <option value="48.8566,2.3522" data-name="巴黎" data-tz="Europe/Paris">巴黎 Paris</option>
           </select>
         </div>
-        <button class="button button--secondary" type="button" data-weather-button>Refresh Weather</button>
+        <button class="button button--secondary" type="button" data-weather-button>更新城市訊號</button>
         <dl class="weather-data" aria-live="polite">
-          <div><dt>City</dt><dd data-weather-place>Taipei</dd></div>
-          <div><dt>Local Time</dt><dd data-weather-time>--</dd></div>
-          <div><dt>Temperature</dt><dd data-weather-temp>--</dd></div>
-          <div><dt>Wind</dt><dd data-weather-wind>--</dd></div>
-          <div><dt>Source</dt><dd data-weather-source>--</dd></div>
+          <div><dt>城市</dt><dd data-weather-place>台北</dd></div>
+          <div><dt>當地時間</dt><dd data-weather-time>--</dd></div>
+          <div><dt>溫度</dt><dd data-weather-temp>--</dd></div>
+          <div><dt>風速</dt><dd data-weather-wind>--</dd></div>
+          <div><dt>來源</dt><dd data-weather-source>--</dd></div>
         </dl>
       </aside>
     </section>
 
     <section id="remotion" class="remotion-strip" aria-labelledby="remotion-title">
       <div class="section-copy" data-reveal>
-        <p class="eyebrow">Remotion Video Slot</p>
-        <h2 id="remotion-title">Remotion loop material embedded as a website section</h2>
-        <p>The video is rendered from frame timeline logic. If it is missing, the poster and text summary remain usable.</p>
+        <p class="eyebrow">動態影像素材</p>
+        <h2 id="remotion-title">用循環影像補足城市觀測的節奏感</h2>
+        <p>影片不是額外附件，而是網站的一個內容區塊；即使影片未載入，也會保留 poster 與文字摘要。</p>
       </div>
       <figure class="video-placeholder" data-reveal>
-        <video controls autoplay muted loop playsinline poster="assets/remotion/cat-loop-still.png" aria-label="Remotion cat loop material">
+        <video controls autoplay muted loop playsinline poster="assets/remotion/cat-loop-still.png" aria-label="Remotion 主循環素材">
           <source src="assets/remotion/cat-loop.mp4" type="video/mp4">
-          Your browser does not support this video format.
+          你的瀏覽器不支援此影片格式。
         </video>
-        <figcaption>Loop summary: cat signal board, HUD scan accents, and rhythm-based frame transitions.</figcaption>
+        <figcaption>片段摘要：城市觀測視角、HUD 掃描節奏、資料轉場與角色訊號。</figcaption>
       </figure>
     </section>
 
     <section id="stories" class="module-band story-band" aria-labelledby="stories-title">
       <div class="section-heading" data-reveal>
-        <p class="eyebrow">Story Layer</p>
-        <h2 id="stories-title">From prototype vibe to complete browsing experience</h2>
-        <p>Beyond visual demo blocks, this layer adds character context, user flow, and content density.</p>
+        <p class="eyebrow">使用情境</p>
+        <h2 id="stories-title">這個平台可以被當成一個城市訊號導覽產品使用</h2>
+        <p>使用者可以從 3D 場域理解訊號、從城市面板查看即時資料，再用 AI 導覽補足脈絡。</p>
       </div>
       <div class="story-grid">
         <article class="story-card" data-reveal>
-          <h3>Role Design</h3>
-          <p>The cat appears as guide marks in signal graphics, gallery images, cursor behavior, and loop video.</p>
+          <h3>輕量導覽</h3>
+          <p>貓咪只出現在提示、圖像與游標等輔助位置，不壓過城市資料與互動內容。</p>
         </article>
         <article class="story-card" data-reveal>
-          <h3>Interaction Flow</h3>
-          <p>Hero to 3D scene, then modules, API zone, and motion material creates a readable narrative path.</p>
+          <h3>觀測流程</h3>
+          <p>入口 -> 3D 場域 -> 平台引擎 -> 城市資料 -> 動態影像，形成清楚的探索動線。</p>
         </article>
         <article class="story-card" data-reveal>
-          <h3>UI Language</h3>
-          <p>Buttons, cards, motion speed, and transitions share one interaction rhythm across the page.</p>
+          <h3>介面語言</h3>
+          <p>按鈕、面板、焦點與轉場採一致語法，讓整個平台像同一個產品而不是分散展示。</p>
         </article>
       </div>
     </section>
 
     <section id="notes" class="report-section" aria-labelledby="notes-title">
       <div class="section-heading" data-reveal>
-        <p class="eyebrow">Lab Notes</p>
-        <h2 id="notes-title">PPT-like web report with horizontal slides and zoom</h2>
-        <p>Use left-right navigation, swipe, keyboard arrows, and zoom for a presentation-like web reading flow.</p>
+        <p class="eyebrow">觀測紀錄</p>
+        <h2 id="notes-title">城市訊號手冊：平台能力、內容路線與下一步</h2>
+        <p>這裡是產品導覽手冊。可以左右滑動閱讀，也能下載成導覽摘要與簡報。</p>
       </div>
 
-      <div class="notes-deck" data-notes-deck tabindex="0" aria-label="Lab Notes web slides">
+      <div class="notes-deck" data-notes-deck tabindex="0" aria-label="城市訊號手冊投影片">
         <div class="notes-deck__toolbar" data-reveal>
-          <button class="icon-button" type="button" data-notes-prev aria-label="Previous slide">◀</button>
-          <div class="notes-deck__counter" data-notes-counter>1 / 6</div>
-          <button class="icon-button" type="button" data-notes-next aria-label="Next slide">▶</button>
-          <label class="notes-deck__zoom">
-            Zoom
-            <input type="range" min="100" max="160" step="5" value="100" data-notes-zoom aria-label="Slide zoom">
+          <button class="icon-button" type="button" data-notes-prev aria-label="上一頁">&#9664;</button>
+          <div class="notes-deck__counter" data-notes-counter>1 / 10</div>
+          <button class="icon-button" type="button" data-notes-next aria-label="下一頁">&#9654;</button>
+          <label class="notes-deck__zoom">縮放
+            <input type="range" min="100" max="150" step="5" value="100" data-notes-zoom aria-label="投影片縮放">
           </label>
-          <button class="button button--secondary" type="button" data-report-download>Download Summary</button>
+          <button class="button button--secondary" type="button" data-report-download>下載導覽摘要</button>
+          <button class="button button--primary" type="button" data-report-ppt>下載導覽簡報</button>
         </div>
 
         <div class="notes-deck__viewport" data-notes-viewport>
           <div class="notes-deck__track" data-notes-track>
-            <article class="note-slide" data-note-slide data-title="01 Goal">
-              <header><span>01</span><h3>Goal</h3></header>
-              <p>Build a one-page interactive website where cat elements act as signals, not a full mascot skin.</p>
+            <article class="note-slide" data-note-slide data-title="01 平台定位">
+              <header><span>01</span><h3>平台定位</h3></header>
+              <p>Cat Future Lab 是城市訊號互動觀測台，將城市天氣、時間、3D 場域與 AI 導覽整合成一個可探索的網站體驗。</p>
+              <div class="note-kpi-grid">
+                <div class="note-kpi"><strong>9 城市</strong><span>台灣與國際城市</span></div>
+                <div class="note-kpi"><strong>3 場域</strong><span>3D / 資料 / 影像</span></div>
+                <div class="note-kpi"><strong>1 助手</strong><span>輕量貓咪導覽</span></div>
+              </div>
               <ul>
-                <li>Readable content</li>
-                <li>Operable interaction</li>
-                <li>Consistent visual style</li>
+                <li>主軸是城市資料與互動觀測，不是單純貓咪主題頁。</li>
+                <li>一頁式動線讓使用者可以從視覺、資料到影像一路探索。</li>
+                <li>貓咪作為品牌記憶點與提示符號，保持克制使用。</li>
               </ul>
             </article>
 
-            <article class="note-slide" data-note-slide data-title="02 Motion Stack">
-              <header><span>02</span><h3>Motion Stack</h3></header>
-              <p>Anime.js handles intro timing, Three.js handles real-time scene rendering, GSAP handles transitions and parallax.</p>
+            <article class="note-slide" data-note-slide data-title="02 視覺語氣">
+              <header><span>02</span><h3>視覺語氣</h3></header>
+              <p>畫面維持產品網站的資訊密度，搭配動畫風角色素材，讓整體既有專業感，也保留溫度。</p>
+              <div class="note-columns">
+                <figure class="note-media">
+                  <img src="assets/images/cat-hero-cartoon.png" alt="Hero 主視覺貓咪圖。">
+                  <figcaption>主視覺：角色位於觀測場域中，服務於城市訊號主題。</figcaption>
+                </figure>
+                <div class="note-panel">
+                  <h4>設計原則</h4>
+                  <ul>
+                    <li>資料內容優先，角色作為輔助。</li>
+                    <li>高對比字級與明確區塊邊界。</li>
+                    <li>圖片與影片都要能說明平台情境。</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+            <article class="note-slide" data-note-slide data-title="03 互動引擎">
+              <header><span>03</span><h3>互動引擎</h3></header>
+              <p>互動層被拆成不同責任：畫面節奏、滾動回饋、3D 更新與資料狀態各自維護，讓平台可以繼續擴充。</p>
+              <div class="note-columns">
+                <div class="note-panel">
+                  <h4>畫面節奏</h4>
+                  <ul>
+                    <li>開場文字與區塊進場。</li>
+                    <li>訊號路徑與節點提示。</li>
+                    <li>輔助角色的局部動態。</li>
+                  </ul>
+                </div>
+                <div class="note-panel">
+                  <h4>閱讀回饋</h4>
+                  <ul>
+                    <li>區塊一次性顯示後固定。</li>
+                    <li>卡片 hover 與微互動。</li>
+                    <li>Hero 場域跟隨游標產生深度。</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+            <article class="note-slide" data-note-slide data-title="04 3D 訊號場域">
+              <header><span>04</span><h3>3D 訊號場域</h3></header>
+              <p>3D 區域像平台的即時觀測窗，以幾何、粒子與光照模式暗示不同城市訊號狀態。</p>
               <ul>
-                <li>Hero timeline and stagger</li>
-                <li>3D rAF with mode switch</li>
-                <li>Smooth deck transitions</li>
+                <li>穩定模式：適合靜態觀測與閱讀。</li>
+                <li>動態模式：強化粒子速度與視覺活性。</li>
+                <li>專注模式：降低干擾，凸顯核心訊號。</li>
+                <li>文字摘要保留資訊，不讓內容只存在 Canvas。</li>
               </ul>
             </article>
 
-            <article class="note-slide" data-note-slide data-title="03 API Safety">
-              <header><span>03</span><h3>API Safety</h3></header>
-              <p>Browser only calls local server routes. Key material stays in server environment variables.</p>
+            <article class="note-slide" data-note-slide data-title="05 城市資料面板">
+              <header><span>05</span><h3>城市資料面板</h3></header>
+              <p>城市資料面板讓使用者選擇不同地點，快速查看當地時間、溫度、風速與資料來源。</p>
+              <figure class="note-media">
+                <img src="assets/images/cat-weather-cartoon.png" alt="城市天氣控制台視覺。">
+                <figcaption>資料面板：城市、天氣與狀態提示集中呈現，方便快速比較。</figcaption>
+              </figure>
               <ul>
-                <li>POST /api/chat</li>
-                <li>GET /api/weather</li>
-                <li>GET /api/env-status</li>
+                <li>城市清單涵蓋台灣與國際主要城市。</li>
+                <li>每個城市保留自己的時區顯示。</li>
+                <li>資料失敗時仍保留狀態說明，不讓平台看起來斷線。</li>
               </ul>
             </article>
 
-            <article class="note-slide" data-note-slide data-title="04 Visual Consistency">
-              <header><span>04</span><h3>Visual Consistency</h3></header>
-              <p>All cat images were regenerated into one animation style, and the waving mascot is now outside the hero image.</p>
+            <article class="note-slide" data-note-slide data-title="06 AI 城市導覽">
+              <header><span>06</span><h3>AI 城市導覽</h3></header>
+              <p>AI 導覽員協助解釋平台功能、城市資料與互動流程，前端只送出問題，金鑰與模型路由都留在 server 端。</p>
+              <div class="note-columns">
+                <div class="note-panel">
+                  <h4>資料安全</h4>
+                  <ul>
+                    <li>金鑰只存在 server 環境變數。</li>
+                    <li>模型請求統一走 proxy。</li>
+                    <li>上游失敗時回到安全回覆。</li>
+                  </ul>
+                </div>
+                <div class="note-panel">
+                  <h4>導覽功能</h4>
+                  <ul>
+                    <li>可解釋平台定位與互動流程。</li>
+                    <li>可補充城市資料與素材脈絡。</li>
+                    <li>狀態更新會即時回饋給使用者。</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+            <article class="note-slide" data-note-slide data-title="07 影像導覽片">
+              <header><span>07</span><h3>影像導覽片</h3></header>
+              <p>影像導覽片用來呈現平台從城市觀測、視覺導覽到資料互動的連續體驗，讓網站內容更像完整產品。</p>
+              <figure class="note-media note-media--video">
+                <video controls preload="metadata" poster="assets/remotion/build-process-still.png">
+                  <source src="assets/remotion/build-process.mp4" type="video/mp4">
+                  你的瀏覽器不支援影片播放。
+                </video>
+                <figcaption>導覽影片：城市訊號 → 觀測視覺 → 互動資料 → 平台體驗。</figcaption>
+              </figure>
+            </article>
+
+            <article class="note-slide" data-note-slide data-title="08 主題循環影像">
+              <header><span>08</span><h3>主題循環影像</h3></header>
+              <p>主題循環影像用於補足場域氛圍，讓觀測視角、HUD 標註與角色訊號在同一個動態語言中運作。</p>
+              <figure class="note-media note-media--video">
+                <video controls preload="metadata" poster="assets/remotion/cat-loop-still.png">
+                  <source src="assets/remotion/cat-loop.mp4" type="video/mp4">
+                  你的瀏覽器不支援影片播放。
+                </video>
+                <figcaption>循環片重點：多鏡頭切換 + 動態文字帶 + 角色訊號。</figcaption>
+              </figure>
+            </article>
+
+            <article class="note-slide" data-note-slide data-title="09 體驗品質">
+              <header><span>09</span><h3>體驗品質</h3></header>
+              <p>平台需要穩定、可讀、可操作。重點不是堆滿效果，而是讓每個互動都有回饋、每段內容都有功能。</p>
+              <div class="note-kpi-grid">
+                <div class="note-kpi"><strong>RWD</strong><span>375 / 768 / 1440</span></div>
+                <div class="note-kpi"><strong>SEO</strong><span>meta / OG / JSON-LD</span></div>
+                <div class="note-kpi"><strong>A11y</strong><span>Keyboard / Focus / Live</span></div>
+              </div>
               <ul>
-                <li>Unified illustration direction</li>
-                <li>No overlay blocking key art</li>
-                <li>Consistent palette and contrast</li>
+                <li>桌面與手機都要避免文字重疊。</li>
+                <li>API 失敗時保留可理解的狀態訊息。</li>
+                <li>降低動態後仍能完整使用平台。</li>
               </ul>
             </article>
 
-            <article class="note-slide" data-note-slide data-title="05 A11y and Perf">
-              <header><span>05</span><h3>A11y and Perf</h3></header>
-              <p>Keyboard control, focus visibility, aria-live updates, and reduced-motion mode remain active.</p>
+            <article class="note-slide" data-note-slide data-title="10 產品路線">
+              <header><span>10</span><h3>產品路線</h3></header>
+              <p>目前版本已形成一個可展示的城市訊號觀測網站。下一步可以加入更多城市資料、互動分析與更完整的導覽內容。</p>
               <ul>
-                <li>Keyboard-friendly controls</li>
-                <li>Focus ring retained</li>
-                <li>Transform and opacity-first animation</li>
-              </ul>
-            </article>
-
-            <article class="note-slide" data-note-slide data-title="06 Next Iteration">
-              <header><span>06</span><h3>Next Iteration</h3></header>
-              <p>Future upgrades can add scene presets, denser data overlays, and multiple Remotion loop families.</p>
-              <ul>
-                <li>More 3D presets</li>
-                <li>More city data states</li>
-                <li>More video material sets</li>
+                <li>加入更多城市與比較視圖。</li>
+                <li>擴充資料視覺化，例如趨勢圖與日夜節奏。</li>
+                <li>讓導覽簡報與網站內容同步更新。</li>
               </ul>
             </article>
           </div>
@@ -396,7 +506,7 @@
 
   <footer class="site-footer">
     <p>yuchan</p>
-    <a href="#hero">Back to top</a>
+    <a href="#hero">回到頂端</a>
   </footer>
 
   <script type="importmap">
@@ -405,7 +515,8 @@
       "three": "https://unpkg.com/three@0.164.1/build/three.module.js",
       "animejs": "https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.es.js",
       "gsap": "https://esm.sh/gsap@3.12.5",
-      "gsap/ScrollTrigger": "https://esm.sh/gsap@3.12.5/ScrollTrigger"
+      "gsap/ScrollTrigger": "https://esm.sh/gsap@3.12.5/ScrollTrigger",
+      "pptxgenjs": "https://esm.sh/pptxgenjs@3.12.0"
     }
   }
   </script>

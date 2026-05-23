@@ -32,18 +32,18 @@ const palette = {
 const shots: Shot[] = [
   {
     src: staticFile('images/cat-hero-cartoon.png'),
-    tag: 'CAT LAB',
-    note: 'Guide cat enters the studio and wakes the HUD'
+    tag: 'LAB 主場景',
+    note: '導覽貓進入實驗室並啟動 HUD 訊號'
   },
   {
     src: staticFile('images/cat-observer-cartoon-wide.png'),
-    tag: 'CAT OBSERVER',
-    note: 'A warm city sequence expands story context'
+    tag: '觀測段落',
+    note: '城市光景延展故事層與情緒節奏'
   },
   {
     src: staticFile('images/cat-weather-cartoon.png'),
-    tag: 'WEATHER NODE',
-    note: 'Interactive weather console for city signals'
+    tag: '天氣節點',
+    note: '互動天氣控制台串接城市資料訊號'
   }
 ];
 
@@ -88,7 +88,7 @@ export const CatLoop: React.FC<CatLoopProps> = ({ title, subtitle }) => {
   return (
     <AbsoluteFill
       style={{
-        fontFamily: 'Arial, sans-serif',
+        fontFamily: 'Noto Sans TC, PingFang TC, Microsoft JhengHei, Arial, sans-serif',
         background: palette.paper,
         overflow: 'hidden'
       }}
@@ -130,7 +130,7 @@ export const CatLoop: React.FC<CatLoopProps> = ({ title, subtitle }) => {
         />
       </div>
 
-      <svg width="1600" height="900" viewBox="0 0 1600 900" aria-label="Cat loop overlay">
+      <svg width="1600" height="900" viewBox="0 0 1600 900" aria-label="貓咪循環影片圖層">
         <defs>
           <radialGradient id="vignette">
             <stop offset="34%" stopColor="rgba(17,19,31,0)" />
@@ -184,25 +184,17 @@ export const CatLoop: React.FC<CatLoopProps> = ({ title, subtitle }) => {
         <rect x={scanX} y="0" width="12" height="900" fill={palette.cyan} opacity="0.34" />
 
         <rect x="62" y="56" width="700" height="216" fill="rgba(247,242,228,0.9)" stroke={palette.ink} strokeWidth="4" />
-        <text x="94" y="132" fontSize="62" fontWeight="800" fill={palette.ink}>
-          {title}
-        </text>
-        <text x="94" y="192" fontSize="30" fontWeight="700" fill={palette.ink}>
-          {subtitle}
-        </text>
-        <text x="94" y="238" fontSize="28" fontWeight="700" fill={palette.navy}>
-          {currentShot.tag}
-        </text>
-        <text x="356" y="238" fontSize="24" fontWeight="500" fill={palette.navy}>
-          {currentShot.note}
-        </text>
+        <text x="94" y="132" fontSize="62" fontWeight="800" fill={palette.ink}>{title}</text>
+        <text x="94" y="192" fontSize="30" fontWeight="700" fill={palette.ink}>{subtitle}</text>
+        <text x="94" y="238" fontSize="28" fontWeight="700" fill={palette.navy}>{currentShot.tag}</text>
+        <text x="356" y="238" fontSize="24" fontWeight="500" fill={palette.navy}>{currentShot.note}</text>
 
         <rect x="66" y="744" width="1468" height="108" fill="rgba(17,19,31,0.88)" />
         <text x="96" y="800" fontSize="34" fontWeight="700" fill={palette.paper}>
-          Animated Cat Sequence / Warm Interactive Loop
+          貓咪互動循環片段 / 溫馨動畫節奏
         </text>
         <text x="96" y="836" fontSize="24" fontWeight="500" fill={palette.moss}>
-          Anime.js inspired rhythm / Three.js style HUD language / Remotion frame pipeline
+          Anime.js 節奏語法 / Three.js HUD 視覺 / Remotion frame pipeline
         </text>
       </svg>
 
@@ -218,15 +210,9 @@ export const CatLoop: React.FC<CatLoopProps> = ({ title, subtitle }) => {
           padding: '14px 16px 12px'
         }}
       >
-        <div style={{ fontSize: 18, fontWeight: 800, color: palette.navy, marginBottom: 8 }}>
-          Next Scene
-        </div>
-        <div style={{ fontSize: 34, fontWeight: 800, color: palette.ink, marginBottom: 6 }}>
-          {upcomingShot.tag}
-        </div>
-        <div style={{ fontSize: 21, lineHeight: 1.3, color: palette.navy }}>
-          {upcomingShot.note}
-        </div>
+        <div style={{ fontSize: 18, fontWeight: 800, color: palette.navy, marginBottom: 8 }}>下一段畫面</div>
+        <div style={{ fontSize: 34, fontWeight: 800, color: palette.ink, marginBottom: 6 }}>{upcomingShot.tag}</div>
+        <div style={{ fontSize: 21, lineHeight: 1.3, color: palette.navy }}>{upcomingShot.note}</div>
       </div>
 
       <div
@@ -244,7 +230,7 @@ export const CatLoop: React.FC<CatLoopProps> = ({ title, subtitle }) => {
           color: palette.navy
         }}
       >
-        Cat Future Lab keeps cat elements as interactive guides: visual rhythm, signal marks, and emotional pacing.
+        Cat Future Lab 以貓咪元素作為互動導引：節奏提示、訊號標記與情緒推進。
       </div>
     </AbsoluteFill>
   );

@@ -78,6 +78,15 @@ export async function initPageAnimations() {
   });
 
   anime({
+    targets: '[data-hero-right-cluster]',
+    translateX: [0, 7, 0, -3, 0],
+    translateY: [0, -9, 0, 3, 0],
+    duration: 1320,
+    easing: 'easeInOutSine',
+    loop: true
+  });
+
+  anime({
     targets: '.hero-signal-eye',
     strokeDashoffset: [34, 0, 34],
     duration: 2200,
@@ -86,7 +95,7 @@ export async function initPageAnimations() {
   });
 
   anime({
-    targets: '[data-hero-arm]',
+    targets: '[data-hero-arm-left]',
     rotate: [-8, 14, -10, 12, -8],
     duration: 1100,
     easing: 'easeInOutSine',
@@ -94,9 +103,25 @@ export async function initPageAnimations() {
   });
 
   anime({
-    targets: '[data-hero-forearm]',
+    targets: '[data-hero-forearm-left]',
     rotate: [14, -20, 15, -16, 14],
     duration: 1100,
+    easing: 'easeInOutSine',
+    loop: true
+  });
+
+  anime({
+    targets: '[data-hero-arm-right]',
+    rotate: [-12, 20, -8, 16, -12],
+    duration: 1320,
+    easing: 'easeInOutSine',
+    loop: true
+  });
+
+  anime({
+    targets: '[data-hero-forearm-right]',
+    rotate: [18, -24, 14, -20, 18],
+    duration: 1320,
     easing: 'easeInOutSine',
     loop: true
   });
