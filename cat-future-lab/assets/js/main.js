@@ -3,12 +3,13 @@ import { initMotionPreference, initRevealObserver } from './a11y.js';
 import { initSoundToggle } from './audio.js';
 import { initCatCursor } from './cursor.js';
 import { initGsapEffects } from './effects.js';
+import { initExperienceShell } from './experience.js';
 import { initNotesDeck } from './notes.js';
 import { initCatScene } from './scene.js';
-import { initApiStatus, initChatPanel, initHeader, initImageGallery, initLoader, initReportDownload, initReportPptDownload, initWeatherPanel } from './ui.js';
+import { initApiStatus, initChatPanel, initHeader, initImageGallery, initReportDownload, initReportPptDownload, initWeatherPanel } from './ui.js';
 
-initLoader();
 initMotionPreference();
+initExperienceShell();
 initRevealObserver(animateRevealedSection);
 initHeader();
 initSoundToggle();

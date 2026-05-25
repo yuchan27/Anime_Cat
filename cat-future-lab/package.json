@@ -5,6 +5,6 @@
   "type": "module",
   "scripts": {
     "start": "node server/server.js",
-    "check": "node --check server/server.js && node --check assets/js/main.js && node --check assets/js/animations.js && node --check assets/js/ui.js && node --check assets/js/scene.js && node --check assets/js/api.js && node --check assets/js/a11y.js && node --check assets/js/cursor.js && node --check assets/js/audio.js && node --check assets/js/effects.js && node --check assets/js/notes.js"
+    "check": "node --check server/server.js && node --check assets/js/main.js && node --check assets/js/animations.js && node --check assets/js/ui.js && node --check assets/js/scene.js && node --check assets/js/api.js && node --check assets/js/a11y.js && node --check assets/js/cursor.js && node --check assets/js/audio.js && node --check assets/js/effects.js && node --check assets/js/experience.js && node --check assets/js/notes.js"
   }
 }
