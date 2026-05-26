@@ -4,14 +4,16 @@ let scrollTriggerInstance;
 const reduceMotion = () => document.documentElement.classList.contains('reduce-motion');
 
 export async function initGsapEffects() {
-  if (reduceMotion()) return;
+  if (reduceMotion() || document.documentElement.classList.contains('reduced-performance')) return;
 
   const gsap = await loadGsap();
   if (!gsap) return;
 
-  initScrollPanels(gsap);
-  initParallax(gsap);
-  initModuleEntrance(gsap);
+  if (!document.body.classList.contains('page-mode')) {
+    initScrollPanels(gsap);
+    initParallax(gsap);
+    initModuleEntrance(gsap);
+  }
   initHoverTilt(gsap);
   initHeroPointerDrift(gsap);
   initTickerPulse(gsap);
@@ -51,16 +53,6 @@ function initParallax(gsap) {
     }
   });
 
-  gsap.to('.hero-signal-widget', {
-    yPercent: 8,
-    ease: 'none',
-    scrollTrigger: {
-      trigger: '#hero',
-      start: 'top top',
-      end: 'bottom top',
-      scrub: true
-    }
-  });
 }
 
 function initScrollPanels(gsap) {
@@ -145,8 +137,7 @@ function initHoverTilt(gsap) {
 function initHeroPointerDrift(gsap) {
   const hero = document.querySelector('#hero');
   const panel = document.querySelector('.signal-panel');
-  const widget = document.querySelector('.hero-signal-widget');
-  if (!hero || !panel || !widget) return;
+  if (!hero || !panel) return;
 
   hero.addEventListener('pointermove', (event) => {
     const rect = hero.getBoundingClientRect();
@@ -160,18 +151,10 @@ function initHeroPointerDrift(gsap) {
       duration: 0.25,
       ease: 'power2.out'
     });
-    gsap.to(widget, {
-      rotateY: -x * 2.2,
-      rotateX: y * 1.2,
-      transformPerspective: 900,
-      transformOrigin: 'center',
-      duration: 0.26,
-      ease: 'power2.out'
-    });
   });
 
   hero.addEventListener('pointerleave', () => {
-    gsap.to([panel, widget], {
+    gsap.to(panel, {
       rotateY: 0,
       rotateX: 0,
       duration: 0.35,

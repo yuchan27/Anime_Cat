@@ -223,7 +223,7 @@ function initSwipeNavigation(shell) {
   let drag = null;
 
   shell.addEventListener('pointerdown', (event) => {
-    if (event.button !== 0 || isTypingTarget(event.target)) return;
+    if (event.button !== 0 || isTypingTarget(event.target) || isGlobalGestureIgnored(event.target)) return;
     drag = {
       startX: event.clientX,
       startY: event.clientY
@@ -250,7 +250,9 @@ function applyVisualState(state) {
   const preset = BACKGROUND_PRESET_MAP[state.backgroundPreset] || BACKGROUND_PRESET_MAP.default;
   const customColor = state.customBackgroundColor;
   const bgMain = customColor || resolvePresetBg(preset.bgMain, tokens);
-  const readableText = customColor ? getReadableTextColor(customColor) : tokens.textMain;
+  const adjustedBackground = customColor || state.backgroundPreset !== 'default';
+  const readableText = adjustedBackground ? getReadableTextColor(bgMain) || tokens.textMain : tokens.textMain;
+  const surface = getSurfacePalette(adjustedBackground ? bgMain : null, readableText, bgMain, tokens);
   const fontScale = FONT_SCALE_MAP[state.fontSize] || 1;
   const shape = SHAPE_MODE_MAP[state.shapeMode] || SHAPE_MODE_MAP.sharp;
 
@@ -266,7 +268,7 @@ function applyVisualState(state) {
   setVars({
     '--theme-bg-main': tokens.bgMain,
     '--bg-main': bgMain,
-    '--bg-panel': tokens.bgPanel,
+    '--bg-panel': surface.bgPanel,
     '--bg-overlay': preset.overlay || 'none',
     '--text-main': readableText,
     '--text-muted': customColor ? colorMix(readableText, 0.68) : tokens.textMuted,
@@ -274,14 +276,15 @@ function applyVisualState(state) {
     '--accent-secondary': tokens.accentSecondary,
     '--border-subtle': tokens.borderSubtle,
     '--ink': readableText,
-    '--paper': bgMain,
+    '--paper': surface.paper,
+    '--white': surface.white,
     '--moss': tokens.moss,
     '--cyan': tokens.cyan,
     '--coral': tokens.coral,
     '--violet': tokens.violet,
     '--clay': tokens.clay,
-    '--line': tokens.line,
-    '--line-strong': tokens.lineStrong,
+    '--line': surface.line,
+    '--line-strong': surface.lineStrong,
     '--font-scale': String(fontScale),
     '--shadow': shape.shapeShadow,
     '--surface-radius': shape.surfaceRadius,
@@ -360,8 +363,8 @@ function runFutureLoader(gate) {
       return;
     }
     const ratio = Math.min(window.devicePixelRatio || 1, 2);
-    const particles = createLoaderParticles(220);
-    const duration = 2600;
+    const particles = createLoaderParticles(96);
+    const duration = 1700;
     const startedAt = performance.now();
 
     const resize = () => {
@@ -475,9 +478,39 @@ function colorMix(color, alpha) {
   return color;
 }
 
+function getSurfacePalette(customColor, readableText, bgMain, tokens) {
+  if (!customColor) {
+    return {
+      bgPanel: tokens.bgPanel,
+      paper: bgMain,
+      white: tokens.paper || bgMain,
+      line: tokens.line,
+      lineStrong: tokens.lineStrong
+    };
+  }
+
+  const isLightSurface = readableText === '#11131f';
+  const panelAlpha = isLightSurface ? 0.86 : 0.78;
+  const solidPanel = isLightSurface ? '#ffffff' : '#071426';
+
+  return {
+    bgPanel: isLightSurface
+      ? `rgba(255, 255, 255, ${panelAlpha})`
+      : `rgba(7, 20, 38, ${panelAlpha})`,
+    paper: solidPanel,
+    white: solidPanel,
+    line: colorMix(readableText, 0.18),
+    lineStrong: colorMix(readableText, 0.72)
+  };
+}
+
 function isTypingTarget(target) {
   const tag = target?.tagName;
   return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || target?.isContentEditable;
+}
+
+function isGlobalGestureIgnored(target) {
+  return Boolean(target?.closest?.('[data-notes-deck], [data-page-controls], [data-wheel-nav], [data-chat-form], .scene-controls, .gallery-controls'));
 }
 
 function lerp(start, end, amount) {

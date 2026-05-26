@@ -198,7 +198,7 @@ export function initReportDownload() {
     });
 
     const markdown = [
-      '# Cat Future Lab - 城市訊號手冊',
+      '# Cat Future Lab - 互動網站技術手冊',
       '',
       `更新時間：${new Date().toLocaleString('zh-TW')}`,
       '',
@@ -238,8 +238,8 @@ export function initReportPptDownload() {
       pptx.layout = 'LAYOUT_WIDE';
       pptx.author = 'yuchan';
       pptx.company = 'Cat Future Lab';
-      pptx.subject = 'Cat Future Lab 城市訊號導覽簡報';
-      pptx.title = 'Cat Future Lab 城市訊號導覽簡報';
+      pptx.subject = 'Cat Future Lab 互動網站技術簡報';
+      pptx.title = 'Cat Future Lab 互動網站技術簡報';
       pptx.lang = 'zh-TW';
 
       const cover = pptx.addSlide();
@@ -253,7 +253,7 @@ export function initReportPptDownload() {
         bold: true,
         fontSize: 34
       });
-      cover.addText('城市訊號互動觀測台', {
+      cover.addText('互動網站技術簡報', {
         x: 0.8,
         y: 2.05,
         w: 11.2,
@@ -262,7 +262,7 @@ export function initReportPptDownload() {
         bold: true,
         fontSize: 26
       });
-      cover.addText('內容包含：平台定位、城市資料、3D 場域、AI 導覽、動態影像與體驗路線。', {
+      cover.addText('內容包含：左右切換 SPA、Action Router、主題 token、API proxy、Three.js、Remotion 與效能降級。', {
         x: 0.8,
         y: 3.0,
         w: 11.4,

@@ -14,7 +14,9 @@ export async function initNotesDeck() {
 
   if (!viewport || !track || !slides.length || !prev || !next || !counter || !zoomInput) return;
 
-  const gsap = await loadGsap();
+  const gsap = document.documentElement.classList.contains('reduced-performance')
+    ? null
+    : await loadGsap();
   const state = {
     index: 0,
     width: viewport.clientWidth,
@@ -111,12 +113,13 @@ export async function initNotesDeck() {
 
   let wheelLock = false;
   viewport.addEventListener('wheel', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
     if (wheelLock) return;
     const horizontal = Math.abs(event.deltaX) > Math.abs(event.deltaY)
       ? event.deltaX
       : event.deltaY;
     if (Math.abs(horizontal) < 24) return;
-    event.preventDefault();
     wheelLock = true;
     goTo(horizontal > 0 ? state.index + 1 : state.index - 1);
     window.setTimeout(() => { wheelLock = false; }, 260);
