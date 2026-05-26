@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
@@ -38,16 +38,16 @@
       <div class="loader-cat" aria-hidden="true">
         <span class="loader-cat__face"></span>
       </div>
-      <p>選擇觀測介面</p>
-      <span class="style-gate__hint">同一個網站，提供原版溫暖配色與未來科技模式。</span>
+      <p>選擇網站語氣</p>
+      <span class="style-gate__hint">同一個網站，提供成熟科技產品感與柔和動畫貓咪感。</span>
       <div class="style-choice-grid">
-        <button class="style-choice" type="button" data-theme-choice="classic">
-          <strong>原版經典</strong>
-          <span>保留現在的紙感網格、暖色對比與動畫風貓咪導覽。</span>
-        </button>
         <button class="style-choice style-choice--future" type="button" data-theme-choice="future">
-          <strong>未來科技</strong>
-          <span>粒子匯聚載入、深色訊號背景、光感面板與高速入場。</span>
+          <strong>未來科技發展</strong>
+          <span>乾淨的產品網站語氣、深色訊號背景與克制的粒子載入。</span>
+        </button>
+        <button class="style-choice style-choice--cat" type="button" data-theme-choice="cat">
+          <strong>可愛動畫貓咪</strong>
+          <span>柔和、乾淨、有質感的貓咪輔助視覺，保留內容專業度。</span>
         </button>
       </div>
       <div class="rainbow-track" aria-hidden="true">
@@ -78,20 +78,36 @@
       <span>Cat Future Lab</span>
     </a>
     <nav class="site-nav" aria-label="主選單">
-      <a href="#scene">3D 場域</a>
-      <a href="#modules">平台引擎</a>
-      <a href="#gallery">觀測圖像</a>
-      <a href="#assistant">城市資料</a>
-      <a href="#remotion">影像素材</a>
-      <a href="#stories">使用情境</a>
-      <a href="#notes">觀測紀錄</a>
+      <a href="#home">首頁</a>
+      <a href="#intro">介紹</a>
+      <a href="#features">特色</a>
+      <a href="#tech">技術</a>
+      <a href="#gallery">展示</a>
+      <a href="#about">關於</a>
+      <a href="#contact">控制</a>
+      <a href="#presentation">簡報</a>
     </nav>
     <div class="header-actions" aria-label="控制列">
       <button class="style-toggle" type="button" data-theme-switch aria-label="切換網站風格">未來科技</button>
+      <button class="reset-settings" type="button" data-reset-settings aria-label="還原預設設定">預設</button>
+
+      <div class="font-size-switcher" data-font-size-switcher aria-label="字體大小">
+        <button type="button" data-font-size="sm" aria-pressed="false">小</button>
+        <button type="button" data-font-size="md" aria-pressed="true">中</button>
+        <button type="button" data-font-size="lg" aria-pressed="false">大</button>
+        <button type="button" data-font-size="xl" aria-pressed="false">特大</button>
+      </div>
       <button class="sound-toggle" type="button" data-sound-toggle aria-pressed="false">啟動音景</button>
       <button class="motion-toggle" type="button" data-motion-toggle aria-pressed="false">降低動態</button>
     </div>
   </header>
+
+  <div class="marquee-bar" data-marquee aria-live="polite">
+    <span data-marquee-text>可用自然語言控制頁面、背景、字體、跑馬燈與簡報模式。</span>
+    <span data-marquee-text aria-hidden="true">可用自然語言控制頁面、背景、字體、跑馬燈與簡報模式。</span>
+  </div>
+
+  <aside class="wheel-nav" data-wheel-nav aria-label="輪軸式頁面導覽"></aside>
 
   <main id="main" data-page-shell>
     <section id="hero" class="hero" aria-labelledby="hero-title">
@@ -106,8 +122,8 @@
           貓咪只作為溫和的觀測助手與介面訊號，讓資料探索更有辨識度但不搶走主軸。
         </p>
         <div class="hero__actions">
-          <a class="button button--primary" href="#scene">開始觀測</a>
-          <a class="button button--secondary" href="#notes">打開觀測紀錄</a>
+          <a class="button button--primary" href="#intro">開始觀測</a>
+          <a class="button button--secondary" href="#presentation">打開觀測紀錄</a>
         </div>
 
         <div class="hero-signal-widget" data-reveal aria-label="貓咪導引訊號">
@@ -253,21 +269,21 @@
     <section id="assistant" class="assistant-section" aria-labelledby="assistant-title">
       <div class="assistant-panel" data-reveal>
         <div class="panel-heading">
-          <p class="eyebrow">AI 城市導覽</p>
-          <h2 id="assistant-title">把城市資料、互動場域與影像內容說清楚</h2>
-          <p>對話請求走 <code>POST /api/chat</code>，由 server proxy 保護金鑰並統一回應狀態。</p>
+          <p class="eyebrow">智慧導覽</p>
+          <h2 id="assistant-title">用一句話控制網站，或詢問功能怎麼做出來</h2>
+          <p>導覽員會先把自然語言轉成安全 JSON Action，再由前端 Router 更新頁面狀態；不會執行任意 JavaScript。</p>
         </div>
-        <div class="status-box status-box--subtle" data-api-status aria-live="polite">正在讀取 API 狀態...</div>
+        <div class="status-box status-box--subtle" data-api-status aria-live="polite">正在讀取模型與 fallback 狀態...</div>
         <form class="chat-form" data-chat-form>
-          <label for="chat-message">向導覽員提問</label>
+          <label for="chat-message">輸入控制或提問</label>
           <div class="chat-row">
             <input id="chat-message" name="message" type="text" autocomplete="off" maxlength="180"
-              placeholder="例如：用 30 秒介紹這個城市觀測平台">
+              placeholder="例如：背景改成白色、切到技術頁、3D 場域怎麼做出來的">
             <button class="button button--primary" type="submit">送出</button>
           </div>
         </form>
         <div class="status-box" data-chat-output aria-live="polite" data-state="idle">
-          可以詢問城市觀測流程、互動設計、資料來源或導覽內容。
+          可以控制頁面、主題、背景、字體、跑馬燈，也可以詢問各區塊的實作方式。
         </div>
       </div>
 
@@ -347,7 +363,7 @@
       <div class="notes-deck" data-notes-deck tabindex="0" aria-label="城市訊號手冊投影片">
         <div class="notes-deck__toolbar" data-reveal>
           <button class="icon-button" type="button" data-notes-prev aria-label="上一頁">&#9664;</button>
-          <div class="notes-deck__counter" data-notes-counter>1 / 10</div>
+          <div class="notes-deck__counter" data-notes-counter>1 / 25</div>
           <button class="icon-button" type="button" data-notes-next aria-label="下一頁">&#9654;</button>
           <label class="notes-deck__zoom">縮放
             <input type="range" min="100" max="150" step="5" value="100" data-notes-zoom aria-label="投影片縮放">
@@ -511,6 +527,156 @@
                 <li>讓導覽簡報與網站內容同步更新。</li>
               </ul>
             </article>
+
+            <article class="note-slide" data-note-slide data-title="11 AI 控制擴充目標">
+              <header><span>11</span><h3>AI 控制擴充目標</h3></header>
+              <p>本次擴充不是重做網站，而是在既有內容上新增一層可被自然語言控制的互動系統。</p>
+              <ul>
+                <li>保留既有圖像、3D、城市資料與影像素材。</li>
+                <li>把控制行為收斂成安全 JSON Action。</li>
+                <li>讓使用者用一句話控制頁面、背景、字體與跑馬燈。</li>
+              </ul>
+            </article>
+
+            <article class="note-slide" data-note-slide data-title="12 左右切換式 SPA">
+              <header><span>12</span><h3>左右切換式 SPA</h3></header>
+              <p>頁面以 pageMap 管理，不依賴垂直長頁滾動。導覽列、左右鍵、滑動、輪軸與智慧導覽員都讀同一份頁面資料。</p>
+              <ul>
+                <li>PageId：home、intro、features、tech、gallery、about、contact、presentation。</li>
+                <li>既有 section 透過 domId 對應，不需要刪掉原本內容。</li>
+                <li>切頁只使用 transform 與 opacity，維持效能。</li>
+              </ul>
+            </article>
+
+            <article class="note-slide" data-note-slide data-title="13 雙主題系統">
+              <header><span>13</span><h3>雙主題系統</h3></header>
+              <p>主題代表整體視覺語言，背景代表可調整的表層色彩。兩者分離，避免改背景時破壞主題。</p>
+              <ul>
+                <li>future：成熟科技產品感，低調光感與乾淨資訊層級。</li>
+                <li>cat：柔和動畫貓咪感，保留可愛元素但不影響閱讀。</li>
+                <li>Theme Token Map 集中管理主題色，不在元件內亂寫色碼。</li>
+              </ul>
+            </article>
+
+            <article class="note-slide" data-note-slide data-title="14 CSS Root Variables">
+              <header><span>14</span><h3>CSS Root Variables</h3></header>
+              <p>主題、背景、文字、邊框、動畫速度與字體比例都透過 root variables 同步到整個介面。</p>
+              <ul>
+                <li><code>--bg-main</code> 控制主背景。</li>
+                <li><code>--font-scale</code> 控制全站字級比例。</li>
+                <li><code>--transition-theme</code> 與 <code>--transition-page</code> 控制切換節奏。</li>
+              </ul>
+            </article>
+
+            <article class="note-slide" data-note-slide data-title="15 背景 Preset 與色碼">
+              <header><span>15</span><h3>背景 Preset 與色碼</h3></header>
+              <p>背景控制支援 preset 與合法 hex color。若使用者說白色、粉紅色、奶油色，也會被轉成安全色碼。</p>
+              <ul>
+                <li>支援 <code>#ffffff</code>、<code>ffffff</code>、<code>#111827</code> 等格式。</li>
+                <li>奇怪或不明確的顏色不會套用，避免誤改畫面。</li>
+                <li>套用自訂背景時會自動選擇較可讀的文字顏色。</li>
+              </ul>
+            </article>
+
+            <article class="note-slide" data-note-slide data-title="16 字體比例縮放">
+              <header><span>16</span><h3>字體比例縮放</h3></header>
+              <p>字體大小不是把所有文字設成同一個尺寸，而是以比例變數維持標題、內文、按鈕與導覽的層級。</p>
+              <ul>
+                <li>模式：特大、大、中、小。</li>
+                <li>控制來源：按鈕或智慧導覽員自然語言。</li>
+                <li>實作方式：更新 <code>--font-scale</code>。</li>
+              </ul>
+            </article>
+
+            <article class="note-slide" data-note-slide data-title="17 輪軸式導覽">
+              <header><span>17</span><h3>輪軸式導覽</h3></header>
+              <p>輪軸不是裝飾，它讀取 pageMap 產生節點，點擊後走同一個 Action Router 切換頁面。</p>
+              <ul>
+                <li>active 狀態與目前頁面同步。</li>
+                <li>手機版會改成橫向可滑動節點。</li>
+                <li>與底部進度線和智慧導覽員共用狀態。</li>
+              </ul>
+            </article>
+
+            <article class="note-slide" data-note-slide data-title="18 跑馬燈控制">
+              <header><span>18</span><h3>跑馬燈控制</h3></header>
+              <p>跑馬燈用 CSS animation 呈現狀態提示，智慧導覽員可以透過 setMarquee action 直接更新文字。</p>
+              <ul>
+                <li>範例：跑馬燈改成歡迎來到我的網站。</li>
+                <li>低效能模式會降低動畫速度或簡化動畫。</li>
+                <li>內容以 textContent 更新，不執行 HTML。</li>
+              </ul>
+            </article>
+
+            <article class="note-slide" data-note-slide data-title="19 Action Schema">
+              <header><span>19</span><h3>Action Schema</h3></header>
+              <p>所有控制都被限制在固定 action 清單，例如 goToPage、setTheme、setBackground、setFontSize、setMarquee。</p>
+              <ul>
+                <li>無效 action 會被 validator 拒絕。</li>
+                <li>PageId、Theme、FontSize、BackgroundPreset 都有 enum 限制。</li>
+                <li>AI 或 mock parser 不能產生任意 JS。</li>
+              </ul>
+            </article>
+
+            <article class="note-slide" data-note-slide data-title="20 Action Router">
+              <header><span>20</span><h3>Action Router</h3></header>
+              <p>Action Router 是唯一會改變 AppState 的入口。UI 元件、輪軸與智慧導覽員都透過它更新狀態。</p>
+              <ul>
+                <li>goToPage 只接受已知 PageId。</li>
+                <li>setBackground 只接受 preset 或合法色碼。</li>
+                <li>downloadPpt 會切到簡報頁並觸發既有 PPT 匯出流程。</li>
+              </ul>
+            </article>
+
+            <article class="note-slide" data-note-slide data-title="21 安全限制">
+              <header><span>21</span><h3>安全限制</h3></header>
+              <p>導覽員不允許直接操作 DOM，不允許 eval，不允許執行 AI 回傳的 JavaScript，也不把 AI 回傳 HTML 當成介面插入。</p>
+              <ul>
+                <li>自然語言先被轉成 JSON Action。</li>
+                <li>Action 通過 validator 後才會被 Router 執行。</li>
+                <li>回覆文字使用 textContent 顯示。</li>
+              </ul>
+            </article>
+
+            <article class="note-slide" data-note-slide data-title="22 底部進度線">
+              <header><span>22</span><h3>底部進度線</h3></header>
+              <p>進度線由 pageIndex 與 pageMap.length 計算，使用 scaleX 填滿，不顯示百分比。</p>
+              <ul>
+                <li>第一頁進度接近 0。</li>
+                <li>最後一頁完整填滿。</li>
+                <li>future 與 cat 主題有不同游標視覺。</li>
+              </ul>
+            </article>
+
+            <article class="note-slide" data-note-slide data-title="23 效能保護">
+              <header><span>23</span><h3>效能保護</h3></header>
+              <p>效能模式會參考 reduced-motion、裝置記憶體與手機寬度，必要時降低粒子、轉場與跑馬燈成本。</p>
+              <ul>
+                <li>低效能模式仍保留核心控制功能。</li>
+                <li>頁面切換可退回簡單 fade。</li>
+                <li>簡報頁、字體切換、背景控制照常運作。</li>
+              </ul>
+            </article>
+
+            <article class="note-slide" data-note-slide data-title="24 RWD 與手機操作">
+              <header><span>24</span><h3>RWD 與手機操作</h3></header>
+              <p>手機版保留左右滑動、底部切頁、橫向輪軸與智慧導覽員輸入，避免變成難操作的長頁。</p>
+              <ul>
+                <li>輪軸節點改成水平滑動。</li>
+                <li>字體切換與跑馬燈不遮住主要控制。</li>
+                <li>Presentation Page 保留可閱讀排版。</li>
+              </ul>
+            </article>
+
+            <article class="note-slide" data-note-slide data-title="25 未來擴充">
+              <header><span>25</span><h3>未來擴充</h3></header>
+              <p>目前版本先以 mock parser 完成所有控制路徑。下一階段可把 /api/ai-navigator 串接 Gemini 2.5 Flash 或 Gemma4。</p>
+              <ul>
+                <li>AI 端只輸出 JSON Action，不輸出自由 HTML 或 JS。</li>
+                <li>可加入更多背景 preset、簡報小節控制與城市資料視覺化。</li>
+                <li>仍以模組化、效能與安全為優先。</li>
+              </ul>
+            </article>
           </div>
         </div>
       </div>
@@ -523,9 +689,14 @@
     <button class="icon-button" type="button" data-page-next aria-label="下一個頁面">&#9654;</button>
   </div>
 
+  <div class="progress-rail" aria-hidden="true">
+    <span class="progress-line"></span>
+    <span class="progress-cursor"></span>
+  </div>
+
   <footer class="site-footer">
     <p>yuchan</p>
-    <a href="#hero">回到頂端</a>
+    <a href="#home">回到首頁</a>
   </footer>
 
   <script type="importmap">

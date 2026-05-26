@@ -1,28 +1,50 @@
-const THEMES = ['classic', 'future'];
+import {
+  BACKGROUND_PRESET_MAP,
+  FONT_SCALE_MAP,
+  FONT_SIZE_LABELS,
+  PAGE_MAP,
+  SHAPE_MODE_MAP,
+  THEME_TOKEN_MAP
+} from './config.js';
+import { getReadableTextColor, handleAIAction, pageIdFromHash } from './aiActions.js';
+import { getState, hasPersistedSettings, subscribeState, updateState } from './state.js';
+
+const THEMES = ['future', 'cat'];
 
 export function initExperienceShell() {
-  const initialTheme = 'classic';
-  applyTheme(initialTheme);
+  applyVisualState(getState());
+  initPerformanceGuard();
   initThemeGate();
   initThemeSwitch();
+  initResetSettings();
+  initFontSizeSwitcher();
   initPageShell();
+  initWheelNavigator();
+  initProgressLine();
+  initMarqueeBar();
+  subscribeState(applyVisualState);
 }
 
 function initThemeGate() {
   const gate = document.querySelector('[data-style-gate]');
   if (!gate) return;
 
+  if (hasPersistedSettings()) {
+    gate.remove();
+    return;
+  }
+
   const buttons = Array.from(gate.querySelectorAll('[data-theme-choice]'));
   buttons.forEach((button) => {
     button.addEventListener('click', async () => {
-      const theme = THEMES.includes(button.dataset.themeChoice) ? button.dataset.themeChoice : 'classic';
+      const theme = THEMES.includes(button.dataset.themeChoice) ? button.dataset.themeChoice : 'cat';
       buttons.forEach((item) => { item.disabled = true; });
-      applyTheme(theme);
+      handleAIAction({ action: 'setTheme', theme });
 
       if (theme === 'future') {
         await runFutureLoader(gate);
       } else {
-        await runClassicLoader(gate);
+        await runCatLoader(gate);
       }
 
       gate.classList.add('is-hidden');
@@ -35,32 +57,270 @@ function initThemeSwitch() {
   const button = document.querySelector('[data-theme-switch]');
   if (!button) return;
 
-  const updateLabel = () => {
-    const isFuture = document.documentElement.classList.contains('theme-future');
-    button.textContent = isFuture ? '原版經典' : '未來科技';
-    button.setAttribute('aria-label', isFuture ? '切換為原版經典風格' : '切換為未來科技風格');
-  };
-
   button.addEventListener('click', () => {
-    const next = document.documentElement.classList.contains('theme-future') ? 'classic' : 'future';
-    applyTheme(next);
+    const next = getState().theme === 'future' ? 'cat' : 'future';
+    handleAIAction({ action: 'setTheme', theme: next });
     document.body.classList.add('theme-switching');
     window.setTimeout(() => document.body.classList.remove('theme-switching'), 520);
   });
-
-  document.addEventListener('catlab:themechange', updateLabel);
-  updateLabel();
 }
 
-function applyTheme(theme) {
-  const normalized = THEMES.includes(theme) ? theme : 'classic';
-  document.documentElement.classList.toggle('theme-future', normalized === 'future');
-  document.documentElement.classList.toggle('theme-classic', normalized === 'classic');
-  document.body.dataset.theme = normalized;
-  document.dispatchEvent(new CustomEvent('catlab:themechange', { detail: { theme: normalized } }));
+function initResetSettings() {
+  const button = document.querySelector('[data-reset-settings]');
+  if (!button) return;
+
+  button.addEventListener('click', () => {
+    handleAIAction({ action: 'resetSettings' });
+    document.body.classList.add('theme-switching');
+    window.setTimeout(() => document.body.classList.remove('theme-switching'), 520);
+  });
 }
 
-function runClassicLoader(gate) {
+function initFontSizeSwitcher() {
+  const buttons = Array.from(document.querySelectorAll('[data-font-size]'));
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const size = button.dataset.fontSize;
+      handleAIAction({ action: 'setFontSize', size });
+    });
+  });
+}
+
+function initPageShell() {
+  const shell = document.querySelector('[data-page-shell]');
+  if (!shell) return;
+
+  const sectionByPage = getSectionByPage();
+  const navLinks = Array.from(document.querySelectorAll('.site-nav a[href^="#"], .hero__actions a[href^="#"], .site-footer a[href^="#"]'));
+  const previous = document.querySelector('[data-page-prev]');
+  const next = document.querySelector('[data-page-next]');
+  const status = document.querySelector('[data-page-status]');
+  const initialPage = pageIdFromHash(window.location.hash);
+
+  document.body.classList.add('page-mode');
+  PAGE_MAP.forEach((page, index) => {
+    const section = sectionByPage.get(page.id);
+    if (!section) return;
+    section.classList.add('page-panel');
+    section.dataset.pageId = page.id;
+    section.dataset.pageIndex = String(index);
+  });
+
+  if (initialPage) {
+    updateState({ currentPage: initialPage });
+  }
+
+  subscribeState((state) => {
+    const activePage = PAGE_MAP[state.pageIndex] || PAGE_MAP[0];
+    const direction = state.pageIndex >= Number(document.body.dataset.previousPageIndex || 0) ? 'forward' : 'back';
+    document.body.dataset.pageDirection = direction;
+    document.body.dataset.previousPageIndex = String(state.pageIndex);
+
+    PAGE_MAP.forEach((page) => {
+      const section = sectionByPage.get(page.id);
+      if (!section) return;
+      const active = page.id === state.currentPage;
+      section.classList.toggle('is-page-active', active);
+      section.setAttribute('aria-hidden', String(!active));
+      if (active) {
+        section.querySelectorAll('[data-reveal]').forEach((node) => node.classList.add('is-visible'));
+        section.scrollTop = 0;
+      }
+    });
+
+    navLinks.forEach((link) => {
+      const pageId = pageIdFromHash(link.getAttribute('href'));
+      const active = pageId === state.currentPage;
+      link.classList.toggle('is-active', active);
+      if (link.closest('.site-nav')) {
+        if (active) link.setAttribute('aria-current', 'page');
+        else link.removeAttribute('aria-current');
+      }
+    });
+
+    if (previous) previous.disabled = state.pageIndex === 0;
+    if (next) next.disabled = state.pageIndex === PAGE_MAP.length - 1;
+    if (status) status.textContent = `${activePage.label} ${state.pageIndex + 1} / ${PAGE_MAP.length}`;
+
+    history.replaceState(null, '', `#${state.currentPage}`);
+    window.setTimeout(() => window.dispatchEvent(new Event('resize')), 80);
+  });
+
+  navLinks.forEach((link) => {
+    link.addEventListener('click', (event) => {
+      const pageId = pageIdFromHash(link.getAttribute('href'));
+      if (!pageId) return;
+      event.preventDefault();
+      handleAIAction({ action: 'goToPage', target: pageId });
+    });
+  });
+
+  previous?.addEventListener('click', () => handleAIAction({ action: 'previousPage' }));
+  next?.addEventListener('click', () => handleAIAction({ action: 'nextPage' }));
+
+  window.addEventListener('keydown', (event) => {
+    if (isTypingTarget(event.target) || event.altKey || event.ctrlKey || event.metaKey) return;
+    if (event.target?.closest?.('[data-notes-deck]')) return;
+    if (event.key === 'ArrowLeft') handleAIAction({ action: 'previousPage' });
+    if (event.key === 'ArrowRight') handleAIAction({ action: 'nextPage' });
+  });
+
+  window.addEventListener('hashchange', () => {
+    const pageId = pageIdFromHash(window.location.hash);
+    if (pageId) handleAIAction({ action: 'goToPage', target: pageId });
+  });
+
+  initSwipeNavigation(shell);
+}
+
+function initWheelNavigator() {
+  const nav = document.querySelector('[data-wheel-nav]');
+  if (!nav) return;
+
+  nav.innerHTML = PAGE_MAP.map((page, index) => `
+    <button class="wheel-nav__node" type="button" data-wheel-page="${page.id}" aria-label="切換到${page.label}頁">
+      <span>${String(index + 1).padStart(2, '0')}</span>
+      <strong>${page.label}</strong>
+    </button>
+  `).join('');
+
+  nav.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-wheel-page]');
+    if (!button) return;
+    handleAIAction({ action: 'goToPage', target: button.dataset.wheelPage });
+  });
+
+  subscribeState((state) => {
+    nav.querySelectorAll('[data-wheel-page]').forEach((button) => {
+      const active = button.dataset.wheelPage === state.currentPage;
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-current', active ? 'page' : 'false');
+    });
+  });
+}
+
+function initProgressLine() {
+  subscribeState((state) => {
+    const ratio = state.progress / 100;
+    document.documentElement.style.setProperty('--progress-ratio', String(ratio));
+    document.documentElement.style.setProperty('--progress-percent', `${state.progress}%`);
+    document.body.classList.toggle('is-completed', state.isCompleted);
+  });
+}
+
+function initMarqueeBar() {
+  const textNodes = Array.from(document.querySelectorAll('[data-marquee-text]'));
+  if (!textNodes.length) return;
+
+  subscribeState((state) => {
+    textNodes.forEach((node) => {
+      node.textContent = state.marqueeText;
+    });
+  });
+}
+
+function initSwipeNavigation(shell) {
+  let drag = null;
+
+  shell.addEventListener('pointerdown', (event) => {
+    if (event.button !== 0 || isTypingTarget(event.target)) return;
+    drag = {
+      startX: event.clientX,
+      startY: event.clientY
+    };
+  });
+
+  shell.addEventListener('pointerup', (event) => {
+    if (!drag) return;
+    const dx = event.clientX - drag.startX;
+    const dy = event.clientY - drag.startY;
+    drag = null;
+    if (Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+    handleAIAction({ action: dx < 0 ? 'nextPage' : 'previousPage' });
+  });
+
+  shell.addEventListener('pointercancel', () => {
+    drag = null;
+  });
+}
+
+function applyVisualState(state) {
+  const root = document.documentElement;
+  const tokens = THEME_TOKEN_MAP[state.theme] || THEME_TOKEN_MAP.cat;
+  const preset = BACKGROUND_PRESET_MAP[state.backgroundPreset] || BACKGROUND_PRESET_MAP.default;
+  const customColor = state.customBackgroundColor;
+  const bgMain = customColor || resolvePresetBg(preset.bgMain, tokens);
+  const readableText = customColor ? getReadableTextColor(customColor) : tokens.textMain;
+  const fontScale = FONT_SCALE_MAP[state.fontSize] || 1;
+  const shape = SHAPE_MODE_MAP[state.shapeMode] || SHAPE_MODE_MAP.sharp;
+
+  root.classList.toggle('theme-future', state.theme === 'future');
+  root.classList.toggle('theme-cat', state.theme === 'cat');
+  document.body.dataset.theme = state.theme;
+  document.body.dataset.backgroundPreset = state.backgroundPreset;
+  document.body.dataset.customBackground = state.customBackgroundColor ? 'true' : 'false';
+  document.body.dataset.fontSize = state.fontSize;
+  document.body.dataset.shapeMode = state.shapeMode;
+  document.body.dataset.presentationMode = state.presentationMode;
+
+  setVars({
+    '--theme-bg-main': tokens.bgMain,
+    '--bg-main': bgMain,
+    '--bg-panel': tokens.bgPanel,
+    '--bg-overlay': preset.overlay || 'none',
+    '--text-main': readableText,
+    '--text-muted': customColor ? colorMix(readableText, 0.68) : tokens.textMuted,
+    '--accent-main': tokens.accentMain,
+    '--accent-secondary': tokens.accentSecondary,
+    '--border-subtle': tokens.borderSubtle,
+    '--ink': readableText,
+    '--paper': bgMain,
+    '--moss': tokens.moss,
+    '--cyan': tokens.cyan,
+    '--coral': tokens.coral,
+    '--violet': tokens.violet,
+    '--clay': tokens.clay,
+    '--line': tokens.line,
+    '--line-strong': tokens.lineStrong,
+    '--font-scale': String(fontScale),
+    '--shadow': shape.shapeShadow,
+    '--surface-radius': shape.surfaceRadius,
+    '--control-radius': shape.controlRadius,
+    '--shape-shadow': shape.shapeShadow,
+    '--panel-blur': shape.panelBlur
+  });
+
+  document.querySelectorAll('[data-theme-switch]').forEach((button) => {
+    button.textContent = state.theme === 'future' ? '可愛貓咪' : '未來科技';
+    button.setAttribute('aria-label', state.theme === 'future' ? '切換成可愛動畫貓咪主題' : '切換成未來科技發展主題');
+  });
+
+  document.querySelectorAll('[data-font-size]').forEach((button) => {
+    const active = button.dataset.fontSize === state.fontSize;
+    button.classList.toggle('is-active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+}
+
+function initPerformanceGuard() {
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const lowMemory = Number(navigator.deviceMemory || 8) <= 4;
+  const narrowMobile = window.matchMedia('(max-width: 520px)').matches;
+  const reduced = prefersReduced || (lowMemory && narrowMobile);
+  document.documentElement.classList.toggle('reduced-performance', reduced);
+  if (reduced) updateState({ performanceMode: 'reduced' }, { persist: false });
+}
+
+function getSectionByPage() {
+  const map = new Map();
+  PAGE_MAP.forEach((page) => {
+    const section = document.getElementById(page.domId);
+    if (section) map.set(page.id, section);
+  });
+  return map;
+}
+
+function runCatLoader(gate) {
   const bar = gate.querySelector('[data-loader-bar]');
   const count = gate.querySelector('[data-loader-count]');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -79,7 +339,8 @@ function runFutureLoader(gate) {
   const canvas = gate.querySelector('[data-tech-loader-canvas]');
   const bar = gate.querySelector('[data-loader-bar]');
   const count = gate.querySelector('[data-loader-count]');
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+    document.documentElement.classList.contains('reduced-performance');
 
   gate.classList.add('is-tech-loading');
   if (!canvas || reduced) {
@@ -94,9 +355,13 @@ function runFutureLoader(gate) {
 
   return new Promise((resolve) => {
     const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      resolve();
+      return;
+    }
     const ratio = Math.min(window.devicePixelRatio || 1, 2);
-    const particles = createLoaderParticles(260);
-    const duration = 2850;
+    const particles = createLoaderParticles(220);
+    const duration = 2600;
     const startedAt = performance.now();
 
     const resize = () => {
@@ -161,82 +426,6 @@ function runFutureLoader(gate) {
   });
 }
 
-function initPageShell() {
-  const shell = document.querySelector('[data-page-shell]');
-  if (!shell) return;
-
-  const sections = Array.from(shell.querySelectorAll(':scope > section'));
-  const navLinks = Array.from(document.querySelectorAll('.site-nav a[href^="#"], .hero__actions a[href^="#"], .site-footer a[href^="#"]'));
-  const previous = document.querySelector('[data-page-prev]');
-  const next = document.querySelector('[data-page-next]');
-  const status = document.querySelector('[data-page-status]');
-  let activeIndex = Math.max(0, sections.findIndex((section) => `#${section.id}` === window.location.hash));
-
-  document.body.classList.add('page-mode');
-  sections.forEach((section, index) => {
-    section.classList.add('page-panel');
-    section.dataset.pageIndex = String(index);
-  });
-
-  const setActive = (nextIndex, { replaceHash = true } = {}) => {
-    const bounded = clamp(nextIndex, 0, sections.length - 1);
-    const direction = bounded >= activeIndex ? 'forward' : 'back';
-    activeIndex = bounded;
-
-    document.body.dataset.pageDirection = direction;
-    sections.forEach((section, index) => {
-      const active = index === activeIndex;
-      section.classList.toggle('is-page-active', active);
-      section.setAttribute('aria-hidden', String(!active));
-      if (active) {
-        section.querySelectorAll('[data-reveal]').forEach((node) => node.classList.add('is-visible'));
-      }
-    });
-
-    navLinks.forEach((link) => {
-      const active = link.getAttribute('href') === `#${sections[activeIndex].id}`;
-      link.classList.toggle('is-active', active);
-      if (link.closest('.site-nav')) {
-        if (active) link.setAttribute('aria-current', 'page');
-        else link.removeAttribute('aria-current');
-      }
-    });
-
-    if (previous) previous.disabled = activeIndex === 0;
-    if (next) next.disabled = activeIndex === sections.length - 1;
-    if (status) status.textContent = `${activeIndex + 1} / ${sections.length}`;
-    if (replaceHash) history.replaceState(null, '', `#${sections[activeIndex].id}`);
-
-    window.setTimeout(() => window.dispatchEvent(new Event('resize')), 80);
-  };
-
-  navLinks.forEach((link) => {
-    link.addEventListener('click', (event) => {
-      const id = link.getAttribute('href')?.slice(1);
-      const index = sections.findIndex((section) => section.id === id);
-      if (index < 0) return;
-      event.preventDefault();
-      setActive(index);
-    });
-  });
-
-  previous?.addEventListener('click', () => setActive(activeIndex - 1));
-  next?.addEventListener('click', () => setActive(activeIndex + 1));
-
-  window.addEventListener('keydown', (event) => {
-    if (isTypingTarget(event.target) || event.altKey || event.ctrlKey || event.metaKey) return;
-    if (event.key === 'ArrowLeft') setActive(activeIndex - 1);
-    if (event.key === 'ArrowRight') setActive(activeIndex + 1);
-  });
-
-  window.addEventListener('hashchange', () => {
-    const index = sections.findIndex((section) => `#${section.id}` === window.location.hash);
-    if (index >= 0) setActive(index, { replaceHash: false });
-  });
-
-  setActive(activeIndex, { replaceHash: Boolean(window.location.hash) });
-}
-
 function createLoaderParticles(count) {
   const colors = ['#6ff8ff', '#dce86a', '#f36f52', '#a79bff', '#f7f2e4'];
   return Array.from({ length: count }, (_, index) => {
@@ -266,13 +455,29 @@ function animateProgress({ duration, onUpdate }) {
   });
 }
 
+function setVars(values) {
+  Object.entries(values).forEach(([name, value]) => {
+    document.documentElement.style.setProperty(name, value);
+  });
+}
+
+function resolvePresetBg(value, tokens) {
+  return value === 'var(--theme-bg-main)' ? tokens.bgMain : value;
+}
+
+function colorMix(color, alpha) {
+  if (color.startsWith('#')) {
+    const r = parseInt(color.slice(1, 3), 16);
+    const g = parseInt(color.slice(3, 5), 16);
+    const b = parseInt(color.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+  return color;
+}
+
 function isTypingTarget(target) {
   const tag = target?.tagName;
   return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || target?.isContentEditable;
-}
-
-function clamp(value, min, max) {
-  return Math.min(max, Math.max(min, value));
 }
 
 function lerp(start, end, amount) {

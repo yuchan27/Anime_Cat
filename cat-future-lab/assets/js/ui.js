@@ -222,7 +222,7 @@ export function initReportPptDownload() {
 
   let exporting = false;
 
-  button.addEventListener('click', async () => {
+  const exportPpt = async () => {
     if (exporting) return;
     exporting = true;
 
@@ -361,7 +361,10 @@ export function initReportPptDownload() {
       button.textContent = originalText;
       exporting = false;
     }
-  });
+  };
+
+  button.addEventListener('click', exportPpt);
+  window.addEventListener('catlab:pptrequest', exportPpt);
 }
 
 function setStatus(node, state, text) {

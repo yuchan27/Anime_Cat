@@ -6,7 +6,8 @@ import { initGsapEffects } from './effects.js';
 import { initExperienceShell } from './experience.js';
 import { initNotesDeck } from './notes.js';
 import { initCatScene } from './scene.js';
-import { initApiStatus, initChatPanel, initHeader, initImageGallery, initReportDownload, initReportPptDownload, initWeatherPanel } from './ui.js';
+import { initSmartNavigator } from './smartNavigator.js';
+import { initApiStatus, initHeader, initImageGallery, initReportDownload, initReportPptDownload, initWeatherPanel } from './ui.js';
 
 initMotionPreference();
 initExperienceShell();
@@ -17,7 +18,7 @@ initCatCursor();
 initPageAnimations();
 initCatScene();
 initApiStatus();
-initChatPanel();
+initSmartNavigator();
 initWeatherPanel();
 initImageGallery();
 initGsapEffects();
