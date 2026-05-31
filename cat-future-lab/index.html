@@ -4,19 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cat Future Lab｜城市訊號互動觀測台</title>
-  <meta name="description" content="Cat Future Lab 是一個以城市資料、3D 場域、AI 導覽與動態影像組成的互動觀測網站。">
+  <meta name="description" content="Cat Future Lab 是一個以城市資料、3D 場域、快速導覽與動態影像組成的互動觀測網站。">
   <link rel="canonical" href="http://localhost:5177/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Cat Future Lab｜城市訊號互動觀測台">
-  <meta property="og:description" content="把城市天氣、3D 場域、AI 導覽與動態影像整合成可探索的互動網站。">
+  <meta property="og:description" content="把城市天氣、3D 場域、快速導覽與動態影像整合成可探索的互動網站。">
   <meta property="og:url" content="http://localhost:5177/">
   <meta property="og:image" content="http://localhost:5177/assets/images/cat-hero-cartoon.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Cat Future Lab｜城市訊號互動觀測台">
-  <meta name="twitter:description" content="城市資料、3D 場域、AI 導覽與 Remotion 動態影像。">
+  <meta name="twitter:description" content="城市資料、3D 場域、快速導覽與 Remotion 動態影像。">
   <meta name="theme-color" content="#11131f">
   <link rel="icon" type="image/png" href="assets/images/catlab-icon.png">
-  <link rel="stylesheet" href="assets/css/styles.css?v=20260531-2">
+  <link rel="stylesheet" href="assets/css/styles.css?v=20260601-1">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -24,7 +24,7 @@
     "name": "Cat Future Lab",
     "inLanguage": "zh-Hant",
     "applicationCategory": "WebApplication",
-    "description": "以動畫風格貓咪作為輔助導引的城市訊號互動觀測網站，整合 3D 場域、城市資料、AI 導覽與動態影像。",
+    "description": "以動畫風格貓咪作為輔助導引的城市訊號互動觀測網站，整合 3D 場域、城市資料、快速導覽與動態影像。",
     "creator": {
       "@type": "Person",
       "name": "yuchan"
@@ -97,7 +97,7 @@
         <a href="#presentation">簡報</a>
       </nav>
       <div class="header-actions" aria-label="控制列">
-        <button class="ai-toggle" type="button" data-ai-open aria-label="開啟智慧導覽視窗">導覽</button>
+        <button class="ai-toggle" type="button" data-ai-open aria-label="開啟快速導覽視窗">導覽</button>
         <button class="style-toggle" type="button" data-theme-switch aria-label="切換網站風格">未來科技</button>
         <button class="reset-settings" type="button" data-reset-settings aria-label="還原預設設定">預設</button>
 
@@ -115,8 +115,8 @@
   </header>
 
   <div class="marquee-bar" data-marquee aria-live="polite">
-    <span data-marquee-text>可用自然語言控制頁面、背景、字體、跑馬燈與簡報模式。</span>
-    <span data-marquee-text aria-hidden="true">可用自然語言控制頁面、背景、字體、跑馬燈與簡報模式。</span>
+    <span data-marquee-text>用導覽列、左右鍵或一句話快速切換頁面、背景與字體。</span>
+    <span data-marquee-text aria-hidden="true">用導覽列、左右鍵或一句話快速切換頁面、背景與字體。</span>
   </div>
 
   <div class="ai-modal" data-ai-modal hidden>
@@ -124,10 +124,10 @@
     <section class="ai-modal__panel" role="dialog" aria-modal="true" aria-labelledby="global-ai-title">
       <div class="ai-modal__header">
         <div>
-          <p class="eyebrow">智慧導覽</p>
+          <p class="eyebrow">快速導覽</p>
           <h2 id="global-ai-title">在任何頁面控制網站</h2>
         </div>
-        <button class="icon-button ai-modal__close" type="button" data-ai-close aria-label="關閉智慧導覽">×</button>
+        <button class="icon-button ai-modal__close" type="button" data-ai-close aria-label="關閉快速導覽">×</button>
       </div>
       <p class="ai-modal__hint">可以輸入「背景改成特殊金色」、「切到技術頁」、「字體小一點」或「這個區塊怎麼做」。</p>
       <form class="chat-form ai-modal__form" data-chat-form>
@@ -138,7 +138,7 @@
           <button class="button button--primary" type="submit">送出</button>
         </div>
       </form>
-      <div class="status-box ai-modal__output" data-chat-output aria-live="polite">導覽員可以控制頁面、主題、背景、字體、形狀與跑馬燈。</div>
+      <div class="status-box ai-modal__output" data-chat-output aria-live="polite">導覽員可以切頁、換背景、調整字體與更新跑馬燈。</div>
     </section>
   </div>
 
@@ -153,12 +153,12 @@
         <span class="hero-title-line hero-title-line--sub">用更有趣的方式看看一座城市</span>
       </h1>
       <p class="hero__lead">
-          這裡把天氣、城市時間、互動場景和智慧導覽放在同一個網站裡。
+          這裡把天氣、城市時間、互動場景和快速導覽放在同一個網站裡。
           你可以像逛一個小型城市觀測站一樣切換頁面、換風格、查資料，也能讓導覽員直接幫你操作畫面。
       </p>
       <div class="hero__actions">
           <a class="button button--primary" href="#intro">開始探索</a>
-          <a class="button button--secondary" href="#contact">試試智慧導覽</a>
+          <a class="button button--secondary" href="#contact">試試快速導覽</a>
         </div>
 
       </div>
@@ -214,13 +214,13 @@
       <div class="section-heading" data-reveal>
         <p class="eyebrow">網站特色</p>
         <h2 id="modules-title">把常見網站功能做得更好玩一點</h2>
-        <p>這個網站保留一般網站該有的導覽、內容、圖片與互動，同時加入可以用一句話控制頁面的智慧導覽。</p>
+        <p>這個網站保留一般網站該有的導覽、內容、圖片與互動，同時加入可以用一句話調整畫面的快速導覽。</p>
       </div>
       <div class="module-grid" data-module-grid>
         <article class="module-card" data-reveal>
           <span class="module-card__index">01</span>
           <h3>畫面有節奏</h3>
-          <p>開場、切頁、按鈕與提示都有輕微動態，讓網站不會像靜態報告。</p>
+          <p>開場、切頁、按鈕與提示都有輕微動態，讓網站更像可以逛的產品頁。</p>
           <ul>
             <li>切頁像輪播一樣滑動。</li>
             <li>按鈕與卡片只保留必要的回饋。</li>
@@ -312,11 +312,10 @@
     <section id="assistant" class="assistant-section" aria-labelledby="assistant-title">
       <div class="assistant-panel" data-reveal>
         <div class="panel-heading">
-          <p class="eyebrow">智慧導覽</p>
+          <p class="eyebrow">快速導覽</p>
           <h2 id="assistant-title">想改畫面，直接用說的</h2>
           <p>你可以輸入「切到展示頁」、「背景改成白色」、「字體大一點」。網站會先判斷指令是否安全，再幫你更新畫面。</p>
         </div>
-        <div class="status-box status-box--subtle" data-api-status aria-live="polite">正在確認 Google AI key...</div>
         <form class="chat-form" data-chat-form>
           <label for="chat-message">輸入控制或提問</label>
           <div class="chat-row">
@@ -368,7 +367,7 @@
           影片負責把城市、天氣、控制台和導覽員串成同一個世界，讓每一頁看起來不是獨立的截圖，而是一段可以被探索的旅程。
         </p>
         <p>
-          當你切換頁面時，就像從入口走進觀測室、資料桌、影像牆，最後抵達簡報桌；智慧導覽則是這間觀測站裡最安靜的操作員。
+          當你切換頁面時，就像從入口走進觀測室、資料桌、影像牆，最後抵達簡報桌；快速導覽則是這間觀測站裡最安靜的操作員。
         </p>
       </div>
       <figure class="video-placeholder" data-reveal>
@@ -378,35 +377,13 @@
         </video>
         <figcaption>片段摘要：觀測站亮起、城市資料流動、貓咪值班員把訊號交給網站導覽。</figcaption>
       </figure>
-      <div class="remotion-storyline" data-reveal>
-        <article>
-          <img class="cartoonized" src="assets/images/cat-french-observatory.png" alt="法式未來觀測餐廳中的貓咪與城市投影。" loading="lazy">
-          <strong>01 觀測站開門</strong>
-          <span>溫暖燈光讓資料網站先有場景，而不是一進來就像簡報封面。</span>
-        </article>
-        <article>
-          <img class="cartoonized" src="assets/images/cat-hero-cartoon.png" alt="貓咪坐在互動實驗室的控制台旁。" loading="lazy">
-          <strong>02 值班員就位</strong>
-          <span>貓咪只做引導，讓使用者知道可以開始探索與操作。</span>
-        </article>
-        <article>
-          <img class="cartoonized" src="assets/images/cat-weather-cartoon.png" alt="城市天氣控制台與貓咪觀察畫面。" loading="lazy">
-          <strong>03 城市資料進站</strong>
-          <span>時間、天氣、風速被整理成可以閱讀的城市訊號。</span>
-        </article>
-        <article>
-          <img class="cartoonized" src="assets/images/cat-observer-cartoon-wide.png" alt="貓咪在城市觀測場景中看向前方。" loading="lazy">
-          <strong>04 導覽員接手</strong>
-          <span>最後由智慧導覽把切頁、背景與字體控制變成一句話。</span>
-        </article>
-      </div>
     </section>
 
     <section id="stories" class="module-band story-band" aria-labelledby="stories-title">
       <div class="section-heading" data-reveal>
         <p class="eyebrow">怎麼使用</p>
         <h2 id="stories-title">把它當成一個可以互動的小型網站來逛</h2>
-        <p>你可以從首頁開始看，也可以用手機選單直接跳到想看的分頁；想調整畫面就交給智慧導覽。</p>
+        <p>你可以從首頁開始看，也可以用手機選單直接跳到想看的分頁；想調整畫面就交給快速導覽。</p>
       </div>
       <div class="story-grid">
         <article class="story-card" data-reveal>
@@ -432,12 +409,34 @@
         <article class="story-card" data-reveal>
           <span class="story-card__kicker">05</span>
           <h3>看資料不被打斷</h3>
-          <p>影片、天氣或 AI 回覆如果暫時失敗，網站仍保留圖片、文字與安全 fallback。</p>
+          <p>影片、天氣或導覽回覆如果暫時失敗，網站仍保留圖片、文字與安全 fallback。</p>
         </article>
         <article class="story-card" data-reveal>
           <span class="story-card__kicker">06</span>
           <h3>最後看簡報</h3>
           <p>如果想了解製作方式，可以到簡報頁看架構、互動和安全控制。</p>
+        </article>
+      </div>
+      <div class="feature-visual-grid remotion-storyline" data-reveal>
+        <article>
+          <img class="cartoonized" src="assets/images/cat-french-observatory.png" alt="法式未來觀測餐廳中的貓咪與城市投影。" loading="lazy">
+          <strong>觀測站入口</strong>
+          <span>用場景先建立氣氛，不一進來就像在看技術封面。</span>
+        </article>
+        <article>
+          <img class="cartoonized" src="assets/images/cat-hero-cartoon.png" alt="貓咪坐在互動實驗室的控制台旁。" loading="lazy">
+          <strong>主視覺角色</strong>
+          <span>貓咪只做引導，重點仍然放在城市資料與頁面操作。</span>
+        </article>
+        <article>
+          <img class="cartoonized" src="assets/images/cat-weather-cartoon.png" alt="城市天氣控制台與貓咪觀察畫面。" loading="lazy">
+          <strong>城市資料桌</strong>
+          <span>時間、天氣與風速被整理成容易比較的城市訊號。</span>
+        </article>
+        <article>
+          <img class="cartoonized" src="assets/images/cat-observer-cartoon-wide.png" alt="貓咪在城市觀測場景中看向前方。" loading="lazy">
+          <strong>導覽員接手</strong>
+          <span>切頁、背景與字體控制可以被整理成一句可理解的操作。</span>
         </article>
       </div>
     </section>
@@ -454,9 +453,6 @@
           <button class="icon-button" type="button" data-notes-prev aria-label="上一頁">&#9664;</button>
           <div class="notes-deck__counter" data-notes-counter>1 / 12</div>
           <button class="icon-button" type="button" data-notes-next aria-label="下一頁">&#9654;</button>
-          <label class="notes-deck__zoom">縮放
-            <input type="range" min="100" max="150" step="5" value="100" data-notes-zoom aria-label="投影片縮放">
-          </label>
           <button class="button button--secondary" type="button" data-report-download>下載導覽摘要</button>
           <button class="button button--primary" type="button" data-report-ppt>下載導覽簡報</button>
         </div>
@@ -469,7 +465,7 @@
               <div class="note-kpi-grid">
                 <div class="note-kpi"><strong>SPA</strong><span>左右切換頁面</span></div>
                 <div class="note-kpi"><strong>State</strong><span>Cookie 保存偏好</span></div>
-                <div class="note-kpi"><strong>Proxy</strong><span>API key 留在 server</span></div>
+                <div class="note-kpi"><strong>Proxy</strong><span>金鑰留在 server</span></div>
               </div>
               <ul>
                 <li><code>config.js</code> 管理 pageMap、主題 token、背景 preset 與說明文字。</li>
@@ -545,8 +541,8 @@
               </ul>
             </article>
 
-            <article class="note-slide" data-note-slide data-title="06 智慧導覽">
-              <header><span>06</span><h3>智慧導覽與 API Proxy</h3></header>
+            <article class="note-slide" data-note-slide data-title="06 快速導覽">
+              <header><span>06</span><h3>快速導覽與 API Proxy</h3></header>
               <p>導覽員可回答功能怎麼做，也可把自然語言轉成安全 action。真實模型請求走 server proxy，前端不接觸金鑰。</p>
               <div class="note-columns">
                 <div class="note-panel">
@@ -582,7 +578,7 @@
 
             <article class="note-slide" data-note-slide data-title="08 背景與主題">
               <header><span>08</span><h3>主題、背景與可讀性</h3></header>
-              <p>主題決定整體語言，背景與文字顏色則是 AI 可調整的表層設定。使用者改白色、黑色或 hex 色碼時，不會破壞原本主題。</p>
+              <p>主題決定整體語言，背景與文字顏色則是可調整的表層設定。使用者改白色、黑色或 hex 色碼時，不會破壞原本主題。</p>
               <div class="note-kpi-grid">
                 <div class="note-kpi"><strong>Theme</strong><span>未來 / 溫暖決定整體語氣</span></div>
                 <div class="note-kpi"><strong>Background</strong><span>支援 preset 與 #hex 色碼</span></div>
@@ -590,7 +586,7 @@
               </div>
               <div class="note-columns">
                 <div class="note-panel">
-                  <h4>AI 可以改什麼</h4>
+                  <h4>導覽可以改什麼</h4>
                   <ul>
                     <li>背景改成黑色、白色、粉紅、奶油色或 #111827。</li>
                     <li>文字顏色可用合法色碼或常見顏色詞控制。</li>
@@ -601,7 +597,7 @@
                   <h4>安全規則</h4>
                   <ul>
                     <li>背景控制不會改變已選主題。</li>
-                    <li>不執行 AI 回傳的任意 CSS 或 JavaScript。</li>
+                    <li>不執行模型回傳的任意 CSS 或 JavaScript。</li>
                     <li>不明確的顏色或形狀指令會被回覆 unknown。</li>
                   </ul>
                 </div>
@@ -639,13 +635,13 @@
               <ul>
                 <li><code>setBackground</code> 只接受合法 hex 或 preset。</li>
                 <li><code>setShapeMode</code> 會轉成系統已定義的形狀模式，不接受任意 CSS 字串。</li>
-                <li>不允許 <code>eval()</code>、<code>new Function()</code> 或 AI 回傳 HTML 執行。</li>
+                <li>不允許 <code>eval()</code>、<code>new Function()</code> 或模型回傳 HTML 執行。</li>
               </ul>
             </article>
 
             <article class="note-slide" data-note-slide data-title="12 Router 與狀態">
               <header><span>12</span><h3>Action Router 與狀態同步</h3></header>
-              <p>按鈕、鍵盤、滑動、輪軸與智慧導覽員全部走同一份狀態。這讓進度線、active nav、頁面與 cookie 偏好保持一致。</p>
+              <p>按鈕、鍵盤、滑動、輪軸與快速導覽全部走同一份狀態。這讓進度線、active nav、頁面與 cookie 偏好保持一致。</p>
               <ul>
                 <li>PageId：home、intro、features、tech、gallery、about、contact、presentation。</li>
                 <li>切頁使用 transform 與 opacity，降低 layout reflow。</li>
@@ -686,6 +682,6 @@
     }
   }
   </script>
-  <script type="module" src="assets/js/main.js?v=20260531-2"></script>
+  <script type="module" src="assets/js/main.js?v=20260601-1"></script>
 </body>
 </html>

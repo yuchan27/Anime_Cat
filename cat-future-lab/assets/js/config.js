@@ -46,14 +46,14 @@ export const PAGE_MAP = [
     domId: 'assistant',
     label: '控制',
     navLabel: '控制',
-    summary: '智慧導覽員可控制頁面、背景、字體、形狀與跑馬燈，也能回答實作問題。'
+    summary: '快速導覽可控制頁面、背景、字體、形狀與跑馬燈，也能回答實作問題。'
   },
   {
     id: 'presentation',
     domId: 'notes',
     label: '簡報',
     navLabel: '簡報',
-    summary: '最後一頁是網頁化技術簡報，可左右切換、縮放與下載 PPT。'
+    summary: '最後一頁是網頁化網站筆記，可左右切換並下載摘要或 PPT。'
   }
 ];
 
@@ -259,8 +259,8 @@ export const SECTION_EXPLAINERS = {
   tech: '技術頁將 Anime.js、Three.js、GSAP、API、可近用與 Remotion 分成六張卡片；目前卡片只做漸入，不再持續浮動。',
   gallery: '展示頁用本機動畫風格圖片作為素材，點選卡片只更新圖片、說明與 active 狀態，不會切換頁面或跳到頂端。',
   about: '影像頁播放 Remotion 輸出的 mp4；如果影片無法播放，poster 與文字摘要仍保留完整資訊。',
-  contact: '控制頁包含智慧導覽與城市天氣。導覽員會先嘗試讓模型理解自然語言，再正規化為安全 JSON Action，由 Action Router 更新 AppState。',
-  presentation: '簡報頁是最後一個 SPA panel，notes.js 負責左右滑動、拖曳、滾輪與縮放；PPT 下載以 lazy import 載入 pptxgenjs。',
+  contact: '控制頁包含快速導覽與城市天氣。導覽員會先嘗試理解自然語言，再正規化為安全 JSON Action，由 Action Router 更新 AppState。',
+  presentation: '簡報頁是最後一個 SPA panel，notes.js 負責左右切換與自適應版面；PPT 下載以 lazy import 載入 pptxgenjs。',
   background: '背景控制走 setBackground action，只改背景色或 preset，不改使用者一開始選的「未來」或「溫暖」主題。',
   theme: '主題控制走 THEME_TOKEN_MAP。未來主題偏高級科技產品，溫暖主題保留柔和貓咪元素；背景色變更不等於切主題。',
   font: '字體大小走 FONT_SCALE_MAP 與 --font-scale，字體家族走 FONT_FAMILY_MAP；標題、內文、按鈕會按比例縮放，不會全部變同一個大小。',

@@ -292,7 +292,7 @@ function executeAction(action, options = {}) {
 
     case 'resetSettings':
       resetState({ preserveTheme: true, preservePage: true, persist: shouldPersist });
-      return { ok: true, reply: '已清除 AI 調整，保留目前選擇的風格與頁面。' };
+      return { ok: true, reply: '已清除導覽調整，保留目前選擇的風格與頁面。' };
 
     case 'unknown':
       return { ok: true, reply: action.message || '我可以回答這個區塊怎麼做，也可以控制頁面、背景、字體與跑馬燈。' };

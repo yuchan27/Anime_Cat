@@ -1,4 +1,4 @@
-import { fetchEnvStatus, fetchWeather } from './api.js';
+import { fetchWeather } from './api.js';
 
 let weatherTimeTimer = null;
 
@@ -49,27 +49,6 @@ function initMobileMenu(header) {
   });
   mobileQuery.addEventListener('change', () => setOpen(false));
 }
-
-export async function initApiStatus() {
-  const node = document.querySelector('[data-api-status]');
-  if (!node) return;
-
-  try {
-    const status = await fetchEnvStatus();
-    if (!status.hasGoogleAiKey) {
-      node.dataset.state = 'error';
-      node.textContent = '尚未讀取 Google AI key，目前會使用安全 fallback 回覆。';
-      return;
-    }
-
-    node.dataset.state = 'success';
-    node.textContent = '已讀取 key';
-  } catch {
-    node.dataset.state = 'error';
-    node.textContent = '無法讀取 API 狀態，請確認 server 是否啟動。';
-  }
-}
-
 
 export function initWeatherPanelV2() {
   const weatherButton = document.querySelector('[data-weather-button]');

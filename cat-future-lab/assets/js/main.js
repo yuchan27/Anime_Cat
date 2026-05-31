@@ -7,7 +7,7 @@ import { initExperienceShell } from './experience.js';
 import { initNotesDeck } from './notes.js';
 import { initCatScene } from './scene.js';
 import { initSmartNavigator } from './smartNavigator.js';
-import { initApiStatus, initControlProximityFeedback, initHeader, initHeroFlipCard, initImageGallery, initReportDownload, initReportPptDownload, initWeatherPanelV2 } from './ui.js';
+import { initControlProximityFeedback, initHeader, initHeroFlipCard, initImageGallery, initReportDownload, initReportPptDownload, initWeatherPanelV2 } from './ui.js';
 
 initMotionPreference();
 initExperienceShell();
@@ -17,7 +17,6 @@ initSoundToggle();
 initCatCursor();
 initPageAnimations();
 initCatScene();
-initApiStatus();
 initSmartNavigator();
 initWeatherPanelV2();
 initHeroFlipCard();

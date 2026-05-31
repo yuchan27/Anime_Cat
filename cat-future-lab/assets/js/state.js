@@ -8,7 +8,7 @@ import {
 } from './config.js';
 
 const listeners = new Set();
-const SETTINGS_COOKIE = 'catlab-settings-v2';
+const SETTINGS_COOKIE = 'catlab-settings-v3';
 const SETTINGS_MAX_AGE = 60 * 60 * 24 * 45;
 const initialPage = PAGE_MAP[0]?.id || 'home';
 
@@ -16,7 +16,7 @@ const DEFAULT_STATE = Object.freeze({
   theme: 'cat',
   fontSize: 'md',
   fontFamily: 'default',
-  marqueeText: '可用智慧導覽控制頁面、背景、字體、形狀、跑馬燈與簡報模式。',
+  marqueeText: '用導覽列、左右鍵或一句話快速切換頁面、背景與字體。',
   backgroundPreset: 'default',
   customBackgroundColor: undefined,
   customTextColor: undefined,
