@@ -9,7 +9,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="CatLoop"
         component={CatLoop}
-        durationInFrames={300}
+        durationInFrames={540}
         fps={30}
         width={1600}
         height={900}

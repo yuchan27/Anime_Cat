@@ -16,10 +16,26 @@ function initMobileMenu(header) {
   const closeButton = header?.querySelector('[data-menu-close]');
   if (!toggle || !menu) return;
 
+  const mobileQuery = window.matchMedia('(max-width: 720px)');
+
   const setOpen = (open) => {
+    if (!mobileQuery.matches) {
+      document.body.classList.remove('mobile-menu-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      menu.inert = false;
+      menu.removeAttribute('aria-hidden');
+      return;
+    }
+
+    if (!open && menu.contains(document.activeElement)) {
+      toggle.focus({ preventScroll: true });
+    }
+
     document.body.classList.toggle('mobile-menu-open', open);
     toggle.setAttribute('aria-expanded', String(open));
-    menu.setAttribute('aria-hidden', String(!open));
+    menu.inert = !open;
+    if (open) menu.removeAttribute('aria-hidden');
+    else menu.setAttribute('aria-hidden', 'true');
   };
 
   setOpen(false);
@@ -31,6 +47,7 @@ function initMobileMenu(header) {
   window.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') setOpen(false);
   });
+  mobileQuery.addEventListener('change', () => setOpen(false));
 }
 
 export async function initApiStatus() {
@@ -45,12 +62,8 @@ export async function initApiStatus() {
       return;
     }
 
-    const chain = Array.isArray(status.chatModels) && status.chatModels.length
-      ? status.chatModels.join(' -> ')
-      : status.primaryModel || '未知模型';
-
     node.dataset.state = 'success';
-    node.textContent = `已讀取 Google AI key。主模型：${status.primaryModel}；fallback 鏈：${chain}`;
+    node.textContent = '已讀取 Google AI key';
   } catch {
     node.dataset.state = 'error';
     node.textContent = '無法讀取 API 狀態，請確認 server 是否啟動。';

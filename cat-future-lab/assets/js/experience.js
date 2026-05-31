@@ -125,15 +125,24 @@ function initPageShell() {
     section.classList.add('page-panel');
     section.dataset.pageId = page.id;
     section.dataset.pageIndex = String(index);
+    section.tabIndex = -1;
   });
 
   if (initialPage) updateState({ currentPage: initialPage }, { persist: false });
 
+  let lastResizePage = null;
+
   subscribeState((state) => {
     const activePage = PAGE_MAP[state.pageIndex] || PAGE_MAP[0];
+    const activeSection = sectionByPage.get(state.currentPage);
     const direction = state.pageIndex >= Number(document.body.dataset.previousPageIndex || 0) ? 'forward' : 'back';
     document.body.dataset.pageDirection = direction;
     document.body.dataset.previousPageIndex = String(state.pageIndex);
+
+    const focusedPanel = document.activeElement?.closest?.('.page-panel');
+    if (focusedPanel && focusedPanel !== activeSection) {
+      activeSection?.focus({ preventScroll: true });
+    }
 
     PAGE_MAP.forEach((page, index) => {
       const section = sectionByPage.get(page.id);
@@ -162,7 +171,12 @@ function initPageShell() {
     if (status) status.textContent = `${activePage.label} ${state.pageIndex + 1} / ${PAGE_MAP.length}`;
 
     history.replaceState(null, '', `#${state.currentPage}`);
-    window.setTimeout(() => window.dispatchEvent(new Event('resize')), 80);
+    if (lastResizePage !== state.currentPage) {
+      lastResizePage = state.currentPage;
+      activeSection?.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      window.setTimeout(() => window.dispatchEvent(new Event('resize')), 80);
+    }
   });
 
   navLinks.forEach((link) => {

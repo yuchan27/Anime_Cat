@@ -16,7 +16,7 @@
   <meta name="twitter:description" content="城市資料、3D 場域、AI 導覽與 Remotion 動態影像。">
   <meta name="theme-color" content="#11131f">
   <link rel="icon" type="image/png" href="assets/images/catlab-icon.png">
-  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/styles.css?v=20260531-2">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -221,31 +221,55 @@
           <span class="module-card__index">01</span>
           <h3>畫面有節奏</h3>
           <p>開場、切頁、按鈕與提示都有輕微動態，讓網站不會像靜態報告。</p>
+          <ul>
+            <li>切頁像輪播一樣滑動。</li>
+            <li>按鈕與卡片只保留必要的回饋。</li>
+          </ul>
         </article>
         <article class="module-card" data-reveal>
           <span class="module-card__index">02</span>
           <h3>可互動場景</h3>
           <p>首頁後的場景可以切模式，也能讓貓咪視覺跟著滑鼠互動。</p>
+          <ul>
+            <li>穩定、動態、專注三種節奏。</li>
+            <li>弱效能裝置會自動降級。</li>
+          </ul>
         </article>
         <article class="module-card" data-reveal>
           <span class="module-card__index">03</span>
           <h3>像輪播一樣切頁</h3>
           <p>每個分頁左右滑動切換，手機也能用手勢或選單快速前往。</p>
+          <ul>
+            <li>鍵盤左右鍵、滑動、導覽列同步。</li>
+            <li>底部進度線跟著頁面更新。</li>
+          </ul>
         </article>
         <article class="module-card" data-reveal>
           <span class="module-card__index">04</span>
           <h3>城市資料</h3>
           <p>可以切換城市，直接查看當地時間、溫度、風速與資料來源。</p>
+          <ul>
+            <li>定位失敗時仍可用預設城市。</li>
+            <li>資料來源清楚標示，不讓畫面失效。</li>
+          </ul>
         </article>
         <article class="module-card" data-reveal>
           <span class="module-card__index">05</span>
           <h3>手機也能用</h3>
           <p>選單、切頁、字體大小與降低動態都針對手機版重新整理。</p>
+          <ul>
+            <li>漢堡選單保留 Logo 與主要操作。</li>
+            <li>CTA 與圖片不再互相覆蓋。</li>
+          </ul>
         </article>
         <article class="module-card" data-reveal>
           <span class="module-card__index">06</span>
           <h3>影像補充</h3>
           <p>影片與圖片作為補充內容，即使影片沒載入也能正常閱讀。</p>
+          <ul>
+            <li>Remotion 負責氛圍片段。</li>
+            <li>圖片故事卡補上影片外的情境。</li>
+          </ul>
         </article>
       </div>
     </section>
@@ -292,7 +316,7 @@
           <h2 id="assistant-title">想改畫面，直接用說的</h2>
           <p>你可以輸入「切到展示頁」、「背景改成白色」、「字體大一點」。網站會先判斷指令是否安全，再幫你更新畫面。</p>
         </div>
-        <div class="status-box status-box--subtle" data-api-status aria-live="polite">正在讀取模型與 fallback 狀態...</div>
+        <div class="status-box status-box--subtle" data-api-status aria-live="polite">正在確認 Google AI key...</div>
         <form class="chat-form" data-chat-form>
           <label for="chat-message">輸入控制或提問</label>
           <div class="chat-row">
@@ -338,16 +362,44 @@
     <section id="remotion" class="remotion-strip" aria-labelledby="remotion-title">
       <div class="section-copy" data-reveal>
         <p class="eyebrow">動態影像</p>
-        <h2 id="remotion-title">用短影片補上網站的節奏</h2>
-        <p>這裡放的是網站氛圍影片，不是必看的附件；影片載入失敗時，圖片與文字還是可以正常看。</p>
+        <h2 id="remotion-title">一座城市觀測站的開場故事</h2>
+        <p>
+          這個網站想像成一間夜裡還亮著燈的小型觀測站：貓咪不是主角，而是陪你整理城市訊號的值班員。
+          影片負責把城市、天氣、控制台和導覽員串成同一個世界，讓每一頁看起來不是獨立的截圖，而是一段可以被探索的旅程。
+        </p>
+        <p>
+          當你切換頁面時，就像從入口走進觀測室、資料桌、影像牆，最後抵達簡報桌；智慧導覽則是這間觀測站裡最安靜的操作員。
+        </p>
       </div>
       <figure class="video-placeholder" data-reveal>
         <video controls autoplay muted loop playsinline poster="assets/remotion/cat-loop-still.png" aria-label="Remotion 主循環素材">
           <source src="assets/remotion/cat-loop.mp4" type="video/mp4">
           你的瀏覽器不支援此影片格式。
         </video>
-        <figcaption>片段摘要：城市、控制台、資料流動與貓咪助手的視覺氣氛。</figcaption>
+        <figcaption>片段摘要：觀測站亮起、城市資料流動、貓咪值班員把訊號交給網站導覽。</figcaption>
       </figure>
+      <div class="remotion-storyline" data-reveal>
+        <article>
+          <img class="cartoonized" src="assets/images/cat-french-observatory.png" alt="法式未來觀測餐廳中的貓咪與城市投影。" loading="lazy">
+          <strong>01 觀測站開門</strong>
+          <span>溫暖燈光讓資料網站先有場景，而不是一進來就像簡報封面。</span>
+        </article>
+        <article>
+          <img class="cartoonized" src="assets/images/cat-hero-cartoon.png" alt="貓咪坐在互動實驗室的控制台旁。" loading="lazy">
+          <strong>02 值班員就位</strong>
+          <span>貓咪只做引導，讓使用者知道可以開始探索與操作。</span>
+        </article>
+        <article>
+          <img class="cartoonized" src="assets/images/cat-weather-cartoon.png" alt="城市天氣控制台與貓咪觀察畫面。" loading="lazy">
+          <strong>03 城市資料進站</strong>
+          <span>時間、天氣、風速被整理成可以閱讀的城市訊號。</span>
+        </article>
+        <article>
+          <img class="cartoonized" src="assets/images/cat-observer-cartoon-wide.png" alt="貓咪在城市觀測場景中看向前方。" loading="lazy">
+          <strong>04 導覽員接手</strong>
+          <span>最後由智慧導覽把切頁、背景與字體控制變成一句話。</span>
+        </article>
+      </div>
     </section>
 
     <section id="stories" class="module-band story-band" aria-labelledby="stories-title">
@@ -358,14 +410,32 @@
       </div>
       <div class="story-grid">
         <article class="story-card" data-reveal>
+          <span class="story-card__kicker">01</span>
           <h3>先逛內容</h3>
           <p>從首頁、介紹、特色一路切到展示頁，像看一個有互動效果的網站。</p>
         </article>
         <article class="story-card" data-reveal>
+          <span class="story-card__kicker">02</span>
           <h3>再試控制</h3>
           <p>到控制頁輸入自然語言，讓網站幫你切頁、換背景、調字體或更新跑馬燈。</p>
         </article>
         <article class="story-card" data-reveal>
+          <span class="story-card__kicker">03</span>
+          <h3>換一種氛圍</h3>
+          <p>同樣的內容可以切成未來科技或溫暖風格；背景可改色，但不會把整個主題打掉。</p>
+        </article>
+        <article class="story-card" data-reveal>
+          <span class="story-card__kicker">04</span>
+          <h3>手機直接操作</h3>
+          <p>手機版用左側選單整理頁面和控制項，避免按鈕擠在第一眼畫面裡。</p>
+        </article>
+        <article class="story-card" data-reveal>
+          <span class="story-card__kicker">05</span>
+          <h3>看資料不被打斷</h3>
+          <p>影片、天氣或 AI 回覆如果暫時失敗，網站仍保留圖片、文字與安全 fallback。</p>
+        </article>
+        <article class="story-card" data-reveal>
+          <span class="story-card__kicker">06</span>
           <h3>最後看簡報</h3>
           <p>如果想了解製作方式，可以到簡報頁看架構、互動和安全控制。</p>
         </article>
@@ -616,6 +686,6 @@
     }
   }
   </script>
-  <script type="module" src="assets/js/main.js"></script>
+  <script type="module" src="assets/js/main.js?v=20260531-2"></script>
 </body>
 </html>

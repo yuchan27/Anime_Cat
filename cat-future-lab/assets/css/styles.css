@@ -1462,6 +1462,17 @@ html:not(.has-anime) body.page-ready .hero .signal-panel {
   line-height: 1.65;
 }
 
+.module-card ul {
+  margin: 1rem 0 0;
+  padding-left: 1.1rem;
+  color: color-mix(in srgb, var(--ink) 82%, transparent);
+  line-height: 1.65;
+}
+
+.module-card li + li {
+  margin-top: 0.28rem;
+}
+
 .gallery-section {
   padding: clamp(4rem, 8vw, 7rem) clamp(1rem, 5vw, 4rem);
   border-top: 2px solid var(--ink);
@@ -1663,8 +1674,11 @@ html:not(.has-anime) body.page-ready .hero .signal-panel {
 .assistant-panel .status-box--subtle {
   min-height: auto;
   border: 0;
-  background: color-mix(in srgb, var(--moss) 18%, transparent);
-  padding-inline: 0;
+  background: transparent;
+  color: color-mix(in srgb, var(--ink) 62%, transparent);
+  padding: 0;
+  font-size: 0.92rem;
+  line-height: 1.5;
 }
 
 .assistant-panel [data-chat-output].status-box,
@@ -1868,6 +1882,39 @@ html:not(.has-anime) body.page-ready .hero .signal-panel {
   display: none;
 }
 
+.remotion-storyline {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.remotion-storyline article {
+  display: grid;
+  gap: 0.72rem;
+  border: 2px solid var(--ink);
+  background: color-mix(in srgb, var(--paper) 88%, white 12%);
+  box-shadow: 7px 7px 0 color-mix(in srgb, var(--ink) 78%, transparent);
+  padding: 0.8rem;
+}
+
+.remotion-storyline img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent);
+}
+
+.remotion-storyline strong {
+  font-size: 1rem;
+}
+
+.remotion-storyline span {
+  color: color-mix(in srgb, var(--ink) 74%, transparent);
+  font-size: 0.92rem;
+  line-height: 1.62;
+}
+
 .story-band {
   background: #fff8ea;
 }
@@ -1885,6 +1932,19 @@ html:not(.has-anime) body.page-ready .hero .signal-panel {
   background: var(--white);
   padding: 1.2rem;
   box-shadow: 8px 8px 0 var(--ink);
+}
+
+.story-card__kicker {
+  display: inline-flex;
+  width: 2.45rem;
+  height: 2.45rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--ink) 32%, transparent);
+  background: color-mix(in srgb, var(--moss) 42%, transparent);
+  color: var(--clay);
+  font-weight: 900;
+  margin-bottom: 1.25rem;
 }
 
 .story-card h3 {
@@ -2203,6 +2263,15 @@ body.page-mode .page-panel.is-page-active {
   filter: blur(0);
 }
 
+body.page-mode .page-panel {
+  contain: layout style paint;
+}
+
+body.page-mode .page-panel:not(.is-page-active) {
+  content-visibility: hidden;
+  contain-intrinsic-size: 100vh 100vw;
+}
+
 body.page-mode .hero,
 body.page-mode .scene-section,
 body.page-mode .assistant-section,
@@ -2285,6 +2354,7 @@ body.page-mode .site-footer {
 .assistant-panel,
 .weather-panel,
 .video-placeholder,
+.remotion-storyline article,
 .story-card,
 .notes-deck__viewport,
 .note-panel {
@@ -2324,6 +2394,7 @@ body[data-shape-mode="glass"] .gallery-preview,
 body[data-shape-mode="glass"] .assistant-panel,
 body[data-shape-mode="glass"] .weather-panel,
 body[data-shape-mode="glass"] .video-placeholder,
+body[data-shape-mode="glass"] .remotion-storyline article,
 body[data-shape-mode="glass"] .story-card,
 body[data-shape-mode="glass"] .notes-deck__viewport,
 body[data-shape-mode="glass"] .note-panel {
@@ -2358,14 +2429,18 @@ html.theme-cat .progress-cursor::after {
 }
 
 .page-controls span {
-  min-width: 4.8rem;
+  order: -1;
+  width: 100%;
+  min-width: 0;
   text-align: center;
+  font-size: 0.92rem;
   font-weight: 800;
+  white-space: nowrap;
 }
 
 .page-controls .icon-button {
-  min-width: 44px;
-  padding: 0.58rem 0.76rem;
+  min-width: 2.3rem;
+  padding: 0.44rem 0.55rem;
 }
 
 .page-controls .icon-button:disabled {
@@ -2385,6 +2460,7 @@ html.theme-future .gallery-preview,
 html.theme-future .assistant-panel,
 html.theme-future .weather-panel,
 html.theme-future .video-placeholder,
+html.theme-future .remotion-storyline article,
 html.theme-future .story-card,
 html.theme-future .note-slide,
 html.theme-future .module-card {
@@ -2494,11 +2570,77 @@ html.theme-future .rainbow-track span {
   background: linear-gradient(90deg, #55f4ff, #8d7cff, #ff6b9b, #b8ff63, #55f4ff);
 }
 
+html.theme-cat body[data-background-preset="default"] .hero,
+html.theme-cat body[data-background-preset="default"] .module-band,
+html.theme-cat body[data-background-preset="default"] .gallery-section,
+html.theme-cat body[data-background-preset="default"] .story-band {
+  background:
+    radial-gradient(circle at 12% 18%, rgba(255, 142, 199, 0.18), transparent 22rem),
+    radial-gradient(circle at 84% 24%, rgba(255, 209, 102, 0.22), transparent 25rem),
+    radial-gradient(ellipse at 46% 88%, rgba(137, 215, 192, 0.12), transparent 28rem),
+    linear-gradient(90deg, rgba(63, 42, 53, 0.045) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(63, 42, 53, 0.035) 1px, transparent 1px),
+    #fff7fb;
+  background-size: auto, auto, auto, 48px 48px, 48px 48px, auto;
+}
+
+html.theme-cat body[data-background-preset="default"] .scene-section,
+html.theme-cat body[data-background-preset="default"] .assistant-section,
+html.theme-cat body[data-background-preset="default"] .remotion-strip,
+html.theme-cat body[data-background-preset="default"] .report-section {
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 18% 20%, rgba(255, 142, 199, 0.24), transparent 22rem),
+    radial-gradient(circle at 78% 18%, rgba(255, 209, 102, 0.28), transparent 24rem),
+    radial-gradient(ellipse at 50% 92%, rgba(137, 215, 192, 0.16), transparent 28rem),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.64), rgba(255, 247, 251, 0.82)),
+    #fff1f7;
+}
+
+html.theme-cat body[data-background-preset="default"] .scene-section::before,
+html.theme-cat body[data-background-preset="default"] .remotion-strip::before,
+html.theme-cat body[data-background-preset="default"] .report-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.24;
+  background-image:
+    radial-gradient(circle, rgba(63, 42, 53, 0.18) 1px, transparent 1.8px),
+    linear-gradient(135deg, transparent 46%, rgba(255, 209, 102, 0.16) 47%, transparent 51%);
+  background-size: 34px 34px, 160px 160px;
+}
+
+html.theme-cat body[data-background-preset="default"] .scene-section,
+html.theme-cat body[data-background-preset="default"] .remotion-strip,
+html.theme-cat body[data-background-preset="default"] .report-section {
+  position: absolute;
+  overflow: hidden;
+}
+
+html.theme-cat body[data-background-preset="default"] .scene-section > *,
+html.theme-cat body[data-background-preset="default"] .remotion-strip > *,
+html.theme-cat body[data-background-preset="default"] .report-section > * {
+  position: relative;
+  z-index: 1;
+}
+
+html.theme-cat body[data-background-preset="default"] .notes-deck__viewport,
+html.theme-cat body[data-background-preset="default"] .note-slide,
+html.theme-cat body[data-background-preset="default"] .story-card,
+html.theme-cat body[data-background-preset="default"] .module-card,
+html.theme-cat body[data-background-preset="default"] .remotion-storyline article {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 247, 251, 0.88)),
+    var(--bg-panel);
+}
+
 body[data-shape-mode] .signal-panel,
 body[data-shape-mode] .gallery-preview,
 body[data-shape-mode] .assistant-panel,
 body[data-shape-mode] .weather-panel,
 body[data-shape-mode] .video-placeholder,
+body[data-shape-mode] .remotion-storyline article,
 body[data-shape-mode] .page-controls {
   box-shadow: var(--shape-shadow);
 }
@@ -2534,6 +2676,7 @@ body[data-custom-background="true"] .gallery-preview,
 body[data-custom-background="true"] .assistant-panel,
 body[data-custom-background="true"] .weather-panel,
 body[data-custom-background="true"] .video-placeholder,
+body[data-custom-background="true"] .remotion-storyline article,
 body[data-custom-background="true"] .story-card,
 body[data-custom-background="true"] .note-slide,
 body[data-custom-background="true"] .module-card,
@@ -2546,12 +2689,84 @@ body[data-background-preset]:not([data-background-preset="default"]) .gallery-pr
 body[data-background-preset]:not([data-background-preset="default"]) .assistant-panel,
 body[data-background-preset]:not([data-background-preset="default"]) .weather-panel,
 body[data-background-preset]:not([data-background-preset="default"]) .video-placeholder,
+body[data-background-preset]:not([data-background-preset="default"]) .remotion-storyline article,
 body[data-background-preset]:not([data-background-preset="default"]) .story-card,
 body[data-background-preset]:not([data-background-preset="default"]) .note-slide,
 body[data-background-preset]:not([data-background-preset="default"]) .module-card {
   color: var(--text-main);
   background: var(--bg-panel);
   border-color: var(--line-strong);
+}
+
+body[data-background-preset="warm"] .hero,
+body[data-background-preset="warm"] .module-band,
+body[data-background-preset="warm"] .gallery-section,
+body[data-background-preset="warm"] .story-band {
+  background:
+    radial-gradient(circle at 12% 18%, rgba(255, 176, 122, 0.26), transparent 21rem),
+    radial-gradient(circle at 84% 22%, rgba(255, 209, 102, 0.24), transparent 26rem),
+    linear-gradient(135deg, rgba(255, 142, 199, 0.12), transparent 42%),
+    linear-gradient(90deg, rgba(142, 91, 68, 0.07) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(142, 91, 68, 0.055) 1px, transparent 1px),
+    #fff8ed;
+  background-size: auto, auto, auto, 46px 46px, 46px 46px, auto;
+}
+
+body[data-background-preset="warm"] .scene-section,
+body[data-background-preset="warm"] .remotion-strip,
+body[data-background-preset="warm"] .report-section,
+body[data-background-preset="warm"] .assistant-section {
+  color: var(--text-main);
+  background:
+    radial-gradient(circle at 18% 22%, rgba(255, 142, 199, 0.22), transparent 22rem),
+    radial-gradient(circle at 76% 18%, rgba(255, 209, 102, 0.3), transparent 24rem),
+    radial-gradient(ellipse at 50% 92%, rgba(137, 215, 192, 0.18), transparent 28rem),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.62), rgba(255, 241, 223, 0.72)),
+    #fff1df;
+}
+
+body[data-background-preset="warm"] .scene-section::before,
+body[data-background-preset="warm"] .remotion-strip::before,
+body[data-background-preset="warm"] .report-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.28;
+  background-image:
+    radial-gradient(circle, rgba(142, 91, 68, 0.22) 1px, transparent 1.5px),
+    linear-gradient(120deg, transparent 46%, rgba(255, 209, 102, 0.16) 47%, transparent 50%);
+  background-size: 34px 34px, 180px 180px;
+}
+
+body[data-background-preset="warm"] .scene-section,
+body[data-background-preset="warm"] .remotion-strip,
+body[data-background-preset="warm"] .report-section {
+  position: absolute;
+  overflow: hidden;
+}
+
+body[data-background-preset="warm"] .scene-section > *,
+body[data-background-preset="warm"] .remotion-strip > *,
+body[data-background-preset="warm"] .report-section > * {
+  position: relative;
+  z-index: 1;
+}
+
+body[data-background-preset="warm"] .notes-deck__viewport,
+body[data-background-preset="warm"] .note-slide,
+body[data-background-preset="warm"] .module-card,
+body[data-background-preset="warm"] .story-card,
+body[data-background-preset="warm"] .remotion-storyline article {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.68), rgba(255, 248, 237, 0.86)),
+    color-mix(in srgb, var(--bg-panel) 78%, transparent);
+}
+
+body[data-background-preset="warm"] .scene-canvas-wrap,
+body[data-background-preset="warm"] .video-placeholder,
+body[data-background-preset="warm"] .notes-deck__viewport {
+  box-shadow: 0 20px 62px rgba(142, 91, 68, 0.16);
 }
 
 [data-reveal] {
@@ -2698,6 +2913,10 @@ body[data-background-preset]:not([data-background-preset="default"]) .module-car
 
   .wheel-nav__node.is-active {
     transform: translateY(-0.18rem);
+  }
+
+  .remotion-storyline {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -2995,6 +3214,7 @@ html.theme-future .gallery-preview,
 html.theme-future .assistant-panel,
 html.theme-future .weather-panel,
 html.theme-future .video-placeholder,
+html.theme-future .remotion-storyline article,
 html.theme-future .story-card,
 html.theme-future .note-slide,
 html.theme-future .module-card {
@@ -3101,8 +3321,11 @@ html.theme-future .is-pointer-near {
 
 .page-controls {
   left: auto;
-  right: clamp(1rem, 3.6vw, 2.4rem);
-  bottom: clamp(3.5rem, 6vh, 5.35rem);
+  right: clamp(0.45rem, 1.4vw, 0.9rem);
+  bottom: clamp(1rem, 2.4vh, 1.45rem);
+  width: 6.8rem;
+  flex-wrap: wrap;
+  justify-content: center;
   opacity: 0.56;
   transform: translateY(0);
   transition:
@@ -3834,5 +4057,81 @@ html.theme-cat body {
 
   .signal-panel strong {
     font-size: clamp(2.6rem, 17vw, 4.2rem);
+  }
+}
+
+@media (max-width: 720px) {
+  body.page-mode .hero {
+    display: flex !important;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.95rem;
+    min-height: auto;
+    overflow: visible;
+  }
+
+  body.page-mode .hero::before {
+    position: relative;
+    order: 5;
+    display: block;
+    margin-top: 0.35rem;
+    border: 1px solid color-mix(in srgb, var(--ink) 36%, transparent);
+    background: color-mix(in srgb, var(--ink) 78%, transparent);
+    transform: none;
+    white-space: normal;
+    letter-spacing: 0.08em;
+    line-height: 1.5;
+  }
+
+  .hero__copy,
+  .signal-panel {
+    width: 100%;
+    flex: 0 0 auto;
+  }
+
+  .hero__actions {
+    position: relative;
+    z-index: 4;
+    margin: 1rem 0 0.8rem;
+  }
+
+  .signal-panel {
+    position: relative;
+    z-index: 1;
+    margin-top: 0.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .signal-panel__image-stack {
+    min-height: clamp(210px, 54vw, 310px);
+  }
+
+  .signal-panel figcaption {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .remotion-storyline {
+    grid-template-columns: 1fr;
+  }
+
+  .remotion-storyline article {
+    grid-template-columns: minmax(92px, 0.36fr) minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .remotion-storyline img {
+    grid-row: 1 / span 2;
+    height: 100%;
+  }
+
+  .page-controls {
+    left: auto;
+    right: 0.7rem;
+    top: calc(6.2rem + env(safe-area-inset-top));
+    bottom: auto;
+    width: 6.6rem;
+    max-width: calc(100vw - 1.4rem);
+    opacity: 0.82;
   }
 }
