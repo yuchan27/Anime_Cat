@@ -1,94 +1,94 @@
-let audioContext;
-let masterGain;
-let nodes = [];
+import { getState, subscribeState } from './state.js';
+
+const TRACKS = {
+  future: 'assets/music/1.mp3',
+  cat: 'assets/music/2.mp3'
+};
+
+let audio;
+let active = false;
+let currentTheme = getState().theme;
 
 export function initSoundToggle() {
   const button = document.querySelector('[data-sound-toggle]');
   if (!button) return;
 
-  button.addEventListener('click', async () => {
-    const isActive = button.getAttribute('aria-pressed') === 'true';
+  audio = new Audio(TRACKS[currentTheme] || TRACKS.cat);
+  audio.loop = true;
+  audio.volume = 0;
 
-    if (isActive) {
-      stopSound();
-      button.setAttribute('aria-pressed', 'false');
-      button.textContent = '啟動音景';
+  subscribeState((state) => {
+    currentTheme = state.theme;
+    if (active) switchTrackForTheme(state.theme);
+  });
+
+  button.addEventListener('click', async () => {
+    active = button.getAttribute('aria-pressed') !== 'true';
+    if (active) {
+      await playCurrentTrack();
+      button.setAttribute('aria-pressed', 'true');
+      button.textContent = '關閉音景';
       return;
     }
 
-    await startSound();
-    button.setAttribute('aria-pressed', 'true');
-    button.textContent = '關閉音景';
+    fadeOutAndPause();
+    button.setAttribute('aria-pressed', 'false');
+    button.textContent = '啟動音景';
   });
 }
 
-async function startSound() {
-  audioContext ||= new AudioContext();
-  if (audioContext.state === 'suspended') {
-    await audioContext.resume();
+async function playCurrentTrack() {
+  switchTrackForTheme(currentTheme, { keepPaused: true });
+  try {
+    await audio.play();
+    fadeVolumeTo(0.38, 900);
+  } catch {
+    active = false;
   }
-
-  stopSound();
-
-  masterGain = audioContext.createGain();
-  masterGain.gain.setValueAtTime(0.0001, audioContext.currentTime);
-  masterGain.gain.exponentialRampToValueAtTime(0.03, audioContext.currentTime + 0.8);
-  masterGain.connect(audioContext.destination);
-
-  nodes = [
-    createTone(146.83, 'sine', 0.66),
-    createTone(220, 'triangle', 0.4),
-    createPulse()
-  ];
 }
 
-function stopSound() {
-  if (!audioContext || !nodes.length) return;
+function switchTrackForTheme(theme, options = {}) {
+  const nextSrc = TRACKS[theme] || TRACKS.cat;
+  if (!audio || audio.getAttribute('src') === nextSrc) return;
 
-  const stopAt = audioContext.currentTime + 0.08;
-  nodes.forEach((node) => node.stop?.(stopAt));
-  nodes = [];
-  masterGain?.disconnect();
-  masterGain = null;
+  const wasPlaying = active && !audio.paused;
+  audio.pause();
+  audio.setAttribute('src', nextSrc);
+  audio.load();
+  audio.volume = 0;
+
+  if (wasPlaying && !options.keepPaused) {
+    audio.play()
+      .then(() => fadeVolumeTo(0.38, 900))
+      .catch(() => {
+        active = false;
+      });
+  }
 }
 
-function createTone(frequency, type, gainValue) {
-  const oscillator = audioContext.createOscillator();
-  const gain = audioContext.createGain();
-  const lfo = audioContext.createOscillator();
-  const lfoGain = audioContext.createGain();
+function fadeOutAndPause() {
+  if (!audio) return;
+  const startVolume = audio.volume;
+  const startedAt = performance.now();
+  const duration = 420;
 
-  oscillator.type = type;
-  oscillator.frequency.value = frequency;
-  gain.gain.value = 0.02 * gainValue;
-  lfo.frequency.value = 0.08;
-  lfoGain.gain.value = 4;
-
-  lfo.connect(lfoGain);
-  lfoGain.connect(oscillator.frequency);
-  oscillator.connect(gain);
-  gain.connect(masterGain);
-  oscillator.start();
-  lfo.start();
-
-  return {
-    stop: (when) => {
-      oscillator.stop(when);
-      lfo.stop(when);
-    }
+  const step = (now) => {
+    const t = Math.min(1, (now - startedAt) / duration);
+    audio.volume = startVolume * (1 - t);
+    if (t < 1) requestAnimationFrame(step);
+    else audio.pause();
   };
+  requestAnimationFrame(step);
 }
 
-function createPulse() {
-  const oscillator = audioContext.createOscillator();
-  const gain = audioContext.createGain();
-
-  oscillator.type = 'square';
-  oscillator.frequency.value = 55;
-  gain.gain.value = 0.004;
-  oscillator.connect(gain);
-  gain.connect(masterGain);
-  oscillator.start();
-
-  return oscillator;
+function fadeVolumeTo(target, duration) {
+  if (!audio) return;
+  const startVolume = audio.volume;
+  const startedAt = performance.now();
+  const step = (now) => {
+    const t = Math.min(1, (now - startedAt) / duration);
+    audio.volume = startVolume + (target - startVolume) * t;
+    if (t < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
 }

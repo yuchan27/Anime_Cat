@@ -1,4 +1,4 @@
-const HOTSPOT = { x: 8, y: 10 };
+const HOTSPOT = { x: 17, y: 17 };
 
 export function initCatCursor() {
   const cursor = document.querySelector('[data-cat-cursor]');
@@ -18,8 +18,10 @@ export function initCatCursor() {
   };
 
   window.addEventListener('pointermove', moveCursor, { passive: true });
+  window.addEventListener('pointerover', moveCursor, { passive: true });
   window.addEventListener('pointerdown', () => cursor.classList.add('is-click'), { passive: true });
   window.addEventListener('pointerup', () => cursor.classList.remove('is-click'), { passive: true });
-  window.addEventListener('pointerleave', () => cursor.classList.remove('is-active'), { passive: true });
-  window.addEventListener('blur', () => cursor.classList.remove('is-active'));
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) cursor.classList.add('is-active');
+  });
 }

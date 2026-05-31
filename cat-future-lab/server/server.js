@@ -24,7 +24,8 @@ const mimeTypes = {
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.mp4': 'video/mp4',
-  '.webm': 'video/webm'
+  '.webm': 'video/webm',
+  '.mp3': 'audio/mpeg'
 };
 
 async function loadEnvFile(filePath) {
@@ -40,7 +41,7 @@ async function loadEnvFile(filePath) {
       const key = trimmed.slice(0, separator).trim();
       const rawValue = trimmed.slice(separator + 1).trim();
       const value = rawValue.replace(/^["']|["']$/g, '');
-      if (key) process.env[key] = value;
+      if (key && process.env[key] === undefined) process.env[key] = value;
     });
   } catch (error) {
     if (error.code !== 'ENOENT') {
@@ -83,7 +84,7 @@ function handleEnvStatus(res) {
   });
 }
 
-async function callGoogleModel({ model, apiKey, prompt }) {
+async function callGoogleModel({ model, apiKey, prompt, jsonMode = false }) {
   const upstream = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`,
     {
@@ -91,7 +92,11 @@ async function callGoogleModel({ model, apiKey, prompt }) {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.72, maxOutputTokens: 280 }
+        generationConfig: {
+          temperature: 0.58,
+          maxOutputTokens: jsonMode ? 720 : 320,
+          ...(jsonMode ? { responseMimeType: 'application/json' } : {})
+        }
       })
     }
   );
@@ -104,10 +109,11 @@ async function callGoogleModel({ model, apiKey, prompt }) {
   return { ok: true, reply };
 }
 
-async function handleChat(req, res) {
+
+async function handleAiNavigator(req, res) {
   try {
     const startedAt = Date.now();
-    const { message, context = '' } = await readBody(req);
+    const { message, state = {} } = await readBody(req);
     const cleanMessage = String(message || '').trim().slice(0, 800);
 
     if (!cleanMessage) {
@@ -118,46 +124,63 @@ async function handleChat(req, res) {
     const modelChain = getModelChain();
 
     if (!apiKey) {
-      return sendJson(res, 200, {
-        reply: '目前伺服器尚未設定 Google AI key，因此先使用安全 fallback。你可以詢問城市觀測流程、3D 場域、城市資料面板或影像素材安排。',
-        model: 'local-fallback-no-key',
-        latencyMs: Date.now() - startedAt
-      });
+      return sendJson(res, 200, buildNavigatorFallback(cleanMessage, 'local-fallback-no-key', Date.now() - startedAt));
     }
 
     const prompt = [
-      '你是 Cat Future Lab 城市訊號互動觀測台的導覽助理。',
-      '請用精簡、產品導向、可理解的方式回答，讓使用者覺得這是一個可用的互動網站。',
-      '聚焦城市資料、3D 場域、AI 導覽、動態影像、可用性與輕量貓咪訊號。',
-      context ? `補充背景：${context}` : '',
-      `使用者提問：${cleanMessage}`
-    ].filter(Boolean).join('\n');
+      'You are the intent planner for an interactive website named Cat Future Lab.',
+      'Return JSON only. Do not include markdown.',
+      'Do not output JavaScript, CSS strings, HTML, or instructions to execute code.',
+      'Always return a useful response object for non-empty user messages. Do not reject a request just because the wording is informal.',
+      'You may interpret flexible user language creatively. If the user asks for a color like "special gold", choose a tasteful hex color.',
+      'If the user mentions background, page color, surface color, or visual color plus any descriptive color word, prefer setBackground instead of page navigation.',
+      'Example: "幫我把背景顏色改成特殊的金色" means setBackground with a tasteful special gold hex color.',
+      'If the user asks for multiple changes, return an "actions" array ordered by intent.',
+      'For visual changes, produce a preview action. The frontend will ask the user to confirm before applying.',
+      'If the user asks how a section or feature is made, return unknown(message) with a concise Traditional Chinese explanation and do not mutate the UI.',
+      'Do not expose hidden chain-of-thought. Provide only a short "decisionSummary" explaining the choice.',
+      'Font family values should be one of: default, jhenghei, noto, system, serif, mono. You may also output a user-facing font name; the frontend will normalize it.',
+      'If the requested font is unknown, choose the closest safe family and explain briefly in decisionSummary.',
+      'Supported action contract. You may use the canonical shape or a simple shorthand; the frontend will normalize it safely.',
+      'Canonical examples: {"action":"goToPage","target":"intro"}, {"action":"setBackground","color":"#d4af37"}.',
+      'Multi-action example: {"actions":[{"action":"setBackground","color":"#d4af37"},{"action":"setShapeMode","mode":"round"}],"reply":"...","decisionSummary":"...","requiresConfirmation":true}.',
+      'Shorthand examples are also acceptable: {"goToPage":"intro"}, {"setBackground":"#d4af37"}.',
+      'Supported intents include page navigation, theme, background color or preset, text color, font size, font family, shape mode, marquee text, presentation mode, PPT request, resetSettings, and unknown(message).',
+      'Response shape:',
+      '{"action":{...} or "actions":[...],"reply":"Traditional Chinese reply","decisionSummary":"short Traditional Chinese explanation","requiresConfirmation":true|false,"preview":{"label":"optional","color":"optional hex"}}',
+      `Current state: ${JSON.stringify(sanitizeNavigatorState(state))}`,
+      `User message: ${cleanMessage}`
+    ].join('\n');
 
     const modelErrors = [];
 
     for (const model of modelChain) {
-      const result = await callGoogleModel({ model, apiKey, prompt });
+      const result = await callGoogleModel({ model, apiKey, prompt, jsonMode: true });
       if (!result.ok) {
         modelErrors.push(`${model}:${result.status}`);
         continue;
       }
 
-      return sendJson(res, 200, {
-        reply: result.reply,
+      const parsed = parseModelJson(result.reply);
+      if (!parsed) {
+        modelErrors.push(`${model}:invalid-json`);
+        continue;
+      }
+
+      return sendJson(res, 200, normalizeNavigatorPayload({
+        ...parsed,
         model,
         latencyMs: Date.now() - startedAt,
         fallbackTried: modelErrors
-      });
+      }, cleanMessage));
     }
 
     return sendJson(res, 200, {
-      reply: '已嘗試主模型與 fallback 模型，但上游暫時無法回應，先切回安全示範回覆：本站是一個城市訊號互動觀測台，整合 3D 場域、城市天氣資料、AI 導覽與動態影像素材。',
-      model: 'fallback-all-failed',
-      latencyMs: Date.now() - startedAt,
+      ...buildNavigatorFallback(cleanMessage, 'fallback-all-failed', Date.now() - startedAt),
       fallbackTried: modelErrors
     });
   } catch {
-    return sendJson(res, 500, { error: 'Chat request failed safely.' });
+    return sendJson(res, 200, buildNavigatorFallback('', 'fallback-error', 0));
   }
 }
 
@@ -238,6 +261,10 @@ const server = createServer(async (req, res) => {
     return handleChat(req, res);
   }
 
+  if (req.method === 'POST' && url.pathname === '/api/ai-navigator') {
+    return handleAiNavigator(req, res);
+  }
+
   if (req.method === 'GET' && url.pathname === '/api/weather') {
     return handleWeather(res, url);
   }
@@ -280,6 +307,324 @@ async function startServerWithRetry(httpServer, basePort, retries) {
       return;
     }
   }
+}
+
+function sanitizeNavigatorState(state) {
+  if (!state || typeof state !== 'object') return {};
+  return {
+    theme: state.theme,
+    fontSize: state.fontSize,
+    fontFamily: state.fontFamily,
+    backgroundPreset: state.backgroundPreset,
+    customBackgroundColor: state.customBackgroundColor,
+    customTextColor: state.customTextColor,
+    shapeMode: state.shapeMode,
+    currentPage: state.currentPage,
+    pageIndex: state.pageIndex,
+    totalPages: state.totalPages,
+    presentationMode: state.presentationMode
+  };
+}
+
+function parseModelJson(text) {
+  const raw = String(text || '').trim();
+  const direct = parseJsonCandidate(raw);
+  if (direct) return direct;
+
+  const withoutFence = raw.replace(/^```(?:json)?/i, '').replace(/```$/i, '').trim();
+  const unfenced = parseJsonCandidate(withoutFence);
+  if (unfenced) return unfenced;
+
+  const start = withoutFence.indexOf('{');
+  const end = withoutFence.lastIndexOf('}');
+  if (start < 0 || end < start) return null;
+  return parseJsonCandidate(withoutFence.slice(start, end + 1));
+}
+
+function parseJsonCandidate(candidate) {
+  try {
+    const parsed = JSON.parse(candidate);
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) return parsed;
+    if (typeof parsed === 'string') return parseJsonCandidate(parsed);
+    if (Array.isArray(parsed) && parsed.length && parsed.every((item) => item && typeof item === 'object')) {
+      return { actions: parsed };
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+function normalizeNavigatorPayload(payload, message) {
+  let actions = normalizeActionList(payload?.actions ?? payload?.action ?? payload);
+
+  if (!actions.length) {
+    actions = [{ action: 'unknown', message: '模型沒有產生可執行的 action，但我已收到你的需求。' }];
+  }
+
+  const preview = payload?.preview && typeof payload.preview === 'object' ? { ...payload.preview } : {};
+  const repairedVisualAction = actions.length === 1
+    ? repairVisualIntent(actions[0], message)
+    : null;
+  const repairedPayload = repairedVisualAction
+    ? buildBackgroundNavigatorPayload(repairedVisualAction.color, payload?.model, payload?.latencyMs)
+    : null;
+
+  if (repairedVisualAction) actions = [repairedVisualAction];
+
+  actions = actions.map((action) => {
+    if (action.action === 'setBackground' && action.color) {
+      const hex = normalizeHex(action.color);
+      preview.color = preview.color || hex || action.color;
+      return { ...action, color: hex || action.color };
+    }
+    if (action.action === 'setTextColor' && action.color) {
+      const hex = normalizeHex(action.color);
+      preview.color = preview.color || hex || action.color;
+      return { ...action, color: hex || action.color };
+    }
+    return action;
+  });
+
+  const visualActions = new Set(['setBackground', 'setTextColor', 'setTheme', 'setFontSize', 'setFontFamily', 'setShapeMode']);
+  return {
+    actions,
+    action: actions[0],
+    reply: String(payload?.reply || '模型已判斷這個需求，請確認是否套用。').slice(0, 500),
+    decisionSummary: String(payload?.decisionSummary || buildSimpleDecisionSummary(actions[0], message)).slice(0, 360),
+    requiresConfirmation: Boolean(payload?.requiresConfirmation ?? actions.some((item) => visualActions.has(item.action))),
+    preview,
+    model: payload?.model,
+    latencyMs: payload?.latencyMs,
+    fallbackTried: payload?.fallbackTried || [],
+    ...(repairedPayload ? {
+      reply: repairedPayload.reply,
+      decisionSummary: repairedPayload.decisionSummary,
+      requiresConfirmation: true,
+      preview: repairedPayload.preview
+    } : {})
+  };
+}
+
+function buildNavigatorFallback(message, model, latencyMs) {
+  const inferredColor = inferBackgroundColor(message);
+  if (inferredColor) {
+    return buildBackgroundNavigatorPayload(inferredColor, model, latencyMs);
+  }
+
+  const text = String(message || '').toLowerCase();
+  let color = null;
+  if (text.includes('金')) color = '#b88a2a';
+  else if (text.includes('黑')) color = '#050505';
+  else if (text.includes('白')) color = '#ffffff';
+  else if (text.includes('粉')) color = '#ffd6e8';
+  else {
+    const match = text.match(/#?[0-9a-f]{6}/i);
+    if (match) color = normalizeHex(match[0]);
+  }
+
+  if (color) {
+    return {
+      action: { action: 'setBackground', color },
+      reply: `模型暫時無法回應，所以改用保底判斷：我建議先預覽背景色 ${color}，你可以套用或拒絕。`,
+      decisionSummary: '保底模式依照顏色描述產生一個合法 hex 色碼；仍需使用者確認才套用。',
+      requiresConfirmation: true,
+      preview: { label: '背景色預覽', color },
+      model,
+      latencyMs
+    };
+  }
+
+  return {
+    action: { action: 'unknown', message: '我已收到你的需求，但目前模型無法產生可靠 action。可以換句話描述，或指定頁面、色彩、字體、形狀、跑馬燈。' },
+    reply: '我已收到你的需求，但目前模型無法產生可靠 action。可以換句話描述，或指定頁面、色彩、字體、形狀、跑馬燈。',
+    decisionSummary: '沒有足夠資訊產生安全 action，因此先不改畫面。',
+    requiresConfirmation: false,
+    preview: {},
+    model,
+    latencyMs
+  };
+}
+
+function normalizeActionShape(action) {
+  if (!action || typeof action !== 'object') return { action: 'unknown' };
+  if (typeof action.action === 'string') {
+    if (action.action === 'goToPage' && action.page && !action.target) {
+      return { ...action, target: action.page };
+    }
+    if (action.action === 'setBackground' && action.value && !action.color && !action.preset) {
+      const hex = normalizeHex(action.value);
+      return hex ? { ...action, color: hex } : { ...action, preset: String(action.value) };
+    }
+    return action;
+  }
+
+  if (action.goToPage || action.page || action.target) {
+    return { action: 'goToPage', target: String(action.goToPage || action.page || action.target) };
+  }
+  if (action.setBackground || action.background || action.bg || action.color) {
+    const value = action.setBackground || action.background || action.bg || action.color;
+    const hex = normalizeHex(value);
+    return hex ? { action: 'setBackground', color: hex } : { action: 'setBackground', preset: String(value) };
+  }
+  if (action.setTextColor || action.textColor || action.fontColor) {
+    return { action: 'setTextColor', color: String(action.setTextColor || action.textColor || action.fontColor) };
+  }
+  if (action.setFontSize || action.fontSize) {
+    return { action: 'setFontSize', size: String(action.setFontSize || action.fontSize) };
+  }
+  if (action.setFontFamily || action.fontFamily) {
+    return { action: 'setFontFamily', family: String(action.setFontFamily || action.fontFamily) };
+  }
+  if (action.setShapeMode || action.shapeMode) {
+    return { action: 'setShapeMode', mode: String(action.setShapeMode || action.shapeMode) };
+  }
+  if (action.setTheme || action.theme) {
+    return { action: 'setTheme', theme: String(action.setTheme || action.theme) };
+  }
+  if (action.setMarquee || action.marquee) {
+    return { action: 'setMarquee', text: String(action.setMarquee || action.marquee) };
+  }
+  if (action.setPresentationMode || action.presentationMode) {
+    return { action: 'setPresentationMode', mode: String(action.setPresentationMode || action.presentationMode) };
+  }
+
+  const entries = Object.entries(action);
+  if (entries.length !== 1) return action;
+
+  const [name, value] = entries[0];
+  switch (name) {
+    case 'goToPage':
+      return { action: 'goToPage', target: String(value) };
+    case 'setBackground':
+      if (typeof value === 'string') {
+        const hex = normalizeHex(value);
+        return hex ? { action: 'setBackground', color: hex } : { action: 'setBackground', preset: value };
+      }
+      return { action: 'setBackground', ...(value || {}) };
+    case 'setTextColor':
+      return typeof value === 'string'
+        ? { action: 'setTextColor', color: value }
+        : { action: 'setTextColor', ...(value || {}) };
+    case 'setFontSize':
+      return { action: 'setFontSize', size: String(value) };
+    case 'setFontFamily':
+      return { action: 'setFontFamily', family: String(value) };
+    case 'setShapeMode':
+      return { action: 'setShapeMode', mode: String(value) };
+    case 'setTheme':
+      return { action: 'setTheme', theme: String(value) };
+    default:
+      return action;
+  }
+}
+
+function normalizeActionList(rawAction) {
+  if (!rawAction) return [];
+  if (Array.isArray(rawAction)) return rawAction.map((item) => normalizeActionShape(item)).filter(Boolean);
+  if (rawAction.actions && Array.isArray(rawAction.actions)) {
+    return rawAction.actions.map((item) => normalizeActionShape(item)).filter(Boolean);
+  }
+  if (typeof rawAction === 'object' && !rawAction.action) {
+    const compound = splitCompoundActions(rawAction);
+    if (compound.length) return compound.map((item) => normalizeActionShape(item)).filter(Boolean);
+  }
+  return [normalizeActionShape(rawAction)];
+}
+
+function splitCompoundActions(rawAction) {
+  const actions = [];
+  if (!rawAction || typeof rawAction !== 'object') return actions;
+
+  if (rawAction.goToPage || rawAction.page || rawAction.target) {
+    actions.push({ action: 'goToPage', target: rawAction.goToPage || rawAction.page || rawAction.target });
+  }
+  if (rawAction.nextPage) actions.push({ action: 'nextPage' });
+  if (rawAction.previousPage) actions.push({ action: 'previousPage' });
+  if (rawAction.getCurrentProgress) actions.push({ action: 'getCurrentProgress' });
+  if (rawAction.generatePpt) actions.push({ action: 'generatePpt' });
+  if (rawAction.downloadPpt) actions.push({ action: 'downloadPpt' });
+  if (rawAction.resetSettings) actions.push({ action: 'resetSettings' });
+  if (rawAction.setTheme || rawAction.theme) actions.push({ action: 'setTheme', theme: rawAction.setTheme || rawAction.theme });
+  if (rawAction.setFontSize || rawAction.fontSize) actions.push({ action: 'setFontSize', size: rawAction.setFontSize || rawAction.fontSize });
+  if (rawAction.setFontFamily || rawAction.fontFamily) actions.push({ action: 'setFontFamily', family: rawAction.setFontFamily || rawAction.fontFamily });
+  if (rawAction.setBackground || rawAction.background || rawAction.bg || rawAction.color) {
+    actions.push({ action: 'setBackground', value: rawAction.setBackground || rawAction.background || rawAction.bg || rawAction.color });
+  }
+  if (rawAction.setTextColor || rawAction.textColor || rawAction.fontColor) {
+    actions.push({ action: 'setTextColor', color: rawAction.setTextColor || rawAction.textColor || rawAction.fontColor });
+  }
+  if (rawAction.setShapeMode || rawAction.shapeMode) {
+    actions.push({ action: 'setShapeMode', mode: rawAction.setShapeMode || rawAction.shapeMode });
+  }
+  if (rawAction.setMarquee || rawAction.marquee) actions.push({ action: 'setMarquee', text: rawAction.setMarquee || rawAction.marquee });
+  if (rawAction.setPresentationMode || rawAction.presentationMode) {
+    actions.push({ action: 'setPresentationMode', mode: rawAction.setPresentationMode || rawAction.presentationMode });
+  }
+
+  return actions;
+}
+
+function repairVisualIntent(action, message) {
+  const color = inferBackgroundColor(message);
+  if (!color || action.action === 'setBackground' || hasTextColorIntent(message)) return null;
+  return {
+    action: 'setBackground',
+    color,
+    meta: { repairedFromModelAction: action.action || 'unknown' }
+  };
+}
+
+function inferBackgroundColor(message) {
+  const text = String(message || '').trim().toLowerCase();
+  const hasBackgroundIntent = /(背景|底色|頁面色|畫面色|版面色|surface|background|bg)/i.test(text);
+  const hasColorIntent = /(顏色|色|color|colour)/i.test(text);
+  if (!hasBackgroundIntent && !hasColorIntent) return null;
+
+  const hex = text.match(/#?[0-9a-f]{6}/i)?.[0];
+  if (hex) return normalizeHex(hex);
+
+  const colorMap = [
+    [/(特殊.*金|金.*特殊|香檳金|金色|金黃|琥珀|奢華|gold|champagne|amber)/i, '#b88a2a'],
+    [/(白色|純白|white)/i, '#ffffff'],
+    [/(黑色|深黑|black)/i, '#050505'],
+    [/(粉紅|粉色|pink)/i, '#ffd6e8'],
+    [/(奶油|米色|cream|warm)/i, '#fff8ed'],
+    [/(藍色|冷色|blue|cool)/i, '#eff6ff'],
+    [/(綠色|green)/i, '#d8f3dc'],
+    [/(紫色|purple|violet)/i, '#efe7ff']
+  ];
+
+  return colorMap.find(([pattern]) => pattern.test(text))?.[1] || null;
+}
+
+function hasTextColorIntent(message) {
+  return /(文字|字體|字|text|font)/i.test(String(message || ''));
+}
+
+function buildBackgroundNavigatorPayload(color, model, latencyMs) {
+  return {
+    action: { action: 'setBackground', color },
+    reply: `我先把這個要求判定為背景色調整，並挑了一個偏香檳與古銅之間的特殊金色 ${color}。你可以先看預覽，滿意再套用。`,
+    decisionSummary: '判斷到背景與顏色意圖，因此產生 setBackground 提案；保留目前主題，只改背景表層。',
+    requiresConfirmation: true,
+    preview: { label: '特殊金色背景', color },
+    model,
+    latencyMs
+  };
+}
+
+function buildSimpleDecisionSummary(action, message) {
+  if (action.action === 'setBackground') return `根據「${message}」選擇背景色或背景 preset，套用前先讓使用者確認。`;
+  if (action.action === 'setTextColor') return `根據「${message}」選擇文字顏色，套用前先讓使用者確認。`;
+  if (action.action === 'unknown') return '模型沒有足夠把握改動畫面，因此改成回覆說明。';
+  return '模型已將自然語言轉成網站可理解的 action。';
+}
+
+function normalizeHex(input) {
+  const raw = String(input || '').trim();
+  const value = raw.startsWith('#') ? raw.slice(1) : raw;
+  return /^[0-9a-f]{6}$/i.test(value) ? `#${value.toLowerCase()}` : null;
 }
 
 function listenOnPort(httpServer, port) {

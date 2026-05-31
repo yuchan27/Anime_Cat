@@ -4,56 +4,56 @@ export const PAGE_MAP = [
     domId: 'hero',
     label: '首頁',
     navLabel: '首頁',
-    summary: '網站入口與主視覺，說明城市訊號觀測台的核心概念。'
+    summary: '城市訊號觀測台的入口，介紹平台理念與主要探索路徑。'
   },
   {
     id: 'intro',
     domId: 'scene',
     label: '介紹',
     navLabel: '介紹',
-    summary: '3D 城市場域，用粒子、幾何與光照說明城市訊號流動。'
+    summary: '以 Three.js 建立 3D 訊號場域，讓城市資料有可操作的視覺入口。'
   },
   {
     id: 'features',
     domId: 'stories',
     label: '特色',
     navLabel: '特色',
-    summary: '使用情境與產品特色，呈現平台如何被當作城市資料導覽產品使用。'
+    summary: '整理平台使用情境：觀測流程、輕量導覽與一致的互動語言。'
   },
   {
     id: 'tech',
     domId: 'modules',
     label: '技術',
     navLabel: '技術',
-    summary: '平台引擎與模組分工，說明動畫、3D、資料層、可用性與影像素材。'
+    summary: '說明動畫、3D、API、可近用與素材層如何以模組方式協作。'
   },
   {
     id: 'gallery',
     domId: 'gallery',
     label: '展示',
     navLabel: '展示',
-    summary: '動畫風格貓咪圖像與城市觀測素材展示。'
+    summary: '展示動畫風格貓咪視覺與城市觀測情境，貓咪只作為輔助角色。'
   },
   {
     id: 'about',
     domId: 'remotion',
-    label: '關於',
-    navLabel: '關於',
-    summary: '動態影像素材區，說明 Remotion 影片如何補足網站節奏。'
+    label: '影像',
+    navLabel: '影像',
+    summary: '以 Remotion 影片素材補足網站節奏，並保留 poster 與文字替代。'
   },
   {
     id: 'contact',
     domId: 'assistant',
     label: '控制',
     navLabel: '控制',
-    summary: '智慧導覽員、城市資料與 Open-Meteo 即時狀態。'
+    summary: '智慧導覽員可控制頁面、背景、字體、形狀與跑馬燈，也能回答實作問題。'
   },
   {
     id: 'presentation',
     domId: 'notes',
     label: '簡報',
     navLabel: '簡報',
-    summary: '最後的網頁化技術簡報與 PPT 下載入口。'
+    summary: '最後一頁是網頁化技術簡報，可左右切換、縮放與下載 PPT。'
   }
 ];
 
@@ -69,22 +69,22 @@ export const PAGE_ID_ALIASES = {
 
 export const THEME_TOKEN_MAP = {
   future: {
-    bgMain: '#0b1020',
+    bgMain: '#130f1f',
     bgPanel: 'rgba(255,255,255,0.08)',
-    textMain: '#ffffff',
-    textMuted: 'rgba(255,255,255,0.7)',
-    accentMain: '#5eead4',
-    accentSecondary: '#8b5cf6',
+    textMain: '#fff3dc',
+    textMuted: 'rgba(255,243,220,0.72)',
+    accentMain: '#d7c27a',
+    accentSecondary: '#9c7bbd',
     borderSubtle: 'rgba(255,255,255,0.14)',
-    ink: '#dffaff',
-    paper: '#0b1020',
-    moss: '#b8ff63',
-    cyan: '#55f4ff',
-    coral: '#ff6b9b',
-    violet: '#8d7cff',
-    clay: '#ff9f7a',
-    line: 'rgba(85,244,255,0.18)',
-    lineStrong: 'rgba(223,250,255,0.74)'
+    ink: '#fff3dc',
+    paper: '#130f1f',
+    moss: '#d7c27a',
+    cyan: '#89d7c0',
+    coral: '#e7838f',
+    violet: '#9c7bbd',
+    clay: '#c28f62',
+    line: 'rgba(215,194,122,0.18)',
+    lineStrong: 'rgba(255,243,220,0.72)'
   },
   cat: {
     bgMain: '#fff7fb',
@@ -155,35 +155,35 @@ export const BACKGROUND_PRESET_MAP = {
 
 export const SHAPE_MODE_MAP = {
   sharp: {
-    label: '俐落直角',
+    label: '俐落方角',
     surfaceRadius: '4px',
     controlRadius: '2px',
     shapeShadow: '12px 12px 0 var(--ink)',
     panelBlur: '0px'
   },
   soft: {
-    label: '柔和方塊',
+    label: '柔和圓角',
     surfaceRadius: '12px',
     controlRadius: '10px',
     shapeShadow: '0 18px 50px rgba(17, 19, 31, 0.14)',
     panelBlur: '0px'
   },
   round: {
-    label: '圓角卡片',
+    label: '膠囊圓角',
     surfaceRadius: '22px',
     controlRadius: '999px',
     shapeShadow: '0 20px 60px rgba(17, 19, 31, 0.16)',
     panelBlur: '0px'
   },
   glass: {
-    label: '玻璃質感',
+    label: '玻璃面板',
     surfaceRadius: '18px',
     controlRadius: '14px',
     shapeShadow: '0 22px 70px rgba(17, 19, 31, 0.16)',
     panelBlur: '16px'
   },
   solid: {
-    label: '實心板塊',
+    label: '實心卡片',
     surfaceRadius: '6px',
     controlRadius: '4px',
     shapeShadow: '6px 6px 0 var(--ink)',
@@ -209,46 +209,63 @@ export const FONT_SIZE_LABELS = {
   sm: '小'
 };
 
+export const FONT_FAMILY_MAP = {
+  default: '"Chivo", "Noto Sans TC", sans-serif',
+  jhenghei: '"Microsoft JhengHei", "Noto Sans TC", sans-serif',
+  noto: '"Noto Sans TC", "Chivo", sans-serif',
+  system: 'system-ui, "Segoe UI", "Noto Sans TC", sans-serif',
+  serif: '"Noto Serif TC", "PMingLiU", serif',
+  mono: '"JetBrains Mono", "Cascadia Mono", "Noto Sans TC", monospace'
+};
+
+export const FONT_FAMILY_LABELS = {
+  default: '預設',
+  jhenghei: '微軟正黑體',
+  noto: '思源黑體',
+  system: '系統字體',
+  serif: '襯線字體',
+  mono: '等寬字體'
+};
+
 export const COLOR_WORD_MAP = {
-  白: '#ffffff',
   白色: '#ffffff',
-  黑: '#050505',
+  白: '#ffffff',
   黑色: '#050505',
+  黑: '#050505',
   粉紅: '#ffd6e8',
-  粉紅色: '#ffd6e8',
+  粉色: '#ffd6e8',
+  粉: '#ffd6e8',
   奶油: '#fff8ed',
-  奶油色: '#fff8ed',
   米色: '#fff8ed',
-  藍: '#eff6ff',
+  暖色: '#fff8ed',
+  冷色: '#eff6ff',
   藍色: '#eff6ff',
-  深藍: '#111827',
-  紫: '#f7f2ff',
+  深色: '#111827',
   紫色: '#f7f2ff',
-  綠: '#e8fff7',
   綠色: '#e8fff7',
-  黃: '#fff8d6',
   黃色: '#fff8d6',
-  橘: '#fff1df',
+  金色: '#c9a646',
+  特殊金色: '#b88a2a',
+  香檳金: '#d7c27a',
   橘色: '#fff1df',
-  紅: '#fff0ed',
   紅色: '#fff0ed',
-  灰: '#f4f4f5',
   灰色: '#f4f4f5'
 };
 
 export const SECTION_EXPLAINERS = {
-  home: '首頁用語意化 hero 區塊、Anime.js 入場節奏、主視覺圖片與輕量 SVG 訊號組成，負責建立網站定位與第一個操作入口。',
-  intro: '3D 場域由 assets/js/scene.js 管理，使用 Three.js 建立 renderer、camera、幾何核心、粒子軌道與三種模式按鈕，並保留文字摘要避免資訊只存在 Canvas。',
-  features: '特色區保留既有產品敘事卡片，透過 data-reveal 與一致的卡片樣式呈現平台使用情境，不把貓咪元素放大成整站主題。',
-  tech: '技術區把 Anime.js、Three.js、資料層、可用性與 Remotion 拆成卡片，對應模組化檔案，讓每個功能責任清楚。',
-  gallery: '圖庫區由 assets/js/ui.js 的 initImageGallery 控制，點擊卡片會切換圖片、說明文字與 active 狀態。',
-  about: '影像素材區使用 video + poster，Remotion 只作為素材來源；就算 mp4 沒載入，仍有 poster 與文字摘要可讀。',
-  contact: '控制區包含智慧導覽員與城市天氣。導覽員走安全 Action Router；天氣區走 /api/weather 並顯示城市時間、溫度、風速與來源。',
-  presentation: '簡報頁由 assets/js/notes.js 管理左右滑動、縮放與 PPT lazy load 下載，內容以網頁簡報形式保留在最後一頁。',
-  background: '背景控制由 AI Action Router 更新 AppState，再套用 CSS variables；背景色或 preset 只改表層背景，不會切換 theme。',
-  theme: '主題控制使用 THEME_TOKEN_MAP 管理 future/cat 的視覺語言，背景 preset 與自訂色碼是另一層，因此不會破壞原本選定主題。',
-  font: '字體大小使用 FONT_SCALE_MAP 更新 --font-scale，標題、內文、按鈕和導覽文字都按照比例縮放，而不是全部變同一個大小。',
-  marquee: '跑馬燈使用 CSS animation 顯示目前提示文字；智慧導覽員可以透過 setMarquee action 更新內容。',
-  wheel: '輪軸式導覽由同一份 PAGE_MAP 產生，點擊節點會走 Action Router 切頁，因此和按鈕、鍵盤、滑動、智慧導覽員保持同步。',
-  progress: '底部進度線根據 PAGE_MAP 的 pageIndex 計算 scaleX，不顯示百分比，到最後一頁會填滿。'
+  home: '首頁用語意化 hero 組成，主視覺與 CTA 都由同一份 PageMap 控制；進場節奏交給 animations.js，頁面切換交給 experience.js。',
+  intro: '3D 場域在 scene.js 內建立 Three.js renderer、camera、幾何核心與粒子軌道，模式按鈕只改場景狀態，不直接重建整個 canvas。',
+  features: '特色頁把使用情境拆成 story cards，讓平台像城市訊號產品，而不是單純貓咪主題頁。',
+  tech: '技術頁將 Anime.js、Three.js、GSAP、API、可近用與 Remotion 分成六張卡片；目前卡片只做漸入，不再持續浮動。',
+  gallery: '展示頁用本機動畫風格圖片作為素材，點選卡片只更新圖片、說明與 active 狀態，不會切換頁面或跳到頂端。',
+  about: '影像頁播放 Remotion 輸出的 mp4；如果影片無法播放，poster 與文字摘要仍保留完整資訊。',
+  contact: '控制頁包含智慧導覽與城市天氣。導覽員會先嘗試讓模型理解自然語言，再正規化為安全 JSON Action，由 Action Router 更新 AppState。',
+  presentation: '簡報頁是最後一個 SPA panel，notes.js 負責左右滑動、拖曳、滾輪與縮放；PPT 下載以 lazy import 載入 pptxgenjs。',
+  background: '背景控制走 setBackground action，只改背景色或 preset，不改使用者一開始選的「未來」或「溫暖」主題。',
+  theme: '主題控制走 THEME_TOKEN_MAP。未來主題偏高級科技產品，溫暖主題保留柔和貓咪元素；背景色變更不等於切主題。',
+  font: '字體大小走 FONT_SCALE_MAP 與 --font-scale，字體家族走 FONT_FAMILY_MAP；標題、內文、按鈕會按比例縮放，不會全部變同一個大小。',
+  shape: '形狀控制會把自然語言轉成 sharp、soft、round、glass、solid 等預設視覺模式，透過 CSS variables 改圓角、陰影與面板質感。',
+  marquee: '跑馬燈用 CSS animation 呈現，導覽員可透過 setMarquee 修改文字；低效能模式會放慢或降級動畫。',
+  wheel: '右側輪軸導覽讀同一份 PAGE_MAP，點擊節點會走 Action Router，因此會同步頁面、進度線與 active nav。',
+  progress: '底部進度線根據 pageIndex / totalPages 計算，不看垂直捲動；最後一頁會完整填滿。'
 };

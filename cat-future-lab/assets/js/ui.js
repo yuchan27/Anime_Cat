@@ -1,40 +1,6 @@
-import { askCatGuide, fetchEnvStatus, fetchWeather } from './api.js';
+import { fetchEnvStatus, fetchWeather } from './api.js';
 
 let weatherTimeTimer = null;
-
-export function initLoader() {
-  const loader = document.querySelector('[data-loader]');
-  const bar = document.querySelector('[data-loader-bar]');
-  const count = document.querySelector('[data-loader-count]');
-  if (!loader || !bar || !count) return;
-
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const start = performance.now();
-  const minimum = reducedMotion ? 240 : 1150;
-
-  const tick = (now) => {
-    const progress = Math.min(99, Math.round(((now - start) / minimum) * 100));
-    bar.style.width = `${progress}%`;
-    count.textContent = `${progress}%`;
-    if (progress < 99) requestAnimationFrame(tick);
-  };
-
-  requestAnimationFrame(tick);
-
-  const finish = () => {
-    const elapsed = performance.now() - start;
-    const delay = Math.max(0, minimum - elapsed);
-    window.setTimeout(() => {
-      bar.style.width = '100%';
-      count.textContent = '100%';
-      loader.classList.add('is-hidden');
-      window.setTimeout(() => loader.remove(), reducedMotion ? 0 : 360);
-    }, delay);
-  };
-
-  if (document.readyState === 'complete') finish();
-  else window.addEventListener('load', finish, { once: true });
-}
 
 export function initHeader() {
   const header = document.querySelector('[data-header]');
@@ -51,13 +17,13 @@ export async function initApiStatus() {
     const status = await fetchEnvStatus();
     if (!status.hasGoogleAiKey) {
       node.dataset.state = 'error';
-      node.textContent = '尚未讀取到 Google AI key，目前使用安全 fallback 模式。';
+      node.textContent = '尚未讀取 Google AI key，目前會使用安全 fallback 回覆。';
       return;
     }
 
     const chain = Array.isArray(status.chatModels) && status.chatModels.length
       ? status.chatModels.join(' -> ')
-      : status.primaryModel || '未知';
+      : status.primaryModel || '未知模型';
 
     node.dataset.state = 'success';
     node.textContent = `已讀取 Google AI key。主模型：${status.primaryModel}；fallback 鏈：${chain}`;
@@ -67,34 +33,8 @@ export async function initApiStatus() {
   }
 }
 
-export function initChatPanel() {
-  const chatForm = document.querySelector('[data-chat-form]');
-  const chatOutput = document.querySelector('[data-chat-output]');
-  if (!chatForm || !chatOutput) return;
 
-  chatForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const input = chatForm.querySelector('input[name="message"]');
-    const message = input?.value.trim();
-    if (!message) return;
-
-    setStatus(chatOutput, 'loading', '導覽員正在整理回覆...');
-    input.value = '';
-
-    try {
-      const data = await askCatGuide(message);
-      const meta = [];
-      if (data.model) meta.push(data.model);
-      if (Number.isFinite(Number(data.latencyMs))) meta.push(`${data.latencyMs}ms`);
-      const metaText = meta.length ? `（${meta.join('，')}）` : '';
-      setStatus(chatOutput, 'success', `${data.reply}${metaText}`);
-    } catch {
-      setStatus(chatOutput, 'error', '聊天請求失敗，請稍後再試。');
-    }
-  });
-}
-
-export function initWeatherPanel() {
+export function initWeatherPanelV2() {
   const weatherButton = document.querySelector('[data-weather-button]');
   const weatherCity = document.querySelector('[data-weather-city]');
   const weatherStatus = document.querySelector('[data-weather-status]');
@@ -109,6 +49,8 @@ export function initWeatherPanel() {
     !weatherTime || !weatherTemp || !weatherWind || !weatherSource
   ) return;
 
+  let weatherRequestId = 0;
+
   const updatePlaceAndTime = () => {
     const option = weatherCity.selectedOptions[0];
     const placeName = option?.dataset.name || option?.textContent || '--';
@@ -119,38 +61,138 @@ export function initWeatherPanel() {
     weatherTimeTimer = window.setInterval(() => updateCityTime(weatherTime, timezone), 1000);
   };
 
-  weatherCity.addEventListener('change', updatePlaceAndTime);
-  updatePlaceAndTime();
-
-  weatherButton.addEventListener('click', async () => {
+  const loadSelectedWeather = async () => {
+    const requestId = ++weatherRequestId;
     const option = weatherCity.selectedOptions[0];
     const [lat, lng] = String(weatherCity.value).split(',').map(Number);
     const cityName = option?.dataset.name || option?.textContent || '未知城市';
 
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-      weatherStatus.textContent = '城市座標格式錯誤。';
+      weatherStatus.textContent = '城市座標格式不正確。';
       return;
     }
 
     weatherButton.disabled = true;
-    weatherStatus.textContent = `正在更新 ${cityName} 的天氣資料...`;
+    weatherStatus.textContent = `正在更新 ${cityName} 的城市訊號...`;
     weatherPlace.textContent = cityName;
 
     try {
       const data = await fetchWeather(lat, lng);
+      if (requestId !== weatherRequestId) return;
       weatherTemp.textContent = formatValue(data.temperature, ' C');
       weatherWind.textContent = formatValue(data.windSpeed, ' km/h');
       weatherSource.textContent = data.source || '未知';
       weatherStatus.textContent = `${cityName} 天氣資料更新完成。`;
     } catch {
+      if (requestId !== weatherRequestId) return;
       weatherTemp.textContent = '--';
       weatherWind.textContent = '--';
-      weatherSource.textContent = '錯誤';
-      weatherStatus.textContent = '天氣請求失敗，請稍後再試。';
+      weatherSource.textContent = 'fallback';
+      weatherStatus.textContent = '天氣資料暫時無法更新，已保留替代狀態。';
     } finally {
-      weatherButton.disabled = false;
+      if (requestId === weatherRequestId) weatherButton.disabled = false;
     }
+  };
+
+  const selectCurrentLocation = ({ latitude, longitude }) => {
+    let option = weatherCity.querySelector('option[data-current-location="true"]');
+    if (!option) {
+      option = document.createElement('option');
+      option.dataset.currentLocation = 'true';
+      weatherCity.prepend(option);
+    }
+
+    option.value = `${latitude.toFixed(4)},${longitude.toFixed(4)}`;
+    option.dataset.name = '目前位置';
+    option.dataset.tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Taipei';
+    option.textContent = '目前位置 Current';
+    option.selected = true;
+  };
+
+  const loadDefaultWeather = () => {
+    updatePlaceAndTime();
+    loadSelectedWeather();
+  };
+
+  weatherCity.addEventListener('change', () => {
+    updatePlaceAndTime();
+    loadSelectedWeather();
   });
+
+  weatherButton.addEventListener('click', loadSelectedWeather);
+
+  if ('geolocation' in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        selectCurrentLocation(position.coords);
+        loadDefaultWeather();
+      },
+      () => loadDefaultWeather(),
+      { enableHighAccuracy: false, timeout: 2600, maximumAge: 600000 }
+    );
+  } else {
+    loadDefaultWeather();
+  }
+}
+
+export function initHeroFlipCard() {
+  const card = document.querySelector('[data-hero-flip-card]');
+  if (!card) return;
+
+  const toggle = () => {
+    const next = !card.classList.contains('is-flipped');
+    card.classList.toggle('is-flipped', next);
+    card.setAttribute('aria-pressed', String(next));
+  };
+
+  card.addEventListener('click', toggle);
+  card.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    toggle();
+  });
+}
+
+export function initControlProximityFeedback() {
+  const controls = Array.from(document.querySelectorAll('button, .button, [role="button"], select'));
+  if (!controls.length || window.matchMedia('(pointer: coarse)').matches) return;
+
+  let frame = 0;
+  window.addEventListener('pointermove', (event) => {
+    if (frame) return;
+    frame = window.requestAnimationFrame(() => {
+      frame = 0;
+      let nearest = null;
+      let nearestDistance = Number.POSITIVE_INFINITY;
+
+      controls.forEach((control) => {
+        const rect = control.getBoundingClientRect();
+        const dx = event.clientX < rect.left
+          ? rect.left - event.clientX
+          : event.clientX > rect.right
+            ? event.clientX - rect.right
+            : 0;
+        const dy = event.clientY < rect.top
+          ? rect.top - event.clientY
+          : event.clientY > rect.bottom
+            ? event.clientY - rect.bottom
+            : 0;
+        const distance = Math.hypot(dx, dy);
+        if (distance < nearestDistance) {
+          nearest = control;
+          nearestDistance = distance;
+        }
+      });
+
+      controls.forEach((control) => {
+        control.classList.toggle('is-pointer-near', control === nearest && nearestDistance < 14);
+      });
+    });
+  }, { passive: true });
+
+  window.addEventListener('pointerleave', () => {
+    controls.forEach((control) => control.classList.remove('is-pointer-near'));
+  }, { passive: true });
 }
 
 export function initImageGallery() {
@@ -187,7 +229,7 @@ export function initReportDownload() {
 
   button.addEventListener('click', () => {
     const sections = slides.map((slide) => {
-      const title = slide.dataset.title || '未命名';
+      const title = slide.dataset.title || '未命名章節';
       const paragraph = slide.querySelector('p')?.textContent?.trim() || '';
       const points = Array.from(slide.querySelectorAll('li'))
         .map((li) => li.textContent?.trim())
@@ -198,9 +240,9 @@ export function initReportDownload() {
     });
 
     const markdown = [
-      '# Cat Future Lab - 互動網站技術手冊',
+      '# Cat Future Lab - 智慧導覽互動網站技術摘要',
       '',
-      `更新時間：${new Date().toLocaleString('zh-TW')}`,
+      `匯出時間：${new Date().toLocaleString('zh-TW')}`,
       '',
       ...sections
     ].join('\n\n');
@@ -228,7 +270,7 @@ export function initReportPptDownload() {
 
     const originalText = button.textContent;
     button.disabled = true;
-    button.textContent = '準備簡報...';
+    button.textContent = '產生簡報中...';
 
     try {
       const module = await import('pptxgenjs');
@@ -238,8 +280,8 @@ export function initReportPptDownload() {
       pptx.layout = 'LAYOUT_WIDE';
       pptx.author = 'yuchan';
       pptx.company = 'Cat Future Lab';
-      pptx.subject = 'Cat Future Lab 互動網站技術簡報';
-      pptx.title = 'Cat Future Lab 互動網站技術簡報';
+      pptx.subject = 'Cat Future Lab 智慧導覽互動網站';
+      pptx.title = 'Cat Future Lab 智慧導覽互動網站技術簡報';
       pptx.lang = 'zh-TW';
 
       const cover = pptx.addSlide();
@@ -253,7 +295,7 @@ export function initReportPptDownload() {
         bold: true,
         fontSize: 34
       });
-      cover.addText('互動網站技術簡報', {
+      cover.addText('智慧導覽互動網站技術簡報', {
         x: 0.8,
         y: 2.05,
         w: 11.2,
@@ -262,7 +304,7 @@ export function initReportPptDownload() {
         bold: true,
         fontSize: 26
       });
-      cover.addText('內容包含：左右切換 SPA、Action Router、主題 token、API proxy、Three.js、Remotion 與效能降級。', {
+      cover.addText('核心理念：未來網頁可以由 AI 理解自然語言後安全控制，但視覺仍維持成熟、乾淨、可閱讀的產品感。', {
         x: 0.8,
         y: 3.0,
         w: 11.4,
@@ -281,8 +323,8 @@ export function initReportPptDownload() {
       });
 
       for (const slideNode of slides) {
-        const title = slideNode.dataset.title || '未命名章節';
-        const summary = slideNode.querySelector('p')?.textContent?.trim() || '—';
+        const title = slideNode.dataset.title || '技術章節';
+        const summary = slideNode.querySelector('p')?.textContent?.trim() || '';
         const points = Array.from(slideNode.querySelectorAll('li'))
           .map((li) => li.textContent?.trim())
           .filter(Boolean);
@@ -355,7 +397,7 @@ export function initReportPptDownload() {
       await pptx.writeFile({ fileName });
     } catch (error) {
       console.error('[ppt-export] failed', error);
-      window.alert('導覽簡報匯出失敗，請稍後再試。');
+      window.alert('簡報匯出失敗，請稍後再試。');
     } finally {
       button.disabled = false;
       button.textContent = originalText;
@@ -365,11 +407,6 @@ export function initReportPptDownload() {
 
   button.addEventListener('click', exportPpt);
   window.addEventListener('catlab:pptrequest', exportPpt);
-}
-
-function setStatus(node, state, text) {
-  node.dataset.state = state;
-  node.textContent = text;
 }
 
 function formatValue(value, suffix) {

@@ -40,4 +40,10 @@ export function initRevealObserver(onReveal = () => {}) {
 function applyMotionPreference(shouldReduce, button) {
   document.documentElement.classList.toggle('reduce-motion', shouldReduce);
   button?.setAttribute('aria-pressed', String(shouldReduce));
+  if (button) {
+    const label = shouldReduce ? '開啟動態' : '降低動態';
+    button.textContent = label;
+    button.setAttribute('aria-label', shouldReduce ? '開啟動態效果' : '降低動態效果');
+  }
+  window.dispatchEvent(new CustomEvent('catlab:motionchange', { detail: { reduced: shouldReduce } }));
 }

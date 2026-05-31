@@ -1,11 +1,8 @@
-export async function askCatGuide(message) {
-  return requestJson('/api/chat', {
+export async function askNavigatorIntent(message, state) {
+  return requestJson('/api/ai-navigator', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({
-      message,
-      context: 'Cat Future Lab 是城市訊號互動觀測台，主軸為城市資料、3D 場域、AI 導覽與動態影像；動畫風貓咪只作為輕量觀測助手。'
-    })
+    body: JSON.stringify({ message, state })
   });
 }
 

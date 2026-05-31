@@ -33,9 +33,9 @@ export async function initNotesDeck() {
     slides.forEach((slide, idx) => {
       const target = idx === state.index ? scale : 1;
       if (gsap && animate && !prefersReduced()) {
-        gsap.to(slide, { scale: target, duration: 0.32, ease: 'power2.out' });
+        gsap.to(slide, { scale: target, duration: 0.32, ease: 'power2.out', force3D: true });
       } else {
-        slide.style.transform = `scale(${target})`;
+        slide.style.transform = `translateZ(0) scale(${target})`;
       }
     });
   };
@@ -43,7 +43,7 @@ export async function initNotesDeck() {
   const snapTrack = (animate = true) => {
     const x = -state.index * state.width;
     if (gsap && animate && !prefersReduced()) {
-      gsap.to(track, { x, duration: 0.55, ease: 'power3.out' });
+      gsap.to(track, { x, duration: 0.55, ease: 'power3.out', force3D: true });
     } else {
       track.style.transform = `translate3d(${x}px, 0, 0)`;
     }
@@ -88,7 +88,7 @@ export async function initNotesDeck() {
     drag.delta = event.clientX - drag.startX;
     const x = drag.startOffset + drag.delta;
     if (gsap) {
-      gsap.set(track, { x });
+      gsap.set(track, { x, force3D: true });
     } else {
       track.style.transform = `translate3d(${x}px,0,0)`;
     }

@@ -14,3 +14,4 @@
 6. Update the existing experience shell to read AppState and pageMap.
 7. Add CSS variables and theme/background/shape transitions without replacing existing content.
 8. Run static checks and short browser/runtime checks without leaving a long-running server.
+9. Performance pass: throttle pointer move handlers, skip animation timelines under reduced-performance, adapt canvas pixel ratio when reduced motion toggles, and keep the motion toggle label in sync.

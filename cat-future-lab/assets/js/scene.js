@@ -12,7 +12,15 @@ export async function initCatScene() {
 
 function initThreeScene(canvas, THREE) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  const getReducedState = () => (
+    document.documentElement.classList.contains('reduce-motion') ||
+    document.documentElement.classList.contains('reduced-performance')
+  );
+  const updatePixelRatio = () => {
+    const maxRatio = getReducedState() ? 1 : 1.5;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, maxRatio));
+  };
+  updatePixelRatio();
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
@@ -78,7 +86,8 @@ function initThreeScene(canvas, THREE) {
   }
   lab.add(antenna);
 
-  const particles = createParticleOrbit(110, materials.line, THREE);
+  const reducedScene = document.documentElement.classList.contains('reduced-performance');
+  const particles = createParticleOrbit(reducedScene ? 42 : 84, materials.line, THREE);
   scene.add(particles);
   const sparkRings = createSparkRings(THREE);
   lab.add(sparkRings);
@@ -106,6 +115,8 @@ function initThreeScene(canvas, THREE) {
   scene.add(accent);
 
   const pointer = { x: 0, y: 0 };
+  let pointerInside = false;
+  let lureMode = false;
   const modes = {
     calm: { speed: 0.72, light: 18, tint: 0x7766d8 },
     play: { speed: 1.35, light: 32, tint: 0xf36f52 },
@@ -117,6 +128,7 @@ function initThreeScene(canvas, THREE) {
     const rect = canvas.parentElement.getBoundingClientRect();
     const width = Math.max(320, rect.width);
     const height = Math.max(360, rect.height);
+    updatePixelRatio();
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
@@ -129,24 +141,59 @@ function initThreeScene(canvas, THREE) {
     updateModeButtons(mode);
   };
 
+  let pointerRaf = null;
+  let latestPointer = null;
+
   window.addEventListener('resize', resize, { passive: true });
   window.addEventListener('pointermove', (event) => {
-    pointer.x = (event.clientX / window.innerWidth - 0.5) * 2;
-    pointer.y = (event.clientY / window.innerHeight - 0.5) * 2;
+    latestPointer = { x: event.clientX, y: event.clientY };
+    if (pointerRaf) return;
+    pointerRaf = requestAnimationFrame(() => {
+      pointerRaf = null;
+      if (!latestPointer) return;
+      const rect = canvas.getBoundingClientRect();
+      pointerInside = latestPointer.x >= rect.left && latestPointer.x <= rect.right &&
+        latestPointer.y >= rect.top && latestPointer.y <= rect.bottom;
+      pointer.x = ((latestPointer.x - rect.left) / Math.max(1, rect.width) - 0.5) * 2;
+      pointer.y = ((latestPointer.y - rect.top) / Math.max(1, rect.height) - 0.5) * 2;
+      document.documentElement.classList.toggle('cat-treat-cursor', lureMode && pointerInside);
+    });
+  }, { passive: true });
+  canvas.addEventListener('pointerleave', () => {
+    pointerInside = false;
+    document.documentElement.classList.remove('cat-treat-cursor');
   }, { passive: true });
 
   bindModeButtons(setMode);
+  bindLureButton((next) => {
+    lureMode = next;
+    document.documentElement.classList.toggle('cat-lure-enabled', lureMode);
+    document.documentElement.classList.toggle('cat-treat-cursor', lureMode && pointerInside);
+  });
   resize();
   setMode('calm');
 
   const clock = new THREE.Clock();
+  let lastReducedState = getReducedState();
   const animate = () => {
+    const reducedNow = getReducedState();
+    if (reducedNow !== lastReducedState) {
+      lastReducedState = reducedNow;
+      updatePixelRatio();
+    }
+    if (document.hidden) {
+      requestAnimationFrame(animate);
+      return;
+    }
     const reduce = document.documentElement.classList.contains('reduce-motion');
     const elapsed = clock.getElapsedTime();
     const speed = reduce ? 0 : activeMode.speed;
+    const attraction = lureMode && pointerInside && !reduce ? 1 : 0;
 
     lab.rotation.y += ((pointer.x * 0.28) - lab.rotation.y) * 0.045;
     lab.rotation.x += ((-pointer.y * 0.12) - lab.rotation.x) * 0.045;
+    lab.position.x += ((pointer.x * 0.34 * attraction) - lab.position.x) * 0.06;
+    lab.position.y += ((-pointer.y * 0.18 * attraction) - lab.position.y) * 0.06;
     core.rotation.y += 0.007 * speed;
     core.rotation.x += 0.0032 * speed;
     ring.rotation.z += 0.008 * speed;
@@ -154,6 +201,10 @@ function initThreeScene(canvas, THREE) {
     ribbon.rotation.y += 0.004 * speed;
     ribbon.rotation.x = Math.sin(elapsed * activeMode.speed * 0.7) * 0.16;
     tailSignal.rotation.z = -0.9 + Math.sin(elapsed * 2.2 * activeMode.speed) * 0.22;
+    leftEar.rotation.z = 0.28 + Math.sin(elapsed * 3.1 * activeMode.speed) * 0.09 + pointer.x * 0.035 * attraction;
+    rightEar.rotation.z = -0.28 - Math.sin(elapsed * 2.8 * activeMode.speed + 0.7) * 0.09 + pointer.x * 0.035 * attraction;
+    leftEye.scale.y += (((attraction ? 4.2 : 1) - leftEye.scale.y) * 0.12);
+    rightEye.scale.y += (((attraction ? 4.2 : 1) - rightEye.scale.y) * 0.12);
     sparkRings.children.forEach((child, idx) => {
       child.rotation.y += (0.0035 + idx * 0.0012) * speed;
       child.rotation.x += (0.002 + idx * 0.0008) * speed;
@@ -241,10 +292,13 @@ function initCanvasFallback(canvas) {
   };
   let speed = modes.calm;
   let frame = 0;
+  let lureMode = false;
 
   const resize = () => {
     const rect = canvas.parentElement.getBoundingClientRect();
-    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    const reduced = document.documentElement.classList.contains('reduce-motion') ||
+      document.documentElement.classList.contains('reduced-performance');
+    const ratio = Math.min(window.devicePixelRatio || 1, reduced ? 1 : 2);
     canvas.width = Math.max(320, Math.floor(rect.width * ratio));
     canvas.height = Math.max(360, Math.floor(rect.height * ratio));
     canvas.style.width = `${Math.floor(canvas.width / ratio)}px`;
@@ -258,6 +312,11 @@ function initCanvasFallback(canvas) {
   };
 
   bindModeButtons(setMode);
+  bindLureButton((next) => {
+    lureMode = next;
+    document.documentElement.classList.toggle('cat-lure-enabled', lureMode);
+    document.documentElement.classList.toggle('cat-treat-cursor', lureMode);
+  });
   window.addEventListener('resize', resize, { passive: true });
   resize();
   setMode('calm');
@@ -310,13 +369,19 @@ function initCanvasFallback(canvas) {
     ctx.stroke();
 
     ctx.strokeStyle = '#11131f';
-    ctx.lineWidth = 10;
+    ctx.lineWidth = lureMode ? 7 : 10;
     ctx.lineCap = 'round';
     ctx.beginPath();
-    ctx.moveTo(-86, -8);
-    ctx.lineTo(-24, -8);
-    ctx.moveTo(24, -8);
-    ctx.lineTo(86, -8);
+    if (lureMode) {
+      ctx.ellipse(-54, -8, 28, 14, 0, 0, Math.PI * 2);
+      ctx.moveTo(82, -8);
+      ctx.ellipse(54, -8, 28, 14, 0, 0, Math.PI * 2);
+    } else {
+      ctx.moveTo(-86, -8);
+      ctx.lineTo(-24, -8);
+      ctx.moveTo(24, -8);
+      ctx.lineTo(86, -8);
+    }
     ctx.stroke();
 
     ctx.restore();
@@ -359,6 +424,17 @@ function roundRect(ctx, x, y, width, height, radius) {
 function bindModeButtons(setMode) {
   document.querySelectorAll('[data-scene-mode]').forEach((button) => {
     button.addEventListener('click', () => setMode(button.dataset.sceneMode));
+  });
+}
+
+function bindLureButton(setLureMode) {
+  const button = document.querySelector('[data-cat-lure-toggle]');
+  if (!button) return;
+  button.addEventListener('click', () => {
+    const next = button.getAttribute('aria-pressed') !== 'true';
+    button.setAttribute('aria-pressed', String(next));
+    button.classList.toggle('is-active', next);
+    setLureMode(next);
   });
 }
 

@@ -1,5 +1,6 @@
 import {
   BACKGROUND_PRESET_MAP,
+  FONT_FAMILY_MAP,
   FONT_SCALE_MAP,
   PAGE_MAP,
   SHAPE_MODE_MAP,
@@ -14,9 +15,11 @@ const initialPage = PAGE_MAP[0]?.id || 'home';
 const DEFAULT_STATE = Object.freeze({
   theme: 'cat',
   fontSize: 'md',
-  marqueeText: '可用智慧導覽控制頁面、背景、字體、形狀與簡報，所有操作都會先通過安全 Action Router。',
+  fontFamily: 'default',
+  marqueeText: '可用智慧導覽控制頁面、背景、字體、形狀、跑馬燈與簡報模式。',
   backgroundPreset: 'default',
   customBackgroundColor: undefined,
+  customTextColor: undefined,
   shapeMode: 'sharp',
   currentPage: initialPage,
   pageIndex: 0,
@@ -51,10 +54,15 @@ export function updateState(patch, options = {}) {
   return getState();
 }
 
-export function resetState() {
-  Object.assign(state, DEFAULT_STATE);
+export function resetState(options = {}) {
+  const preserved = {};
+  if (options.preserveTheme) preserved.theme = state.theme;
+  if (options.preservePage) preserved.currentPage = state.currentPage;
+  const shouldPersist = options.persist !== false;
+
+  Object.assign(state, DEFAULT_STATE, preserved);
   deriveState();
-  persistSettings();
+  if (shouldPersist) persistSettings();
   notify();
   return getState();
 }
@@ -93,6 +101,10 @@ export function isKnownFontSize(size) {
   return Object.hasOwn(FONT_SCALE_MAP, size);
 }
 
+export function isKnownFontFamily(family) {
+  return Object.hasOwn(FONT_FAMILY_MAP, family);
+}
+
 export function isKnownShapeMode(mode) {
   return Object.hasOwn(SHAPE_MODE_MAP, mode);
 }
@@ -100,11 +112,15 @@ export function isKnownShapeMode(mode) {
 function deriveState() {
   if (!isKnownTheme(state.theme)) state.theme = DEFAULT_STATE.theme;
   if (!isKnownFontSize(state.fontSize)) state.fontSize = DEFAULT_STATE.fontSize;
+  if (!isKnownFontFamily(state.fontFamily)) state.fontFamily = DEFAULT_STATE.fontFamily;
   if (!isKnownBackgroundPreset(state.backgroundPreset)) state.backgroundPreset = DEFAULT_STATE.backgroundPreset;
   if (!isKnownShapeMode(state.shapeMode)) state.shapeMode = DEFAULT_STATE.shapeMode;
   if (!isKnownPage(state.currentPage)) state.currentPage = initialPage;
   if (state.customBackgroundColor && !/^#[0-9a-f]{6}$/i.test(state.customBackgroundColor)) {
     state.customBackgroundColor = undefined;
+  }
+  if (state.customTextColor && !/^#[0-9a-f]{6}$/i.test(state.customTextColor)) {
+    state.customTextColor = undefined;
   }
 
   state.pageIndex = getPageIndex(state.currentPage);
@@ -125,6 +141,9 @@ function sanitizePatch(patch = {}) {
   if (next.customBackgroundColor === null || next.customBackgroundColor === '') {
     next.customBackgroundColor = undefined;
   }
+  if (next.customTextColor === null || next.customTextColor === '') {
+    next.customTextColor = undefined;
+  }
   if (typeof next.marqueeText === 'string') {
     next.marqueeText = next.marqueeText.trim().slice(0, 120);
   }
@@ -141,7 +160,6 @@ function readStoredSettings() {
 
   try {
     const parsed = JSON.parse(decodeURIComponent(raw));
-    if (parsed?.reset === true) return {};
     return sanitizeStoredSettings(parsed);
   } catch {
     return {};
@@ -153,6 +171,7 @@ function sanitizeStoredSettings(value) {
   const next = {};
   if (isKnownTheme(value.theme)) next.theme = value.theme;
   if (isKnownFontSize(value.fontSize)) next.fontSize = value.fontSize;
+  if (isKnownFontFamily(value.fontFamily)) next.fontFamily = value.fontFamily;
   if (isKnownBackgroundPreset(value.backgroundPreset)) next.backgroundPreset = value.backgroundPreset;
   if (isKnownShapeMode(value.shapeMode)) next.shapeMode = value.shapeMode;
   if (isKnownPage(value.currentPage)) next.currentPage = value.currentPage;
@@ -163,6 +182,9 @@ function sanitizeStoredSettings(value) {
   if (typeof value.customBackgroundColor === 'string' && /^#[0-9a-f]{6}$/i.test(value.customBackgroundColor)) {
     next.customBackgroundColor = value.customBackgroundColor.toLowerCase();
   }
+  if (typeof value.customTextColor === 'string' && /^#[0-9a-f]{6}$/i.test(value.customTextColor)) {
+    next.customTextColor = value.customTextColor.toLowerCase();
+  }
   return next;
 }
 
@@ -172,20 +194,15 @@ function persistSettings() {
     chosen: true,
     theme: state.theme,
     fontSize: state.fontSize,
+    fontFamily: state.fontFamily,
     marqueeText: state.marqueeText,
     backgroundPreset: state.backgroundPreset,
     customBackgroundColor: state.customBackgroundColor,
+    customTextColor: state.customTextColor,
     shapeMode: state.shapeMode,
     currentPage: state.currentPage,
     presentationMode: state.presentationMode
   };
   document.cookie = `${SETTINGS_COOKIE}=${encodeURIComponent(JSON.stringify(payload))}; Max-Age=${SETTINGS_MAX_AGE}; Path=/; SameSite=Lax`;
   hasPersistedSettingsFlag = true;
-}
-
-function clearStoredSettings() {
-  if (typeof document === 'undefined') return;
-  document.cookie = `${SETTINGS_COOKIE}=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/; SameSite=Lax`;
-  document.cookie = `${SETTINGS_COOKIE}=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/`;
-  document.cookie = `${SETTINGS_COOKIE}=${encodeURIComponent(JSON.stringify({ reset: true }))}; Max-Age=5; Path=/; SameSite=Lax`;
 }

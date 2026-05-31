@@ -1437,3 +1437,67 @@ type ShapeMode = "sharp" | "soft" | "round" | "glass" | "solid";
 - Reset must not delete files, rebuild assets, or change committed source. It only resets runtime UI preferences for this site.
 - If the user asks for an unclear, unsafe, or strange visual command, return `unknown` and do not mutate state.
 - If the user asks how a block works, answer from local project knowledge without changing UI state unless the request also includes a clear action command.
+
+---
+
+## 29. 2026-05-27 User Requirements Addendum
+
+Use these requirements as active project rules for the current Cat Future Lab implementation.
+
+- The project core idea is: future websites can be controlled by AI through safe, validated actions. Users should be able to ask the navigator to change page, background color, card shape, font size, marquee text, and presentation mode.
+- The visual design must not become a robot/AI dashboard. The interface should feel like a mature modern website. AI is the control layer, not the visual theme.
+- The original two style choices are now named `future` and `warm`. In code the warm theme may still use the legacy id `cat`, but user-facing text should say `溫暖` instead of emphasizing a full cat-themed site.
+- The reset/default button must clear AI-made runtime changes only. It should preserve the user's selected theme/style and should not unexpectedly send the user back to the top of a page.
+- Natural language color control should be flexible. Common color words such as white, black, pink, warm, cool, cream, dark, and valid hex colors should become safe `setBackground` actions. Strange or unclear color commands should return `unknown` and must not change UI state.
+- Background changes must automatically maintain readable text contrast. A black background should use light text; a white background should use dark text.
+- Text color control may be supported as a separate safe action, but only through validated hex colors or known color words. It must not allow arbitrary CSS.
+- Shape changes must remain bounded to whitelisted modes such as `sharp`, `soft`, `round`, `glass`, and `solid`. The navigator must never execute arbitrary CSS or JavaScript from user or AI output.
+- Runtime preferences should be persisted with a site-scoped cookie only. Never store API keys, chat history, or private data in the cookie.
+- Page changes, wheel navigation, gallery actions, and presentation next/previous actions must not force-scroll the user back to the top. Preserve the user's current reading position whenever possible.
+- The custom cat cursor should remain available on desktop/fine-pointer devices, including after opening browser developer tools. The visual cursor hotspot should match the real pointer position as closely as possible.
+- The `future` theme must include an actual future-lab background treatment, not just button/card color changes.
+- The `future` theme should be visually distinct from the warm/cat style. Current direction: French art future, using dark aubergine surfaces, champagne linework, restrained rose/sage accents, decorative curves, and a curated gallery feeling instead of American flat SaaS/cyber neon.
+- Initial loading should be theme-specific: future mode uses particles gathering toward the center and bursting outward; warm mode uses a small animated cat/progress motif.
+- Page transitions should be visible and polished across the SPA. Prefer transform and opacity, and keep reduced-motion behavior available.
+- The final presentation page should be compact and useful. Avoid large empty areas. It should support web slides and PPT download, with content sufficient for a technical walkthrough.
+- Font size changes must never make page panels or presentation slides unusable. Large and extra-large text modes should tighten title maximums, increase bottom safe padding, and shrink presentation media automatically.
+- Avoid duplicate large media slides in the presentation. Keep Remotion as the video/process slide, and use later slides for AI-controlled theme/background logic rather than another full video.
+
+---
+
+## 30. 2026-05-28 Smart Navigator and RWD Addendum
+
+These rules refine the current AI-controlled website direction.
+
+- The smart navigator must attempt the server AI planner first for normal user messages. The local parser is only a fallback for missing keys, network failure, invalid model JSON, or server failure.
+- The frontend should always show a visible response for every non-empty smart navigator message, even when no page state changes.
+- The user may describe colors in flexible natural language, such as `特殊的金色`, `奶油霧面`, `深海藍`, `高級黑`, or `柔和粉色`. The AI planner should infer a tasteful safe hex color when reasonable.
+- Visual mutations such as background, text color, shape, font size, and theme changes should be returned as a proposal first. The user should be able to accept or reject the proposal before it changes the page.
+- Do not expose chain-of-thought. Show only a short user-facing `decisionSummary` that explains why an action was selected.
+- Even if the user asks to "turn off security", the site must not execute arbitrary JavaScript, CSS, or HTML from the model. The relaxed part is natural-language interpretation, not code execution.
+- Explanation questions such as `3D 場域怎麼做？`, `背景控制怎麼做？`, or `這個區塊的功能是什麼？` should be sent to the AI planner when available and should return an explanatory `unknown(message)` response without mutating UI state.
+- Mobile layout must not be constrained by fixed-height cards. Panels, weather cards, smart navigator responses, and presentation slides must grow or scroll with font size changes.
+- On mobile, header controls should stay compact near the logo/brand row instead of becoming a large block below navigation. Navigation can scroll horizontally, but content must not be pushed into unusable space.
+- Bottom page controls and wheel navigation should remain semi-transparent, compact, and should not block primary content or cause horizontal overflow.
+
+---
+
+## 31. 2026-05-28 Relaxed Navigator, Particles, Music, and Cat Interaction Addendum
+
+These rules override stricter wording from older sections for the active Cat Future Lab implementation.
+
+- Do not treat the smart navigator as a rigid keyword switcher. For normal messages, call the server AI planner first and let the model infer intent from flexible natural language.
+- The relaxed behavior applies to natural-language interpretation and model output shape. It does not allow exposing secrets, running arbitrary JavaScript, injecting HTML, or applying raw CSS from the model.
+- The navigator must refuse requests that try to reveal, print, infer, or extract API keys, tokens, passwords, `.env` contents, or other secrets.
+- Model responses may use canonical JSON actions or simple shorthand such as `{"goToPage":"intro"}` and `{"setBackground":"#d4af37"}`. The frontend should normalize those into safe Action Router actions.
+- If a model action is malformed but the user intent is clear and harmless, repair it into the nearest safe action instead of failing with a validation-only error.
+- Visual changes such as background, text color, font size, shape, and theme should show a confirmation proposal first, including a short user-facing decision summary and color preview when relevant.
+- The site should always return a visible response for every non-empty navigator input, even if no state changes.
+- The global `導覽` control must be available from every page. It should open a lightweight translucent modal and submit through the same smart navigator flow as the control page.
+- Music support uses local files only: `assets/music/1.mp3` for the future theme and `assets/music/2.mp3` for the warm theme. Music starts only after the user clicks the sound button.
+- The future theme must include a visible particle background with slow drift plus gather/burst feeling. Reduced-motion or reduced-performance mode may pause or simplify particles, but the future theme should still have a distinct background treatment.
+- Background and theme switching should be slower and more visible than ordinary hover transitions so users can perceive the state change.
+- The intro / 3D page should explain its scene modes clearly. The cat-ear geometry should feel alive, with subtle ear movement even when the user is not interacting.
+- The intro / 3D page should include a `貓咪跟隨` interaction. When enabled, the cat-like scene follows the pointer, eyes open toward the pointer, and the desktop cursor changes to a cat treat while hovering the scene.
+- The site icon / brand mark should use cat-related imagery and may animate subtly. Keep it lightweight and do not block layout.
+- Performance remains a required quality gate: cap device pixel ratio where needed, reduce particle counts on weak devices, and prefer CSS transforms/opacity over layout-heavy animation.

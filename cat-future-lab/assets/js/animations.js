@@ -3,14 +3,20 @@ let animeModule;
 const reduceMotion = () => document.documentElement.classList.contains('reduce-motion');
 
 export async function initPageAnimations() {
+  await waitForPageReady();
   prepareSignalPath();
-  if (reduceMotion()) return;
+  if (reduceMotion() || document.documentElement.classList.contains('reduced-performance')) {
+    revealSignalPath();
+    return;
+  }
 
   const anime = await loadAnime();
   if (!anime) {
     revealSignalPath();
     return;
   }
+
+  document.documentElement.classList.add('has-anime');
 
   const signalPath = document.querySelector('[data-signal-path]');
   const metricNode = document.querySelector('[data-metric-value]');
@@ -68,16 +74,25 @@ export async function initPageAnimations() {
   }
 
   anime({
-    targets: '.signal-panel__image',
-    scale: [1.005, 1.02, 1.005],
+    targets: '.signal-panel__image-stack',
+    opacity: [1, 0.96, 1],
     duration: 7600,
     easing: 'easeInOutSine',
     loop: true
   });
 }
 
+function waitForPageReady() {
+  if (document.body.classList.contains('page-ready')) return Promise.resolve();
+
+  return new Promise((resolve) => {
+    const onReady = () => resolve();
+    window.addEventListener('catlab:pageready', onReady, { once: true });
+  });
+}
+
 export async function animateRevealedSection(node) {
-  if (reduceMotion() || !node) return;
+  if (reduceMotion() || document.documentElement.classList.contains('reduced-performance') || !node) return;
   if (!node.matches('.module-card, .story-card, .note-slide')) return;
 
   const anime = await loadAnime();

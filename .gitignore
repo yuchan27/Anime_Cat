@@ -12,3 +12,16 @@ cat-future-lab/assets/remotion/*.mp4
 cat-future-lab/assets/remotion/*.webm
 cat-future-lab/assets/remotion/*.mov
 cat-future-lab/assets/remotion/*.png
+cat-future-lab/remotion/node_modules/
+cat-future-lab/remotion/.cache/
+cat-future-lab/remotion/out/
+cat-future-lab/remotion/dist/
+cat-future-lab/remotion/*.log
+
+# Local-only course / handoff artifacts
+/講義/
+/image/
+/*.pptx
+*.tmp
+*.temp
+Thumbs.db

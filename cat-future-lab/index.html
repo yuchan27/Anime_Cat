@@ -15,6 +15,7 @@
   <meta name="twitter:title" content="Cat Future Lab｜城市訊號互動觀測台">
   <meta name="twitter:description" content="城市資料、3D 場域、AI 導覽與 Remotion 動態影像。">
   <meta name="theme-color" content="#11131f">
+  <link rel="icon" type="image/png" href="assets/images/catlab-icon.png">
   <link rel="stylesheet" href="assets/css/styles.css">
   <script type="application/ld+json">
   {
@@ -39,14 +40,14 @@
         <span class="loader-cat__face"></span>
       </div>
       <p>選擇網站語氣</p>
-      <span class="style-gate__hint">同一個網站，提供成熟科技產品感與柔和動畫貓咪感。</span>
+      <span class="style-gate__hint">同一個網站，提供成熟科技產品感與溫暖動畫貓咪感。</span>
       <div class="style-choice-grid">
         <button class="style-choice style-choice--future" type="button" data-theme-choice="future">
           <strong>未來科技發展</strong>
-          <span>乾淨的產品網站語氣、深色訊號背景與克制的粒子載入。</span>
+          <span>法式藝術未來感、深色展廳背景、香檳色線條與克制的粒子載入。</span>
         </button>
         <button class="style-choice style-choice--cat" type="button" data-theme-choice="cat">
-          <strong>可愛動畫貓咪</strong>
+          <strong>溫暖動畫貓咪</strong>
           <span>柔和、乾淨、有質感的貓咪輔助視覺，保留內容專業度。</span>
         </button>
       </div>
@@ -60,12 +61,16 @@
   <div class="cat-cursor" data-cat-cursor aria-hidden="true">
     <img class="cat-cursor__sprite" src="assets/images/pixel-cat-cursor.png" alt="">
   </div>
+  <div class="future-particle-field" aria-hidden="true"></div>
 
   <a class="skip-link" href="#main">跳到主要內容</a>
 
   <header class="site-header" data-header>
     <a class="brand" href="#hero" aria-label="Cat Future Lab 首頁">
-      <span class="brand-mark" aria-hidden="true"><span></span></span>
+      <span class="brand-mark" aria-hidden="true">
+        <img class="brand-mark__image" src="assets/images/catlab-icon.png" alt="">
+        <span></span>
+      </span>
       <span>Cat Future Lab</span>
     </a>
     <nav class="site-nav" aria-label="主選單">
@@ -79,6 +84,7 @@
       <a href="#presentation">簡報</a>
     </nav>
     <div class="header-actions" aria-label="控制列">
+      <button class="ai-toggle" type="button" data-ai-open aria-label="開啟智慧導覽視窗">導覽</button>
       <button class="style-toggle" type="button" data-theme-switch aria-label="切換網站風格">未來科技</button>
       <button class="reset-settings" type="button" data-reset-settings aria-label="還原預設設定">預設</button>
 
@@ -96,6 +102,29 @@
   <div class="marquee-bar" data-marquee aria-live="polite">
     <span data-marquee-text>可用自然語言控制頁面、背景、字體、跑馬燈與簡報模式。</span>
     <span data-marquee-text aria-hidden="true">可用自然語言控制頁面、背景、字體、跑馬燈與簡報模式。</span>
+  </div>
+
+  <div class="ai-modal" data-ai-modal hidden>
+    <div class="ai-modal__scrim" data-ai-close aria-hidden="true"></div>
+    <section class="ai-modal__panel" role="dialog" aria-modal="true" aria-labelledby="global-ai-title">
+      <div class="ai-modal__header">
+        <div>
+          <p class="eyebrow">智慧導覽</p>
+          <h2 id="global-ai-title">在任何頁面控制網站</h2>
+        </div>
+        <button class="icon-button ai-modal__close" type="button" data-ai-close aria-label="關閉智慧導覽">×</button>
+      </div>
+      <p class="ai-modal__hint">可以輸入「背景改成特殊金色」、「切到技術頁」、「字體小一點」或「這個區塊怎麼做」。</p>
+      <form class="chat-form ai-modal__form" data-chat-form>
+        <label for="global-chat-message">輸入控制或問題</label>
+        <div class="chat-row">
+          <input id="global-chat-message" name="message" type="text" autocomplete="off"
+            placeholder="例如：把背景改成深海藍，並切到展示頁">
+          <button class="button button--primary" type="submit">送出</button>
+        </div>
+      </form>
+      <div class="status-box ai-modal__output" data-chat-output aria-live="polite">導覽員可以控制頁面、主題、背景、字體、形狀與跑馬燈。</div>
+    </section>
   </div>
 
   <aside class="wheel-nav" data-wheel-nav aria-label="輪軸式頁面導覽"></aside>
@@ -119,11 +148,15 @@
 
       </div>
 
-      <figure class="signal-panel" aria-label="主視覺貓咪圖">
-        <img class="signal-panel__image cartoonized" src="assets/images/cat-hero-cartoon.png" alt="動畫風格虎斑貓坐在互動實驗室中。">
+      <figure class="signal-panel signal-panel--flip" data-hero-flip-card role="button" tabindex="0"
+        aria-pressed="false" aria-label="主視覺貓咪圖，點擊可切換另一張觀測場景">
+        <div class="signal-panel__image-stack">
+          <img class="signal-panel__image signal-panel__image--front cartoonized" src="assets/images/cat-hero-cartoon.png" alt="動畫風格虎斑貓坐在互動實驗室中。">
+          <img class="signal-panel__image signal-panel__image--back cartoonized" src="assets/images/cat-french-observatory.png" alt="法式未來觀測餐廳裡，貓咪坐在城市天氣投影旁。">
+        </div>
         <figcaption>
           <strong data-metric-value>60</strong>
-          <span>FPS 體驗目標 / 城市資料 / 即時互動</span>
+          <span>FPS 體驗目標 / 點擊翻轉主視覺</span>
         </figcaption>
       </figure>
     </section>
@@ -132,11 +165,28 @@
       <div class="section-copy" data-reveal>
         <p class="eyebrow">3D 城市場域</p>
         <h2 id="scene-title">用粒子軌道呈現城市訊號流動</h2>
+        <p>
+          這一頁是平台的「城市訊號入口」。未來風格不做厚重科技儀表板，而是以法式展廳般的單層面板、
+          香檳金線條與柔和背景光，讓 3D 場域像一個可以安靜觀測資料的空間。
+        </p>
         <p>核心場域把城市資料轉成幾何、光照與粒子節奏，使用者可切換穩定、動態與專注三種觀測模式。</p>
         <div class="scene-controls" aria-label="3D 場景模式控制">
-          <button class="icon-button" type="button" data-scene-mode="calm" aria-pressed="true" title="穩定模式">穩定</button>
-          <button class="icon-button" type="button" data-scene-mode="play" aria-pressed="false" title="動態模式">動態</button>
-          <button class="icon-button" type="button" data-scene-mode="focus" aria-pressed="false" title="專注模式">專注</button>
+          <button class="icon-button scene-mode-button" type="button" data-scene-mode="calm" aria-pressed="true"
+            title="穩定模式：慢速粒子與柔和光線">
+            <strong>穩定</strong><span>慢速觀測</span>
+          </button>
+          <button class="icon-button scene-mode-button" type="button" data-scene-mode="play" aria-pressed="false"
+            title="動態模式：粒子速度提升，光線更活躍">
+            <strong>動態</strong><span>訊號流動</span>
+          </button>
+          <button class="icon-button scene-mode-button" type="button" data-scene-mode="focus" aria-pressed="false"
+            title="專注模式：降低速度，強調核心資訊">
+            <strong>專注</strong><span>安靜閱讀</span>
+          </button>
+          <button class="icon-button scene-mode-button scene-mode-button--lure" type="button" data-cat-lure-toggle
+            aria-pressed="false" title="讓場域中的貓咪被滑鼠吸引">
+            <strong>貓咪跟隨</strong><span>靠近會看著貓條</span>
+          </button>
         </div>
       </div>
       <figure class="scene-canvas-wrap" data-reveal>
@@ -164,8 +214,8 @@
         </article>
         <article class="module-card" data-reveal>
           <span class="module-card__index">03</span>
-          <h3>滾動體驗</h3>
-          <p>處理區塊進場、視差與互動回饋，讓長頁面不只是靜態閱讀。</p>
+          <h3>頁面轉場</h3>
+          <p>使用左右切換、鍵盤與滑動手勢組成 SPA 節奏，避免變成傳統垂直長頁。</p>
         </article>
         <article class="module-card" data-reveal>
           <span class="module-card__index">04</span>
@@ -244,7 +294,7 @@
       <aside class="weather-panel" data-reveal aria-labelledby="weather-title">
         <p class="eyebrow">Open-Meteo 城市資料</p>
         <h2 id="weather-title">選一座城市，讀取當地訊號</h2>
-        <p data-weather-status>請先選擇城市，再更新當地天氣與時間。</p>
+        <p data-weather-status>正在判斷目前位置；無法定位時會使用台北。</p>
         <label class="weather-select-label" for="weather-city">城市選單</label>
         <div class="weather-select-wrap">
           <select id="weather-city" data-weather-city>
@@ -259,7 +309,7 @@
             <option value="48.8566,2.3522" data-name="巴黎" data-tz="Europe/Paris">巴黎 Paris</option>
           </select>
         </div>
-        <button class="button button--secondary" type="button" data-weather-button>更新城市訊號</button>
+        <button class="button button--secondary" type="button" data-weather-button>重新整理城市訊號</button>
         <dl class="weather-data" aria-live="polite">
           <div><dt>城市</dt><dd data-weather-place>台北</dd></div>
           <div><dt>當地時間</dt><dd data-weather-time>--</dd></div>
@@ -447,14 +497,30 @@
 
             <article class="note-slide" data-note-slide data-title="08 背景與主題">
               <header><span>08</span><h3>主題、背景與可讀性</h3></header>
-              <p>主題決定整體語言，背景只是可調整表層。使用者改白色、黑色或 hex 色碼時，不會破壞原本主題。</p>
-              <figure class="note-media note-media--video">
-                <video controls preload="metadata" poster="assets/remotion/cat-loop-still.png">
-                  <source src="assets/remotion/cat-loop.mp4" type="video/mp4">
-                  你的瀏覽器不支援影片播放。
-                </video>
-                <figcaption>可讀性策略：背景變亮時切深色文字；背景變暗時切淺色文字，面板同步套用安全 surface。</figcaption>
-              </figure>
+              <p>主題決定整體語言，背景與文字顏色則是 AI 可調整的表層設定。使用者改白色、黑色或 hex 色碼時，不會破壞原本主題。</p>
+              <div class="note-kpi-grid">
+                <div class="note-kpi"><strong>Theme</strong><span>未來 / 溫暖決定整體語氣</span></div>
+                <div class="note-kpi"><strong>Background</strong><span>支援 preset 與 #hex 色碼</span></div>
+                <div class="note-kpi"><strong>Contrast</strong><span>自動選擇可讀文字色</span></div>
+              </div>
+              <div class="note-columns">
+                <div class="note-panel">
+                  <h4>AI 可以改什麼</h4>
+                  <ul>
+                    <li>背景改成黑色、白色、粉紅、奶油色或 #111827。</li>
+                    <li>文字顏色可用合法色碼或常見顏色詞控制。</li>
+                    <li>方塊形狀由安全 Action Router 轉成預設視覺模式，避免任意 CSS 破壞版面。</li>
+                  </ul>
+                </div>
+                <div class="note-panel">
+                  <h4>安全規則</h4>
+                  <ul>
+                    <li>背景控制不會改變已選主題。</li>
+                    <li>不執行 AI 回傳的任意 CSS 或 JavaScript。</li>
+                    <li>不明確的顏色或形狀指令會被回覆 unknown。</li>
+                  </ul>
+                </div>
+              </div>
             </article>
 
             <article class="note-slide" data-note-slide data-title="09 效能與可近用">
@@ -483,11 +549,11 @@
             </article>
 
             <article class="note-slide" data-note-slide data-title="11 Action Schema">
-              <header><span>11</span><h3>Action Schema 與白名單</h3></header>
-              <p>導覽員不執行任意 JS，只能輸出固定 JSON Action；每個 action 都會被 validator 檢查 enum 與參數格式。</p>
+              <header><span>11</span><h3>Action Schema 與安全邊界</h3></header>
+              <p>導覽員可以用更彈性的自然語言理解需求，但不執行任意 JS；模型輸出會先正規化成 JSON Action，再由 Router 套用。</p>
               <ul>
                 <li><code>setBackground</code> 只接受合法 hex 或 preset。</li>
-                <li><code>setShapeMode</code> 只接受 sharp、soft、round、glass、solid。</li>
+                <li><code>setShapeMode</code> 會轉成系統已定義的形狀模式，不接受任意 CSS 字串。</li>
                 <li>不允許 <code>eval()</code>、<code>new Function()</code> 或 AI 回傳 HTML 執行。</li>
               </ul>
             </article>
