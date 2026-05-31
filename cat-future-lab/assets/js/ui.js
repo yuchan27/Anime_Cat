@@ -63,7 +63,7 @@ export async function initApiStatus() {
     }
 
     node.dataset.state = 'success';
-    node.textContent = '已讀取 Google AI key';
+    node.textContent = '已讀取 key';
   } catch {
     node.dataset.state = 'error';
     node.textContent = '無法讀取 API 狀態，請確認 server 是否啟動。';
