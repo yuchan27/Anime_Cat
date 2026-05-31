@@ -511,6 +511,24 @@ html.theme-future .future-particle-field {
     future-particle-breathe 6.5s ease-in-out infinite alternate;
 }
 
+html.theme-cat .future-particle-field {
+  display: block;
+  opacity: 0.44;
+  mix-blend-mode: multiply;
+  background:
+    repeating-linear-gradient(90deg, rgba(63, 42, 53, 0.035) 0 1px, transparent 1px 58px),
+    repeating-linear-gradient(180deg, rgba(63, 42, 53, 0.028) 0 1px, transparent 1px 58px),
+    radial-gradient(circle at 14% 24%, rgba(255, 142, 199, 0.72) 0 1px, transparent 2px),
+    radial-gradient(circle at 74% 18%, rgba(255, 209, 102, 0.78) 0 1px, transparent 2px),
+    radial-gradient(circle at 42% 78%, rgba(137, 215, 192, 0.46) 0 1px, transparent 2px),
+    radial-gradient(circle at 62% 50%, rgba(243, 111, 82, 0.34) 0 1px, transparent 2px),
+    radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.52), transparent 23rem);
+  background-size: 58px 58px, 58px 58px, 116px 116px, 178px 178px, 152px 152px, 230px 230px, auto;
+  animation:
+    future-particle-drift 42s linear infinite,
+    future-particle-breathe 8s ease-in-out infinite alternate;
+}
+
 .future-particle-field::before,
 .future-particle-field::after {
   content: "";
@@ -531,6 +549,15 @@ html.theme-future .future-particle-field {
   animation: future-particle-converge 18s cubic-bezier(0.35, 0, 0.2, 1) infinite;
 }
 
+html.theme-cat .future-particle-field::before {
+  opacity: 0.28;
+  background:
+    radial-gradient(circle at center, rgba(255, 142, 199, 0.86) 0 1px, transparent 2px),
+    radial-gradient(circle at 52% 48%, rgba(255, 209, 102, 0.22), transparent 16%),
+    conic-gradient(from 90deg at 50% 50%, transparent 0 12%, rgba(255, 209, 102, 0.2) 18%, transparent 26%, rgba(255, 142, 199, 0.18) 44%, transparent 54%, rgba(137, 215, 192, 0.16) 70%, transparent 78%);
+  background-size: 92px 92px, auto, auto;
+}
+
 .future-particle-field::after {
   opacity: 0.28;
   background:
@@ -540,6 +567,15 @@ html.theme-future .future-particle-field {
   background-size: 180px 180px, 260px 260px, 220px 220px;
   transform-origin: center;
   animation: future-particle-drift 48s linear infinite reverse;
+}
+
+html.theme-cat .future-particle-field::after {
+  opacity: 0.3;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 209, 102, 0.72) 0 1px, transparent 2px),
+    radial-gradient(circle at 20% 70%, rgba(255, 142, 199, 0.55) 0 1px, transparent 2px),
+    radial-gradient(circle at 76% 30%, rgba(243, 111, 82, 0.4) 0 1px, transparent 2px);
+  background-size: 170px 170px, 240px 240px, 210px 210px;
 }
 
 html.reduce-motion .future-particle-field,
@@ -698,6 +734,7 @@ html.cat-treat-cursor .cat-cursor::after {
   height: 3px;
   background: var(--ink);
   box-shadow: 15px 0 0 var(--ink);
+  display: none;
 }
 
 @keyframes brand-cat-breathe {
@@ -741,6 +778,15 @@ html.cat-treat-cursor .cat-cursor::after {
 .site-nav a.is-active {
   border-color: var(--coral);
   color: var(--coral);
+}
+
+.site-menu {
+  display: contents;
+}
+
+.site-menu-toggle,
+.site-menu-scrim {
+  display: none;
 }
 
 .header-actions {
@@ -3524,5 +3570,179 @@ html.reduced-performance.theme-future body::after {
   .note-slide video {
     max-height: 34vh;
     object-fit: cover;
+  }
+}
+
+/* --- 2026-05-31 workflow fixes: carousel paging, mobile app menu, warm particles --- */
+body.page-mode .page-panel {
+  transform: translate3d(calc(var(--page-offset, 1) * 100%), 0, 0) scale(0.985);
+  filter: none;
+  transition:
+    opacity calc(var(--transition-page) * 1.4) ease,
+    transform calc(var(--transition-page) * 1.35) cubic-bezier(0.22, 1, 0.36, 1),
+    visibility var(--transition-page) ease,
+    background-color var(--transition-theme) ease,
+    color var(--transition-theme) ease,
+    border-color var(--transition-theme) ease,
+    box-shadow var(--transition-theme) ease;
+}
+
+body.page-mode[data-page-direction="back"] .page-panel {
+  transform: translate3d(calc(var(--page-offset, 1) * 100%), 0, 0) scale(0.985);
+}
+
+body.page-mode .page-panel.is-page-active {
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+html.theme-cat body {
+  background:
+    var(--bg-overlay),
+    radial-gradient(circle at 12% 16%, rgba(255, 142, 199, 0.2), transparent 24rem),
+    radial-gradient(circle at 82% 18%, rgba(255, 209, 102, 0.2), transparent 28rem),
+    radial-gradient(ellipse at 78% 78%, rgba(137, 215, 192, 0.12), transparent 26rem),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.42), transparent 42%, rgba(255, 209, 102, 0.08)),
+    linear-gradient(90deg, rgba(63, 42, 53, 0.035) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(63, 42, 53, 0.03) 1px, transparent 1px),
+    var(--bg-main);
+  background-size: auto, auto, auto, auto, 52px 52px, 52px 52px, auto;
+}
+
+@media (max-width: 720px) {
+  .site-header {
+    grid-template-columns: auto auto minmax(0, 1fr);
+    gap: 0.55rem;
+    overflow: visible;
+  }
+
+  .site-menu-toggle {
+    grid-column: 1;
+    display: inline-grid;
+    place-items: center;
+    gap: 4px;
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: 3px 3px 0 color-mix(in srgb, var(--ink) 72%, transparent);
+    cursor: pointer;
+  }
+
+  .site-menu-toggle span {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  .brand {
+    grid-column: 2;
+  }
+
+  .site-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 92;
+    display: flex;
+    width: min(18rem, 84vw);
+    height: 100svh;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    border-right: 2px solid var(--ink);
+    background: color-mix(in srgb, var(--bg-main) 94%, white 6%);
+    box-shadow: 18px 0 42px color-mix(in srgb, var(--ink) 18%, transparent);
+    transform: translateX(-106%);
+    transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  body.mobile-menu-open .site-menu {
+    transform: translateX(0);
+  }
+
+  .site-menu-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 91;
+    display: block;
+    border: 0;
+    background: rgba(17, 19, 31, 0.36);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease;
+  }
+
+  body.mobile-menu-open .site-menu-scrim {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .site-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.35rem;
+    overflow: visible;
+    padding: 3rem 0 0;
+    white-space: normal;
+  }
+
+  .site-nav a {
+    min-height: 42px;
+    justify-content: flex-start;
+    border: 1px solid color-mix(in srgb, var(--ink) 26%, transparent);
+    border-bottom-width: 1px;
+    padding: 0.75rem 0.8rem;
+    background: color-mix(in srgb, var(--bg-panel) 78%, transparent);
+  }
+
+  .site-nav a.is-active {
+    border-color: var(--coral);
+    background: color-mix(in srgb, var(--coral) 14%, transparent);
+  }
+
+  .header-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.45rem;
+    overflow: visible;
+    padding: 0;
+  }
+
+  .style-toggle,
+  .reset-settings,
+  .sound-toggle,
+  .ai-toggle,
+  .motion-toggle {
+    width: 100%;
+    justify-content: flex-start;
+    min-height: 40px;
+    padding: 0.68rem 0.8rem;
+    font-size: 0.84rem;
+    text-align: left;
+  }
+
+  .font-size-switcher {
+    width: 100%;
+  }
+
+  .font-size-switcher button {
+    flex: 1 1 0;
+  }
+
+  .wheel-nav {
+    left: 0.32rem;
+    right: auto;
+  }
+
+  .page-controls {
+    left: 0.68rem;
+    right: auto;
+    bottom: 0.85rem;
   }
 }

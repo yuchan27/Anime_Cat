@@ -66,6 +66,11 @@
   <a class="skip-link" href="#main">跳到主要內容</a>
 
   <header class="site-header" data-header>
+    <button class="site-menu-toggle" type="button" data-menu-toggle aria-label="開啟主選單" aria-controls="site-menu" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
     <a class="brand" href="#hero" aria-label="Cat Future Lab 首頁">
       <span class="brand-mark" aria-hidden="true">
         <img class="brand-mark__image" src="assets/images/catlab-icon.png" alt="">
@@ -73,30 +78,33 @@
       </span>
       <span>Cat Future Lab</span>
     </a>
-    <nav class="site-nav" aria-label="主選單">
-      <a href="#home">首頁</a>
-      <a href="#intro">介紹</a>
-      <a href="#features">特色</a>
-      <a href="#tech">技術</a>
-      <a href="#gallery">展示</a>
-      <a href="#about">關於</a>
-      <a href="#contact">控制</a>
-      <a href="#presentation">簡報</a>
-    </nav>
-    <div class="header-actions" aria-label="控制列">
-      <button class="ai-toggle" type="button" data-ai-open aria-label="開啟智慧導覽視窗">導覽</button>
-      <button class="style-toggle" type="button" data-theme-switch aria-label="切換網站風格">未來科技</button>
-      <button class="reset-settings" type="button" data-reset-settings aria-label="還原預設設定">預設</button>
+    <div class="site-menu" id="site-menu" data-site-menu>
+      <nav class="site-nav" aria-label="主選單">
+        <a href="#home">首頁</a>
+        <a href="#intro">介紹</a>
+        <a href="#features">特色</a>
+        <a href="#tech">技術</a>
+        <a href="#gallery">展示</a>
+        <a href="#about">關於</a>
+        <a href="#contact">控制</a>
+        <a href="#presentation">簡報</a>
+      </nav>
+      <div class="header-actions" aria-label="控制列">
+        <button class="ai-toggle" type="button" data-ai-open aria-label="開啟智慧導覽視窗">導覽</button>
+        <button class="style-toggle" type="button" data-theme-switch aria-label="切換網站風格">未來科技</button>
+        <button class="reset-settings" type="button" data-reset-settings aria-label="還原預設設定">預設</button>
 
-      <div class="font-size-switcher" data-font-size-switcher aria-label="字體大小">
-        <button type="button" data-font-size="sm" aria-pressed="false">小</button>
-        <button type="button" data-font-size="md" aria-pressed="true">中</button>
-        <button type="button" data-font-size="lg" aria-pressed="false">大</button>
-        <button type="button" data-font-size="xl" aria-pressed="false">特大</button>
+        <div class="font-size-switcher" data-font-size-switcher aria-label="字體大小">
+          <button type="button" data-font-size="sm" aria-pressed="false">小</button>
+          <button type="button" data-font-size="md" aria-pressed="true">中</button>
+          <button type="button" data-font-size="lg" aria-pressed="false">大</button>
+          <button type="button" data-font-size="xl" aria-pressed="false">特大</button>
+        </div>
+        <button class="sound-toggle" type="button" data-sound-toggle aria-pressed="false">啟動音景</button>
+        <button class="motion-toggle" type="button" data-motion-toggle aria-pressed="false">降低動態</button>
       </div>
-      <button class="sound-toggle" type="button" data-sound-toggle aria-pressed="false">啟動音景</button>
-      <button class="motion-toggle" type="button" data-motion-toggle aria-pressed="false">降低動態</button>
     </div>
+    <button class="site-menu-scrim" type="button" data-menu-close aria-label="關閉主選單"></button>
   </header>
 
   <div class="marquee-bar" data-marquee aria-live="polite">

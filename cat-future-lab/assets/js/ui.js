@@ -7,6 +7,30 @@ export function initHeader() {
   const update = () => header?.classList.toggle('is-compact', window.scrollY > 30);
   update();
   window.addEventListener('scroll', update, { passive: true });
+  initMobileMenu(header);
+}
+
+function initMobileMenu(header) {
+  const toggle = header?.querySelector('[data-menu-toggle]');
+  const menu = header?.querySelector('[data-site-menu]');
+  const closeButton = header?.querySelector('[data-menu-close]');
+  if (!toggle || !menu) return;
+
+  const setOpen = (open) => {
+    document.body.classList.toggle('mobile-menu-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    menu.setAttribute('aria-hidden', String(!open));
+  };
+
+  setOpen(false);
+  toggle.addEventListener('click', () => setOpen(!document.body.classList.contains('mobile-menu-open')));
+  closeButton?.addEventListener('click', () => setOpen(false));
+  menu.querySelectorAll('a, button').forEach((control) => {
+    control.addEventListener('click', () => setOpen(false));
+  });
+  window.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') setOpen(false);
+  });
 }
 
 export async function initApiStatus() {

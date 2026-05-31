@@ -5,7 +5,7 @@
 - 根目錄已初始化 Git，baseline commit 為 `8270b19 chore: baseline cat future lab project`。
 - Figma 設計稿已建立：https://www.figma.com/design/KHTxo4D1lTXtSteplkjcCp
 - Figma `Implementation Sync` 頁記錄目前方向：未來互動動畫實驗室，加上貓耳幾何、尾巴軌跡、貓眼 HUD 等局部貓咪元素。
-- 主視覺圖片在 `cat-future-lab/assets/images/cat-lab-guide.png`，由 imagegen 生成後複製進專案。
+- 主視覺圖片在 `cat-future-lab/assets/images/cat-hero-cartoon.png`，由 imagegen 生成後複製進專案。
 - OneDrive 目錄曾出現 Git lock / 權限問題，因此後續建議移到 `C:\Code\CatFutureLab` 執行。
 
 ## 1. 搬到 C:\ 的交接流程
@@ -58,7 +58,7 @@ GOOGLE_AI_MODEL=gemini-2.0-flash
 ## 5. 檔案分工
 - `cat-future-lab/index.html`：一頁式網站結構、SEO meta、JSON-LD。
 - `cat-future-lab/assets/css/styles.css`：視覺系統、RWD、focus、reduced motion。
-- `cat-future-lab/assets/images/cat-lab-guide.png`：Hero 使用的生成貓咪實驗室主視覺。
+- `cat-future-lab/assets/images/cat-hero-cartoon.png`：Hero 使用的生成貓咪實驗室主視覺。
 - `cat-future-lab/assets/js/main.js`：頁面啟動與模組 orchestration。
 - `cat-future-lab/assets/js/animations.js`：Anime.js timeline、stagger、SVG path 與狀態數字動畫。
 - `cat-future-lab/assets/js/ui.js`：header、chat 與 weather UI 狀態控制。
@@ -80,3 +80,27 @@ GOOGLE_AI_MODEL=gemini-2.0-flash
 - SEO 有 title、description、canonical、Open Graph、Twitter Card、JSON-LD。
 - Accessibility 有 heading hierarchy、alt、aria-live、aria-pressed、focus ring、reduced motion。
 - 完成後執行 `git status --short` 並建立 focused commit。
+
+## 7. 2026-05-31 修正 Workflow：資源整理、手機導覽、輪播切頁
+
+### 任務清單
+
+- [x] 盤點正式圖片資源，確認完全相同的圖片 hash。
+- [x] 統一圖片引用路徑：Hero 使用 `cat-hero-cartoon.png`，展示使用 `cat-observer-cartoon-wide.png`，天氣/簡報使用 `cat-weather-cartoon.png`。
+- [x] 逐一刪除重複圖片檔：`cat-lab-guide.png`、`cat-observer-cartoon.png`、`cat-observer-lab.png`、`cat-weather-console.png`。
+- [x] 檢查明顯未使用程式碼並移除 `experience.js` 內未被呼叫的 `easeInCubic()` helper。
+- [x] 風格選擇後強制切回 `home`，避免從舊 hash 或 cookie 直接進入其他頁。
+- [x] 將 SPA 頁面切換改成橫向輪播式位移，使用 `--page-offset` 控制每個 panel 的相對位置。
+- [x] 手機版改成左側漢堡選單：主選單與控制列改為抽屜式直列，不再塞在頂部造成按鈕消失。
+- [x] 移除品牌圖示上的額外線條，避免手機版 logo 與裝飾線重疊。
+- [x] 溫暖模式加入輕量粒子背景與更柔和的多層背景，不再只呈現單一紅色背景。
+- [x] 完成瀏覽器桌機與手機畫面驗收。
+- [x] 執行 `npm run check`。
+- [x] 完成 git commit / push。
+
+### 驗收重點
+
+- 桌機：首頁載入後停在首頁，右側輪軸、底部進度、左右切頁同步。
+- 手機：左上角三條線可開啟直列選單，選單內能切頁、切主題、調字級與開導覽。
+- 圖片：正式 `assets/images/` 不再保留同 hash 的重複圖片。
+- 主題：溫暖模式要有可辨識的粒子與柔和背景層次，低效能模式仍可降級。

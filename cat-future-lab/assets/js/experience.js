@@ -49,7 +49,13 @@ function initThemeGate() {
       const theme = THEMES.includes(button.dataset.themeChoice) ? button.dataset.themeChoice : 'cat';
       buttons.forEach((item) => { item.disabled = true; });
       button.classList.add('is-selected');
-      handleAIAction({ action: 'setTheme', theme });
+      handleAIAction({ action: 'setTheme', theme }, { persist: true });
+      updateState({
+        currentPage: 'home',
+        backgroundPreset: 'default',
+        customBackgroundColor: undefined,
+        customTextColor: undefined
+      }, { persist: true });
 
       if (theme === 'future') {
         await runFutureLoader(gate);
@@ -129,10 +135,11 @@ function initPageShell() {
     document.body.dataset.pageDirection = direction;
     document.body.dataset.previousPageIndex = String(state.pageIndex);
 
-    PAGE_MAP.forEach((page) => {
+    PAGE_MAP.forEach((page, index) => {
       const section = sectionByPage.get(page.id);
       if (!section) return;
       const active = page.id === state.currentPage;
+      section.style.setProperty('--page-offset', String(index - state.pageIndex));
       section.classList.toggle('is-page-active', active);
       section.setAttribute('aria-hidden', String(!active));
       if (active) {
@@ -626,10 +633,6 @@ function isGlobalGestureIgnored(target) {
 
 function lerp(start, end, amount) {
   return start + (end - start) * amount;
-}
-
-function easeInCubic(value) {
-  return value * value * value;
 }
 
 function easeInOutCubic(value) {
