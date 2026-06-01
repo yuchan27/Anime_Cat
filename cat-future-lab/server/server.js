@@ -1,4 +1,4 @@
-import { createServer } from 'node:http';
+﻿import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -130,25 +130,22 @@ async function handleAiNavigator(req, res) {
     const prompt = [
       'You are the intent planner for an interactive website named Cat Future Lab.',
       'Return JSON only. Do not include markdown.',
-      'Do not output JavaScript, CSS strings, HTML, or instructions to execute code.',
-      'Always return a useful response object for non-empty user messages. Do not reject a request just because the wording is informal.',
-      'You may interpret flexible user language creatively. If the user asks for a color like "special gold", choose a tasteful hex color.',
-      'If the user mentions background, page color, surface color, or visual color plus any descriptive color word, prefer setBackground instead of page navigation.',
-      'Example: "幫我把背景顏色改成特殊的金色" means setBackground with a tasteful special gold hex color.',
-      'If the user asks for multiple changes, return an "actions" array ordered by intent.',
-      'For visual changes, produce a preview action. The frontend will ask the user to confirm before applying.',
-      'If the user asks how a section or feature is made, return unknown(message) with a concise Traditional Chinese explanation and do not mutate the UI.',
-      'Do not expose hidden chain-of-thought. Provide only a short "decisionSummary" explaining the choice.',
-      'Font family values should be one of: default, jhenghei, noto, system, serif, mono. You may also output a user-facing font name; the frontend will normalize it.',
-      'If the requested font is unknown, choose the closest safe family and explain briefly in decisionSummary.',
-      'Theme values must be one of: future, cat, metal. Map 金屬風格、銀色、鋼、鉻、霧面金屬 to metal.',
-      'Supported action contract. You may use the canonical shape or a simple shorthand; the frontend will normalize it safely.',
-      'Canonical examples: {"action":"goToPage","target":"intro"}, {"action":"setBackground","color":"#d4af37"}.',
-      'Multi-action example: {"actions":[{"action":"setBackground","color":"#d4af37"},{"action":"setShapeMode","mode":"round"}],"reply":"...","decisionSummary":"...","requiresConfirmation":true}.',
-      'Shorthand examples are also acceptable: {"goToPage":"intro"}, {"setBackground":"#d4af37"}.',
-      'Supported intents include page navigation, theme, background color or preset, text color, font size, font family, shape mode, marquee text, presentation mode, PPT request, resetSettings, and unknown(message).',
-      'Response shape:',
-      '{"action":{...} or "actions":[...],"reply":"Traditional Chinese reply","decisionSummary":"short Traditional Chinese explanation","requiresConfirmation":true|false,"preview":{"label":"optional","color":"optional hex"}}',
+      'Never output JavaScript, CSS strings, HTML, selectors, or instructions to execute code.',
+      'All UI changes must use fixed JSON actions only.',
+      'If the user asks how something works, return unknown with a concise Traditional Chinese explanation and do not mutate UI.',
+      'If the user asks for multiple changes, return an actions array ordered by intent.',
+      'Visual changes require confirmation: set requiresConfirmation to true for theme, font, background, text color, and shape changes.',
+      'Supported actions: goToPage, nextPage, previousPage, getCurrentProgress, setTheme, setFontSize, setFontFamily, setBackground, setTextColor, setShapeMode, setMarquee, setPresentationMode, generatePpt, downloadPpt, resetSettings, unknown.',
+      'Page ids: home, intro, features, tech, gallery, about, contact, presentation.',
+      'Themes: future, cat, metal.',
+      'Font sizes: xl, lg, md, sm.',
+      'Font families: default, jhenghei, noto, system, serif, mono.',
+      'Shape modes: sharp, soft, round, glass, solid. Map 正方形, 方形, 直角, 外框改成正方形 to sharp. Map 卡片變圓 to round. Map 毛玻璃 to glass.',
+      'Background may use color hex or preset: default, dark, light, soft, neon, pastel, warm, cool, minimal, lab, catRoom.',
+      'Map 背景改成特殊金色 to {"action":"setBackground","color":"#d4af37"}.',
+      'Map 字改成黑色 or 文字改成黑色 to {"action":"setTextColor","color":"#050505"}.',
+      'Canonical example: {"actions":[{"action":"setBackground","color":"#d4af37"},{"action":"setShapeMode","mode":"sharp"}],"reply":"準備套用變更。","decisionSummary":"使用安全 action，不執行 CSS。","requiresConfirmation":true,"preview":{"color":"#d4af37"}}',
+      'Response shape: {"action":{...} or "actions":[...],"reply":"Traditional Chinese reply","decisionSummary":"short Traditional Chinese explanation","requiresConfirmation":true|false,"preview":{"label":"optional","color":"optional hex"}}',
       `Current state: ${JSON.stringify(sanitizeNavigatorState(state))}`,
       `User message: ${cleanMessage}`
     ].join('\n');
@@ -646,3 +643,4 @@ function listenOnPort(httpServer, port) {
     httpServer.listen(port);
   });
 }
+

@@ -1,4 +1,4 @@
-export const PAGE_MAP = [
+﻿export const PAGE_MAP = [
   {
     id: 'home',
     domId: 'hero',
@@ -173,35 +173,35 @@ export const BACKGROUND_PRESET_MAP = {
 
 export const SHAPE_MODE_MAP = {
   sharp: {
-    label: '俐落方角',
+    label: '直角',
     surfaceRadius: '4px',
     controlRadius: '2px',
     shapeShadow: '12px 12px 0 var(--ink)',
     panelBlur: '0px'
   },
   soft: {
-    label: '柔和圓角',
+    label: '柔和',
     surfaceRadius: '12px',
     controlRadius: '10px',
     shapeShadow: '0 18px 50px rgba(17, 19, 31, 0.14)',
     panelBlur: '0px'
   },
   round: {
-    label: '膠囊圓角',
+    label: '圓角',
     surfaceRadius: '22px',
     controlRadius: '999px',
     shapeShadow: '0 20px 60px rgba(17, 19, 31, 0.16)',
     panelBlur: '0px'
   },
   glass: {
-    label: '玻璃面板',
+    label: '毛玻璃',
     surfaceRadius: '18px',
     controlRadius: '14px',
     shapeShadow: '0 22px 70px rgba(17, 19, 31, 0.16)',
     panelBlur: '16px'
   },
   solid: {
-    label: '實心卡片',
+    label: '實心',
     surfaceRadius: '6px',
     controlRadius: '4px',
     shapeShadow: '6px 6px 0 var(--ink)',
@@ -232,7 +232,7 @@ export const FONT_FAMILY_MAP = {
   jhenghei: '"Microsoft JhengHei", "Noto Sans TC", sans-serif',
   noto: '"Noto Sans TC", "Chivo", sans-serif',
   system: 'system-ui, "Segoe UI", "Noto Sans TC", sans-serif',
-  kai: '"DFKai-SB", "BiauKai", "KaiTi", "標楷體", "Noto Serif TC", serif',
+  kai: '"DFKai-SB", "BiauKai", "KaiTi", "Noto Serif TC", serif',
   serif: '"Noto Serif TC", "PMingLiU", serif',
   mono: '"JetBrains Mono", "Cascadia Mono", "Noto Sans TC", monospace'
 };
@@ -240,9 +240,10 @@ export const FONT_FAMILY_MAP = {
 export const FONT_FAMILY_LABELS = {
   default: '預設',
   jhenghei: '微軟正黑體',
-  noto: '思源黑體',
+  noto: 'Noto Sans TC',
   system: '系統字體',
   serif: '襯線字體',
+  kai: '標楷體',
   mono: '等寬字體'
 };
 
@@ -290,3 +291,4 @@ export const SECTION_EXPLAINERS = {
   wheel: '右側輪軸導覽讀同一份 PAGE_MAP，點擊節點會走 Action Router，因此會同步頁面、進度線與 active nav。',
   progress: '底部進度線根據 pageIndex / totalPages 計算，不看垂直捲動；最後一頁會完整填滿。'
 };
+

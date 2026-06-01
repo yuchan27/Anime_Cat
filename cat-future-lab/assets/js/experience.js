@@ -1,4 +1,4 @@
-import {
+﻿import {
   BACKGROUND_PRESET_MAP,
   FONT_FAMILY_MAP,
   FONT_SCALE_MAP,
@@ -11,11 +11,10 @@ import { getState, subscribeState, updateState } from './state.js';
 
 const THEMES = ['future', 'cat', 'metal'];
 const THEME_LABELS = {
-  future: '未來科技',
+  future: '未來',
   cat: '溫暖',
   metal: '金屬'
 };
-const AUTO_THEME_DELAY_MS = 10000;
 
 export function initExperienceShell() {
   applyVisualState(getState());
@@ -51,12 +50,10 @@ function initThemeGate() {
 
   const buttons = Array.from(gate.querySelectorAll('[data-theme-choice]'));
   let selected = false;
-  let autoTimer = 0;
 
   const chooseTheme = async (button) => {
     if (selected) return;
     selected = true;
-    window.clearTimeout(autoTimer);
 
     const theme = THEMES.includes(button?.dataset.themeChoice) ? button.dataset.themeChoice : 'future';
     buttons.forEach((item) => { item.disabled = true; });
@@ -90,8 +87,6 @@ function initThemeGate() {
     button.addEventListener('click', () => chooseTheme(button), { once: true });
   });
 
-  const fallbackButton = buttons.find((button) => button.dataset.themeChoice === 'future') || buttons[0];
-  autoTimer = window.setTimeout(() => chooseTheme(fallbackButton), AUTO_THEME_DELAY_MS);
 }
 
 function initThemeSwitch() {
@@ -133,7 +128,7 @@ function initResetSettings() {
 }
 
 function initFontSizeSwitcher() {
-  const buttons = Array.from(document.querySelectorAll('[data-font-size]'));
+  const buttons = Array.from(document.querySelectorAll('button[data-font-size]'));
   buttons.forEach((button) => {
     button.addEventListener('click', () => {
       const size = button.dataset.fontSize;
@@ -384,26 +379,29 @@ function applyVisualState(state) {
     const theme = button.dataset.themeOption;
     const label = THEME_LABELS[theme] || theme;
     const active = theme === state.theme;
-    button.hidden = active;
+    button.hidden = false;
     button.classList.toggle('is-active', active);
     button.setAttribute('aria-pressed', String(active));
-    button.setAttribute('aria-label', active ? `目前是${label}主題` : `切換成${label}主題`);
+    button.title = active ? `目前是${label}風格` : `切換成${label}風格`;
+    button.setAttribute('aria-label', button.title);
   });
 
   document.querySelectorAll('[data-theme-switch]').forEach((button) => {
     const nextTheme = getNextTheme(state.theme);
-    const currentLabel = THEME_LABELS[state.theme] || '目前風格';
+    const currentLabel = THEME_LABELS[state.theme] || state.theme;
     const nextLabel = THEME_LABELS[nextTheme] || nextTheme;
     button.textContent = currentLabel;
     button.classList.add('is-active');
-    button.title = `目前是${currentLabel}，點擊切換成${nextLabel}`;
-    button.setAttribute('aria-label', `目前是${currentLabel}主題，點擊切換成${nextLabel}主題`);
+    button.title = `目前是${currentLabel}風格，點擊切換成${nextLabel}`;
+    button.setAttribute('aria-label', button.title);
   });
 
-  document.querySelectorAll('[data-font-size]').forEach((button) => {
+  document.querySelectorAll('button[data-font-size]').forEach((button) => {
     const active = button.dataset.fontSize === state.fontSize;
     button.classList.toggle('is-active', active);
     button.setAttribute('aria-pressed', String(active));
+    button.title = active ? `目前字體大小：${button.textContent.trim()}` : `切換字體大小：${button.textContent.trim()}`;
+    button.setAttribute('aria-label', button.title);
   });
 }
 
@@ -735,3 +733,4 @@ function easeInOutCubic(value) {
 function easeOutCubic(value) {
   return 1 - Math.pow(1 - value, 3);
 }
+

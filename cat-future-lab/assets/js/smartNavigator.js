@@ -1,5 +1,4 @@
 import { askNavigatorIntent } from './api.js';
-import { FONT_FAMILY_LABELS } from './config.js';
 import { coerceAIActionList, handleVisibleAIAction as handleAIAction, inferActionsFromText, parseNavigatorCommand, validateAIAction } from './aiActions.js';
 import { getState, subscribeState } from './state.js';
 
@@ -60,7 +59,7 @@ function bindNavigatorForm(form) {
   const scheduleAutoClose = (actions) => {
     if (!isModalForm || typeof closeGlobalModal !== 'function') return;
     if (!shouldAutoClose(actions)) return;
-    window.setTimeout(() => closeGlobalModal?.(), 140);
+    window.setTimeout(() => closeGlobalModal?.(), 160);
   };
 
   form.dataset.mode = 'smart-navigator';
@@ -73,9 +72,12 @@ function bindNavigatorForm(form) {
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     const message = input.value.trim();
-    if (!message) return;
+    if (!message) {
+      setTextStatus(output, 'idle', '請輸入想控制或想詢問的內容。');
+      return;
+    }
 
-    setTextStatus(output, 'loading', '正在詢問模型並整理可執行動作...');
+    setTextStatus(output, 'loading', '正在判斷安全 action...');
     input.value = '';
 
     const beforeState = getState();
@@ -88,8 +90,8 @@ function bindNavigatorForm(form) {
     if (!validation.ok) {
       renderDecision(output, {
         state: 'error',
-        reply: `模型回傳的 action 無法執行：${safeText(validation.reason)}`,
-        decisionSummary: parsed.decisionSummary || '已阻擋不符合 schema 的操作。',
+        reply: `這個指令沒有執行：${validation.reason}`,
+        decisionSummary: parsed.decisionSummary || 'Action schema 驗證失敗，因此沒有改畫面。',
         actions,
         model: parsed.model,
         latencyMs: parsed.latencyMs
@@ -97,8 +99,8 @@ function bindNavigatorForm(form) {
       return;
     }
 
-    const shouldConfirm = parsed.requiresConfirmation || actions.some((action) => CONFIRM_ACTIONS.has(action.action));
     const unknownOnly = actions.every((action) => action.action === 'unknown');
+    const shouldConfirm = parsed.requiresConfirmation || actions.some((action) => CONFIRM_ACTIONS.has(action.action));
     if (shouldConfirm && !unknownOnly) {
       renderProposal(output, parsed, beforeState, {
         onApplied: () => scheduleAutoClose(parsed.actions)
@@ -110,7 +112,7 @@ function bindNavigatorForm(form) {
     if (result.ok) rememberRestorableAction(actions, beforeState);
     renderDecision(output, {
       state: result.ok ? 'success' : 'error',
-      reply: result.reply || parsed.reply || '已處理完成。',
+      reply: result.reply || parsed.reply || '已完成。',
       decisionSummary: parsed.decisionSummary,
       actions,
       model: parsed.model,
@@ -145,7 +147,6 @@ function initGlobalNavigatorModal() {
   };
 
   closeGlobalModal = close;
-
   openers.forEach((button) => button.addEventListener('click', open));
   closers.forEach((button) => button.addEventListener('click', close));
   window.addEventListener('keydown', (event) => {
@@ -156,33 +157,33 @@ function initGlobalNavigatorModal() {
 }
 
 async function getModelDecision(message, state) {
+  const localFallback = parseNavigatorCommand(message, state);
+  const fallbackActions = Array.isArray(localFallback.actions)
+    ? localFallback.actions
+    : (localFallback.action ? [localFallback.action] : []);
+
   try {
     const modelDecision = await askNavigatorIntent(message, state);
-    return normalizeDecision(modelDecision, message);
+    return normalizeDecision(modelDecision, message, fallbackActions);
   } catch {
-    const fallback = parseNavigatorCommand(message, state);
-    const fallbackActions = Array.isArray(fallback.actions)
-      ? fallback.actions
-      : (fallback.action ? [fallback.action] : []);
     const actions = fallbackActions.length
       ? fallbackActions
-      : [{ action: 'unknown', message: '模型暫時無法回應，所以改用本機解析。你可以要求切換頁面、背景、字體、形狀或詢問區塊做法。' }];
-
+      : [{ action: 'unknown', message: 'AI API 暫時無法連線，本機 parser 也沒有找到安全 action。' }];
     return {
       actions: coerceAIActionList(actions, message),
       reply: describePendingAction(actions),
-      decisionSummary: 'AI API 無法連線時，系統改用本機 fallback parser，仍會經過 Action Router。',
+      decisionSummary: 'AI API 無法連線時，改用本機 parser，仍會經過 Action Router。',
       requiresConfirmation: actions.some((action) => CONFIRM_ACTIONS.has(action.action)),
       model: 'local-parser-fallback'
     };
   }
 }
 
-function normalizeDecision(value, originalMessage) {
-  const rawActions = value?.actions || value?.action || value || { action: 'unknown', message: value?.reply || '模型沒有回傳有效 action。' };
+function normalizeDecision(value, originalMessage, fallbackActions = []) {
+  const rawActions = value?.actions || value?.action || value || { action: 'unknown', message: value?.reply || '沒有回傳 action。' };
   const actionList = coerceAIActionList(rawActions, originalMessage);
   const inferred = inferActionsFromText(originalMessage);
-  const actions = mergeActionLists(actionList, inferred);
+  const actions = mergeActionLists(actionList, inferred.length ? inferred : fallbackActions);
   const preview = value?.preview && typeof value.preview === 'object' ? { ...value.preview } : {};
   const previewColor = findPreviewColor(actions);
   if (previewColor && !preview.color) preview.color = previewColor;
@@ -190,7 +191,7 @@ function normalizeDecision(value, originalMessage) {
   return {
     actions,
     reply: safeText(value?.reply) || describePendingAction(actions),
-    decisionSummary: safeText(value?.decisionSummary) || `已理解「${originalMessage}」，並轉成安全 JSON Action。`,
+    decisionSummary: safeText(value?.decisionSummary) || `已把「${originalMessage}」轉成安全 JSON action。`,
     requiresConfirmation: Boolean(value?.requiresConfirmation),
     preview,
     model: value?.model,
@@ -206,14 +207,14 @@ function renderProposal(output, decision, beforeState, callbacks = {}) {
   wrap.className = 'ai-proposal';
 
   const title = document.createElement('strong');
-  title.textContent = '需要確認';
+  title.textContent = '確認要套用嗎？';
 
   const reply = document.createElement('p');
   reply.textContent = decision.reply || describePendingAction(decision.actions);
 
   const summary = document.createElement('p');
   summary.className = 'ai-proposal__summary';
-  summary.textContent = decision.decisionSummary || '這個操作會改變頁面狀態，確認後才會套用。';
+  summary.textContent = decision.decisionSummary || '這是會改變畫面的操作，確認後才會由 Action Router 套用。';
 
   wrap.append(title, reply, summary);
 
@@ -240,7 +241,7 @@ function renderProposal(output, decision, beforeState, callbacks = {}) {
   const accept = document.createElement('button');
   accept.type = 'button';
   accept.className = 'button button--primary';
-  accept.textContent = '套用';
+  accept.textContent = '確認套用';
 
   const reject = document.createElement('button');
   reject.type = 'button';
@@ -264,9 +265,9 @@ function renderProposal(output, decision, beforeState, callbacks = {}) {
   reject.addEventListener('click', () => {
     renderDecision(output, {
       state: 'idle',
-      reply: '已取消這次操作，畫面維持不變。',
+      reply: '已取消，畫面沒有變更。',
       decisionSummary: decision.decisionSummary,
-      actions: [{ action: 'unknown', message: '使用者取消操作' }],
+      actions: [{ action: 'unknown', message: '使用者取消操作。' }],
       model: decision.model,
       latencyMs: decision.latencyMs
     });
@@ -285,7 +286,7 @@ function renderDecision(output, { state, reply, decisionSummary, actions, model,
   wrap.className = 'ai-decision';
 
   const replyNode = document.createElement('p');
-  replyNode.textContent = safeText(reply) || '已處理完成。';
+  replyNode.textContent = safeText(reply) || '已完成。';
   wrap.append(replyNode);
 
   if (decisionSummary) {
@@ -318,8 +319,7 @@ function setTextStatus(node, state, text) {
 }
 
 function shouldAutoClose(actions) {
-  if (!Array.isArray(actions) || actions.length === 0) return false;
-  return actions.some((action) => AUTO_CLOSE_ACTIONS.has(action.action));
+  return Array.isArray(actions) && actions.some((action) => AUTO_CLOSE_ACTIONS.has(action.action));
 }
 
 function rememberRestorableAction(actions, beforeState) {
@@ -335,8 +335,8 @@ function rememberRestorableAction(actions, beforeState) {
 function buildRestoreCommand() {
   if (!lastRestorableAction || !lastRestorableState) {
     return {
-      actions: [{ action: 'unknown', message: '目前沒有可復原的上一個操作。' }],
-      reply: '目前沒有可復原的上一個操作。',
+      actions: [{ action: 'unknown', message: '目前沒有可以還原的上一個操作。' }],
+      reply: '目前沒有可以還原的上一個操作。',
       requiresConfirmation: false
     };
   }
@@ -345,33 +345,20 @@ function buildRestoreCommand() {
     ? buildInverseActions(lastRestorableAction.actions || [], lastRestorableState)
     : buildInverseAction(lastRestorableAction, lastRestorableState);
   const actions = Array.isArray(inverse) ? inverse : (inverse ? [inverse] : []);
-
-  if (!actions.length) {
-    return {
-      actions: [{ action: 'unknown', message: '上一個操作無法自動復原。' }],
-      reply: '上一個操作無法自動復原。',
-      requiresConfirmation: false
-    };
-  }
-
   actions.forEach((action) => {
     if (action && typeof action === 'object') action.meta = { restore: true };
   });
+
   return {
-    actions,
-    reply: '準備復原上一個可回復操作。',
-    decisionSummary: '依照上一個 AppState 快照建立反向 action。',
+    actions: actions.length ? actions : [{ action: 'unknown', message: '上一個操作無法安全還原。' }],
+    reply: actions.length ? '準備還原上一個操作。' : '上一個操作無法安全還原。',
+    decisionSummary: '根據上一個 AppState 產生反向 action。',
     requiresConfirmation: false
   };
 }
 
 function buildInverseActions(actions, previous) {
-  const inverse = [];
-  actions.forEach((action) => {
-    const reversed = buildInverseAction(action, previous);
-    if (reversed) inverse.push(reversed);
-  });
-  return inverse;
+  return actions.map((action) => buildInverseAction(action, previous)).filter(Boolean);
 }
 
 function buildInverseAction(action, previous) {
@@ -397,9 +384,7 @@ function buildInverseAction(action, previous) {
         ? { action: 'setBackground', color: previous.customBackgroundColor }
         : { action: 'setBackground', preset: previous.backgroundPreset || 'default' };
     case 'setTextColor':
-      return previous.customTextColor
-        ? { action: 'setTextColor', color: previous.customTextColor }
-        : null;
+      return previous.customTextColor ? { action: 'setTextColor', color: previous.customTextColor } : null;
     default:
       return null;
   }
@@ -408,70 +393,51 @@ function buildInverseAction(action, previous) {
 function isRestoreLastCommand(message) {
   const text = String(message || '').trim().toLowerCase().replace(/\s+/g, '');
   if (!text) return false;
-  if (text.includes('預設') || text.includes('還原') || text === 'reset' || text === 'resetsettings') return false;
-  return ['復原', '上一步', '取消上一個', 'undo'].includes(text);
+  if (/重設|還原預設|resetsettings/.test(text)) return false;
+  return ['還原', '上一步', '復原', 'undo'].includes(text);
 }
 
 function describePendingAction(actionOrActions) {
   const actions = Array.isArray(actionOrActions) ? actionOrActions : [actionOrActions];
-  if (!actions.length) return '模型沒有找到適合的安全操作。';
+  if (!actions.length) return '沒有可執行的 action。';
   if (actions.length === 1) return describeSingleAction(actions[0]);
-  const parts = actions.map((action) => describeSingleAction(action)).filter(Boolean);
-  return `模型建議執行 ${actions.length} 個操作：${parts.join(' ')}`;
+  return `準備執行 ${actions.length} 個安全 action。`;
 }
 
 function describeSingleAction(action) {
   switch (action?.action) {
     case 'setBackground':
-      return action.color
-        ? `模型建議把背景改成 ${action.color}，確認後套用。`
-        : `模型建議套用「${action.preset}」背景 preset，確認後套用。`;
+      return action.color ? `準備把背景改成 ${action.color}。` : `準備套用 ${action.preset} 背景。`;
     case 'setTextColor':
-      return `模型建議把文字改成 ${action.color}。`;
+      return `準備把文字改成 ${action.color}。`;
     case 'setFontSize':
-      return `模型建議把字體大小改成 ${action.size}。`;
+      return `準備調整字體大小為 ${action.size}。`;
     case 'setFontFamily':
-      return `模型建議把字體切換成 ${FONT_FAMILY_LABELS[action.family] || action.family}。`;
+      return `準備調整字體為 ${action.family}。`;
     case 'setShapeMode':
-      return `模型建議把方塊形狀改成 ${action.mode}。`;
+      return `準備調整形狀為 ${action.mode}。`;
     case 'setTheme':
-      return `模型建議切換成${getThemeLabel(action.theme)}風格。`;
+      return `準備切換主題為 ${action.theme}。`;
     case 'goToPage':
-      return `模型建議切到「${action.target}」頁。`;
+      return `準備切到 ${action.target}。`;
     case 'nextPage':
-      return '模型建議前往下一頁。';
+      return '準備切到下一頁。';
     case 'previousPage':
-      return '模型建議前往上一頁。';
+      return '準備切到上一頁。';
     case 'setMarquee':
-      return '模型建議更新跑馬燈文字。';
+      return '準備更新跑馬燈。';
     case 'unknown':
-      return safeText(action.message) || '模型沒有找到適合的安全操作。';
+      return safeText(action.message) || '沒有足夠資訊產生安全 action。';
     default:
-      return '模型回傳了一個可處理的操作。';
+      return '準備執行安全 action。';
   }
-}
-
-function getThemeLabel(theme) {
-  return {
-    future: '未來',
-    cat: '溫暖',
-    metal: '金屬'
-  }[theme] || theme;
-}
-
-function safeText(value) {
-  return String(value || '').trim();
 }
 
 function validateActionList(actions) {
-  if (!Array.isArray(actions) || actions.length === 0) {
-    return { ok: false, reason: '沒有可執行的 action。' };
-  }
+  if (!Array.isArray(actions) || actions.length === 0) return { ok: false, reason: '沒有可驗證的 action。' };
   for (let index = 0; index < actions.length; index += 1) {
     const validation = validateAIAction(actions[index]);
-    if (!validation.ok) {
-      return { ok: false, reason: `第 ${index + 1} 個 action 無法執行：${validation.reason}` };
-    }
+    if (!validation.ok) return { ok: false, reason: `第 ${index + 1} 個 action 錯誤：${validation.reason}` };
   }
   return { ok: true };
 }
@@ -481,7 +447,7 @@ function applyActions(actions) {
   for (const action of actions) {
     const result = handleAIAction(action, { persist: true });
     if (result.reply) replies.push(result.reply);
-    if (!result.ok) return { ok: false, reply: result.reply || '部分操作無法完成。' };
+    if (!result.ok) return { ok: false, reply: result.reply || '執行失敗。' };
   }
   return { ok: true, reply: replies.filter(Boolean).join(' ') };
 }
@@ -489,14 +455,11 @@ function applyActions(actions) {
 function mergeActionLists(primary, fallback) {
   const base = Array.isArray(primary) && primary.length
     ? primary
-    : [{ action: 'unknown', message: '模型沒有回傳有效 action。' }];
+    : [{ action: 'unknown', message: '沒有回傳 action。' }];
   const fallbackList = Array.isArray(fallback) ? fallback : [];
-
   const fallbackValid = fallbackList.filter((action) => action && action.action && action.action !== 'unknown');
-  if (base.length === 1 && base[0].action === 'unknown' && fallbackValid.length) {
-    return fallbackValid;
-  }
 
+  if (base.length === 1 && base[0].action === 'unknown' && fallbackValid.length) return fallbackValid;
   if (base.length > 1) return base;
 
   const used = new Set(base.map((action) => action.action));
@@ -512,13 +475,16 @@ function mergeActionLists(primary, fallback) {
 
 function findPreviewColor(actions) {
   if (!Array.isArray(actions)) return null;
-  const target = actions.find((action) => (
+  return actions.find((action) => (
     (action.action === 'setBackground' || action.action === 'setTextColor') && action.color
-  ));
-  return target?.color || null;
+  ))?.color || null;
 }
 
 function formatActionsForDisplay(actions) {
   if (!Array.isArray(actions) || actions.length === 0) return null;
   return actions.length === 1 ? actions[0] : actions;
+}
+
+function safeText(value) {
+  return String(value || '').trim();
 }

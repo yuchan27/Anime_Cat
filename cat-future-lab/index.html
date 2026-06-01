@@ -40,7 +40,7 @@
         <span class="loader-cat__face"></span>
       </div>
       <p>選擇網站語氣</p>
-      <span class="style-gate__hint">同一個網站，提供未來科技、溫暖貓咪與金屬光澤三種語氣；10 秒未選會自動進入未來科技。</span>
+      <span class="style-gate__hint">同一個網站，提供未來科技、溫暖貓咪與金屬光澤三種語氣；請先選擇一種風格再進入網站。</span>
       <div class="style-choice-grid">
         <button class="style-choice style-choice--future" type="button" data-theme-choice="future">
           <strong>未來科技發展</strong>
@@ -724,26 +724,5 @@
   }
   </script>
   <script type="module" src="assets/js/main.js?v=20260601-4"></script>
-  <script>
-    // Fallback: 若 style-gate 因為模組或網路問題未被移除，1.5s 後自動解除，避免整站被遮罩
-    (function(){
-      try{
-        window.setTimeout(() => {
-          const gate = document.querySelector('[data-style-gate]');
-          if (gate && document.body.classList.contains('gate-open')) {
-            gate.classList.add('is-hidden');
-            document.body.classList.remove('gate-open','gate-exiting');
-            document.body.classList.add('page-ready');
-            // keep a short delay to allow minimal reveal transition
-            window.setTimeout(()=>{
-              gate.remove();
-            }, 600);
-          }
-        }, 1500);
-      }catch(e){
-        /* noop */
-      }
-    })();
-  </script>
 </body>
 </html>
