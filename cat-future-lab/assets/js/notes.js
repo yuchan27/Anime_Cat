@@ -21,6 +21,7 @@ export async function initNotesDeck() {
     slideWidth: 0,
     spreadSize: 1
   };
+  let turnTimer = 0;
 
   const prefersReduced = () => document.documentElement.classList.contains('reduce-motion');
   const getCurrentSpreadSize = () => {
@@ -81,8 +82,22 @@ export async function initNotesDeck() {
     next.disabled = state.index >= getMaxIndex();
   };
 
+  const markPageTurn = (nextIndex, animate) => {
+    const normalized = normalizeIndex(nextIndex);
+    if (!animate || normalized === state.index || prefersReduced()) return normalized;
+    const direction = normalized > state.index ? 'forward' : 'back';
+    window.clearTimeout(turnTimer);
+    deck.classList.remove('is-turning-forward', 'is-turning-back');
+    void deck.offsetWidth;
+    deck.classList.add(`is-turning-${direction}`);
+    turnTimer = window.setTimeout(() => {
+      deck.classList.remove('is-turning-forward', 'is-turning-back');
+    }, 520);
+    return normalized;
+  };
+
   const goTo = (nextIndex, animate = true) => {
-    state.index = normalizeIndex(nextIndex);
+    state.index = markPageTurn(nextIndex, animate);
     slides.slice(state.index, state.index + state.spreadSize).forEach((slide) => {
       slide.scrollTo?.({ top: 0, left: 0, behavior: 'auto' });
     });
