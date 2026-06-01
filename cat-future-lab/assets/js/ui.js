@@ -61,7 +61,7 @@ export function initWeatherPanelV2() {
   const weatherSource = document.querySelector('[data-weather-source]');
 
   if (
-    !weatherButton || !weatherCity || !weatherStatus || !weatherPlace ||
+    !weatherCity || !weatherStatus || !weatherPlace ||
     !weatherTime || !weatherTemp || !weatherWind || !weatherSource
   ) return;
 
@@ -88,7 +88,7 @@ export function initWeatherPanelV2() {
       return;
     }
 
-    weatherButton.disabled = true;
+    if (weatherButton) weatherButton.disabled = true;
     weatherStatus.textContent = `正在更新 ${cityName} 的城市訊號...`;
     weatherPlace.textContent = cityName;
 
@@ -106,7 +106,7 @@ export function initWeatherPanelV2() {
       weatherSource.textContent = 'fallback';
       weatherStatus.textContent = '天氣資料暫時無法更新，已保留替代狀態。';
     } finally {
-      if (requestId === weatherRequestId) weatherButton.disabled = false;
+      if (requestId === weatherRequestId && weatherButton) weatherButton.disabled = false;
     }
   };
 
@@ -135,7 +135,7 @@ export function initWeatherPanelV2() {
     loadSelectedWeather();
   });
 
-  weatherButton.addEventListener('click', loadSelectedWeather);
+  weatherButton?.addEventListener('click', loadSelectedWeather);
 
   if ('geolocation' in navigator) {
     navigator.geolocation.getCurrentPosition(
@@ -171,7 +171,10 @@ export function initHeroFlipCard() {
 
 export function initControlProximityFeedback() {
   const controls = Array.from(document.querySelectorAll('button, .button, [role="button"], select'));
-  if (!controls.length || window.matchMedia('(pointer: coarse)').matches) return;
+  const skipPointerFeedback = window.matchMedia('(pointer: coarse)').matches ||
+    window.matchMedia('(max-width: 900px)').matches ||
+    document.documentElement.classList.contains('reduced-performance');
+  if (!controls.length || skipPointerFeedback) return;
 
   let frame = 0;
   window.addEventListener('pointermove', (event) => {

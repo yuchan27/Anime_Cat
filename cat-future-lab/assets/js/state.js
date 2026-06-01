@@ -8,12 +8,12 @@ import {
 } from './config.js';
 
 const listeners = new Set();
-const SETTINGS_COOKIE = 'catlab-settings-v3';
+const SETTINGS_COOKIE = 'catlab-settings-v4';
 const SETTINGS_MAX_AGE = 60 * 60 * 24 * 45;
 const initialPage = PAGE_MAP[0]?.id || 'home';
 
 const DEFAULT_STATE = Object.freeze({
-  theme: 'cat',
+  theme: 'future',
   fontSize: 'md',
   fontFamily: 'default',
   marqueeText: '用導覽列、左右鍵或一句話快速切換頁面、背景與字體。',

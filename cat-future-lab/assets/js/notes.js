@@ -18,50 +18,114 @@ export async function initNotesDeck() {
     : await loadGsap();
   const state = {
     index: 0,
-    width: viewport.clientWidth
+    slideWidth: 0,
+    spreadSize: 1
   };
+  let turnTimer = 0;
 
   const prefersReduced = () => document.documentElement.classList.contains('reduce-motion');
+  const getCurrentSpreadSize = () => {
+    const width = viewport.getBoundingClientRect().width || viewport.clientWidth || window.innerWidth;
+    return width >= 860 ? 2 : 1;
+  };
+
+  const getMaxIndex = () => Math.max(0, slides.length - state.spreadSize);
+
+  const normalizeIndex = (index) => {
+    const maxIndex = getMaxIndex();
+    const clamped = clamp(index, 0, maxIndex);
+    return state.spreadSize > 1 ? clamped - (clamped % state.spreadSize) : clamped;
+  };
+
+  const measureSlideWidth = () => {
+    const rect = viewport.getBoundingClientRect();
+    const measured = (rect.width || viewport.clientWidth || track.clientWidth) / state.spreadSize;
+    state.slideWidth = measured || 0;
+  };
 
   const updateCounter = () => {
-    counter.textContent = `${state.index + 1} / ${slides.length}`;
+    const start = state.index + 1;
+    const end = Math.min(slides.length, state.index + state.spreadSize);
+    counter.textContent = start === end ? `${start} / ${slides.length}` : `${start}-${end} / ${slides.length}`;
   };
 
   const syncSlideState = () => {
     slides.forEach((slide, idx) => {
-      slide.classList.toggle('is-note-active', idx === state.index);
-      slide.setAttribute('aria-hidden', String(idx !== state.index));
+      const active = idx >= state.index && idx < state.index + state.spreadSize;
+      slide.classList.toggle('is-note-active', active);
+      slide.setAttribute('aria-hidden', String(!active));
     });
   };
 
   const snapTrack = (animate = true) => {
-    const x = -state.index * state.width;
+    state.spreadSize = getCurrentSpreadSize();
+    state.index = normalizeIndex(state.index);
+    measureSlideWidth();
+    const x = -state.index * state.slideWidth;
     if (gsap && animate && !prefersReduced()) {
-      gsap.to(track, { x, duration: 0.55, ease: 'power3.out', force3D: true });
+      gsap.to(track, {
+        x,
+        duration: 0.55,
+        ease: 'power3.out',
+        force3D: true,
+        overwrite: true,
+        onComplete: () => {
+          track.style.transform = `translate3d(${x}px, 0, 0)`;
+        }
+      });
     } else {
       track.style.transform = `translate3d(${x}px, 0, 0)`;
     }
     syncSlideState();
     updateCounter();
     prev.disabled = state.index <= 0;
-    next.disabled = state.index >= slides.length - 1;
+    next.disabled = state.index >= getMaxIndex();
+  };
+
+  const markPageTurn = (nextIndex, animate) => {
+    const normalized = normalizeIndex(nextIndex);
+    if (!animate || normalized === state.index || prefersReduced()) return normalized;
+    const direction = normalized > state.index ? 'forward' : 'back';
+    window.clearTimeout(turnTimer);
+    deck.classList.remove('is-turning-forward', 'is-turning-back');
+    void deck.offsetWidth;
+    deck.classList.add(`is-turning-${direction}`);
+    turnTimer = window.setTimeout(() => {
+      deck.classList.remove('is-turning-forward', 'is-turning-back');
+    }, 520);
+    return normalized;
   };
 
   const goTo = (nextIndex, animate = true) => {
-    state.index = clamp(nextIndex, 0, slides.length - 1);
+    state.index = markPageTurn(nextIndex, animate);
+    slides.slice(state.index, state.index + state.spreadSize).forEach((slide) => {
+      slide.scrollTo?.({ top: 0, left: 0, behavior: 'auto' });
+    });
     snapTrack(animate);
   };
 
-  prev.addEventListener('click', () => goTo(state.index - 1));
-  next.addEventListener('click', () => goTo(state.index + 1));
+  prev.addEventListener('click', () => goTo(state.index - state.spreadSize));
+  next.addEventListener('click', () => goTo(state.index + state.spreadSize));
+
+  viewport.addEventListener('click', (event) => {
+    if (event.target.closest('a, button, input, select, textarea, video')) return;
+    const rect = viewport.getBoundingClientRect();
+    const midpoint = rect.left + rect.width / 2;
+    goTo(state.index + (event.clientX >= midpoint ? state.spreadSize : -state.spreadSize));
+  });
 
   deck.addEventListener('keydown', (event) => {
-    if (event.key === 'ArrowLeft') goTo(state.index - 1);
-    if (event.key === 'ArrowRight') goTo(state.index + 1);
+    if (event.key === 'ArrowLeft') goTo(state.index - state.spreadSize);
+    if (event.key === 'ArrowRight') goTo(state.index + state.spreadSize);
   });
 
   window.addEventListener('resize', () => {
-    state.width = viewport.clientWidth;
+    const nextSpreadSize = getCurrentSpreadSize();
+    if (nextSpreadSize !== state.spreadSize) {
+      state.spreadSize = nextSpreadSize;
+      state.index = normalizeIndex(state.index);
+    }
+    measureSlideWidth();
     snapTrack(false);
   }, { passive: true });
 

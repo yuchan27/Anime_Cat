@@ -16,7 +16,7 @@
   <meta name="twitter:description" content="城市資料、3D 場域、快速導覽與 Remotion 動態影像。">
   <meta name="theme-color" content="#11131f">
   <link rel="icon" type="image/png" href="assets/images/catlab-icon.png">
-  <link rel="stylesheet" href="assets/css/styles.css?v=20260601-1">
+  <link rel="stylesheet" href="assets/css/styles.css?v=20260601-15">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -40,7 +40,7 @@
         <span class="loader-cat__face"></span>
       </div>
       <p>選擇網站語氣</p>
-      <span class="style-gate__hint">同一個網站，提供成熟科技產品感與溫暖動畫貓咪感。</span>
+      <span class="style-gate__hint">同一個網站，提供未來科技、溫暖貓咪與金屬光澤三種語氣；請先選擇一種風格再進入網站。</span>
       <div class="style-choice-grid">
         <button class="style-choice style-choice--future" type="button" data-theme-choice="future">
           <strong>未來科技發展</strong>
@@ -49,6 +49,10 @@
         <button class="style-choice style-choice--cat" type="button" data-theme-choice="cat">
           <strong>溫暖動畫貓咪</strong>
           <span>柔和、乾淨、有質感的貓咪輔助視覺，保留內容專業度。</span>
+        </button>
+        <button class="style-choice style-choice--metal" type="button" data-theme-choice="metal">
+          <strong>金屬光澤</strong>
+          <span>霧面深鋼、細緻拉絲紋理與銀色高光，讓內容像展示在金屬展台上。</span>
         </button>
       </div>
       <div class="rainbow-track" aria-hidden="true">
@@ -98,7 +102,11 @@
       </nav>
       <div class="header-actions" aria-label="控制列">
         <button class="ai-toggle" type="button" data-ai-open aria-label="開啟快速導覽視窗">導覽</button>
-        <button class="style-toggle" type="button" data-theme-switch aria-label="切換網站風格">未來科技</button>
+        <div class="theme-switcher" data-theme-switcher aria-label="切換網站風格">
+          <button class="style-toggle style-toggle--future" type="button" data-theme-option="future">未來</button>
+          <button class="style-toggle style-toggle--cat" type="button" data-theme-option="cat">溫暖</button>
+          <button class="style-toggle style-toggle--metal" type="button" data-theme-option="metal">金屬</button>
+        </div>
         <button class="reset-settings" type="button" data-reset-settings aria-label="還原預設設定">預設</button>
 
         <div class="font-size-switcher" data-font-size-switcher aria-label="字體大小">
@@ -114,9 +122,9 @@
     <button class="site-menu-scrim" type="button" data-menu-close aria-label="關閉主選單"></button>
   </header>
 
-  <div class="marquee-bar" data-marquee aria-live="polite">
-    <span data-marquee-text>用導覽列、左右鍵或一句話快速切換頁面、背景與字體。</span>
-    <span data-marquee-text aria-hidden="true">用導覽列、左右鍵或一句話快速切換頁面、背景與字體。</span>
+  <div class="marquee-bar" role="status" aria-live="polite">
+    <span data-marquee-text></span>
+    <span data-marquee-text></span>
   </div>
 
   <div class="ai-modal" data-ai-modal hidden>
@@ -146,32 +154,50 @@
 
   <main id="main" data-page-shell>
     <section id="hero" class="hero" aria-labelledby="hero-title">
+      <div class="hero-depth-stack" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
       <div class="hero__copy" data-animate="hero">
-      <p class="eyebrow">城市探索網站</p>
+      <div class="award-kicker" aria-label="作品型網站資訊">
+        <span class="ui-badge">Interactive Site</span>
+        <span>城市訊號作品集</span>
+        <span>UX / Motion / Data</span>
+      </div>
       <h1 id="hero-title">
         <span class="hero-title-line">Cat Future Lab</span>
-        <span class="hero-title-line hero-title-line--sub">用更有趣的方式看看一座城市</span>
+        <span class="hero-title-line hero-title-line--sub">探索城市</span>
       </h1>
       <p class="hero__lead">
-          這裡把天氣、城市時間、互動場景和快速導覽放在同一個網站裡。
-          你可以像逛一個小型城市觀測站一樣切換頁面、換風格、查資料，也能讓導覽員直接幫你操作畫面。
+          這裡把天氣、城市時間、互動場景和快速導覽做成一個可以左右切換的展示網站。
+          每一頁像一件作品：有主視覺、有狀態、有互動，也保留讓導覽員直接替你操作畫面的能力。
       </p>
       <div class="hero__actions">
-          <a class="button button--primary" href="#intro">開始探索</a>
-          <a class="button button--secondary" href="#contact">試試快速導覽</a>
+          <a class="button button--primary ui-button" href="#intro">開始探索</a>
+          <a class="button button--secondary ui-button" href="#contact">試試快速導覽</a>
         </div>
+        <dl class="award-scorebar" aria-label="作品評估指標">
+          <div><dt>體驗</dt><dd>8.7</dd></div>
+          <div><dt>動態</dt><dd>低耗能</dd></div>
+          <div><dt>控制</dt><dd>Safe Action</dd></div>
+        </dl>
 
       </div>
 
-      <figure class="signal-panel signal-panel--flip" data-hero-flip-card role="button" tabindex="0"
+      <figure class="signal-panel signal-panel--flip award-showcase-card" data-hero-flip-card role="button" tabindex="0"
         aria-pressed="false" aria-label="主視覺貓咪圖，點擊可切換另一張觀測場景">
+        <div class="award-card-meta" aria-hidden="true">
+          <span>01</span>
+          <span>Site of the Lab</span>
+        </div>
         <div class="signal-panel__image-stack">
-          <img class="signal-panel__image signal-panel__image--front cartoonized" src="assets/images/cat-hero-cartoon.png" alt="動畫風格虎斑貓坐在互動實驗室中。">
+          <img class="signal-panel__image signal-panel__image--front signal-panel__image--portal cartoonized" src="assets/images/cat-3d-billboard-portal.png" alt="3D 風格三花貓從城市觀測窗探出來。">
           <img class="signal-panel__image signal-panel__image--back cartoonized" src="assets/images/cat-french-observatory.png" alt="法式未來觀測餐廳裡，貓咪坐在城市天氣投影旁。">
         </div>
         <figcaption>
           <strong data-metric-value>60</strong>
-          <span>流暢體驗目標 / 點擊可翻面看另一個場景</span>
+          <span>FPS 體驗目標 / 點擊翻面查看另一個觀測場景</span>
         </figcaption>
       </figure>
     </section>
@@ -179,12 +205,12 @@
     <section id="scene" class="scene-section" aria-labelledby="scene-title">
       <div class="section-copy" data-reveal>
         <p class="eyebrow">互動場景</p>
-        <h2 id="scene-title">先用一個會動的場景進入城市</h2>
+        <h2 id="scene-title">會動的場景進入城市</h2>
         <p>
-          這一頁不是要做成複雜的儀表板，而是讓你先用一個簡單、會動的 3D 場景感受網站的氣氛。
-          你可以切換不同模式，看它用不同節奏呈現資料流動。
+          讓你先用一個簡單、會動的 3D 場景感受網站的氣氛。<br>
+          切換不同模式，看不同節奏呈現的資料流動。
         </p>
-        <p>如果只是想安靜閱讀，可以用穩定或專注模式；想看更多動態，就切到動態模式。</p>
+        <p>如果想安靜閱讀，可以用穩定或專注模式；想看更多動態，就切到動態模式。</p>
         <div class="scene-controls" aria-label="3D 場景模式控制">
           <button class="icon-button scene-mode-button" type="button" data-scene-mode="calm" aria-pressed="true"
             title="穩定模式：慢速粒子與柔和光線">
@@ -200,24 +226,30 @@
           </button>
           <button class="icon-button scene-mode-button scene-mode-button--lure" type="button" data-cat-lure-toggle
             aria-pressed="false" title="讓場域中的貓咪被滑鼠吸引">
-            <strong>貓咪跟隨</strong><span>靠近會看著貓條</span>
+            <strong>貓咪跟隨模式!!</strong><span>貓咪會看著貓條</span>
           </button>
         </div>
       </div>
       <figure class="scene-canvas-wrap" data-reveal>
         <canvas id="cat-scene" aria-label="城市訊號 3D 互動場域"></canvas>
-        <figcaption>這個互動場景是網站的入口視覺，也保留文字說明讓手機和鍵盤操作都能閱讀。</figcaption>
+        <figcaption>即時 3D 訊號場域保留互動，但在弱效能裝置會自動降低動態。</figcaption>
       </figure>
     </section>
 
     <section id="modules" class="module-band" aria-labelledby="modules-title">
-      <div class="section-heading" data-reveal>
+      <div class="section-heading award-section-heading" data-reveal>
         <p class="eyebrow">網站特色</p>
-        <h2 id="modules-title">把常見網站功能做得更好玩一點</h2>
+        <h2 id="modules-title">把常見網站功能做得好玩一點</h2>
         <p>這個網站保留一般網站該有的導覽、內容、圖片與互動，同時加入可以用一句話調整畫面的快速導覽。</p>
+        <div class="award-filter-row" aria-label="作品分類">
+          <span class="ui-badge ui-badge--outline">Nominee</span>
+          <span class="ui-badge ui-badge--outline">Interactive</span>
+          <span class="ui-badge ui-badge--outline">Motion</span>
+          <span class="ui-badge ui-badge--outline">Navigator</span>
+        </div>
       </div>
       <div class="module-grid" data-module-grid>
-        <article class="module-card" data-reveal>
+        <article class="module-card ui-card award-card" data-reveal>
           <span class="module-card__index">01</span>
           <h3>畫面有節奏</h3>
           <p>開場、切頁、按鈕與提示都有輕微動態，讓網站更像可以逛的產品頁。</p>
@@ -226,7 +258,7 @@
             <li>按鈕與卡片只保留必要的回饋。</li>
           </ul>
         </article>
-        <article class="module-card" data-reveal>
+        <article class="module-card ui-card award-card" data-reveal>
           <span class="module-card__index">02</span>
           <h3>可互動場景</h3>
           <p>首頁後的場景可以切模式，也能讓貓咪視覺跟著滑鼠互動。</p>
@@ -235,7 +267,7 @@
             <li>弱效能裝置會自動降級。</li>
           </ul>
         </article>
-        <article class="module-card" data-reveal>
+        <article class="module-card ui-card award-card" data-reveal>
           <span class="module-card__index">03</span>
           <h3>像輪播一樣切頁</h3>
           <p>每個分頁左右滑動切換，手機也能用手勢或選單快速前往。</p>
@@ -244,7 +276,7 @@
             <li>底部進度線跟著頁面更新。</li>
           </ul>
         </article>
-        <article class="module-card" data-reveal>
+        <article class="module-card ui-card award-card" data-reveal>
           <span class="module-card__index">04</span>
           <h3>城市資料</h3>
           <p>可以切換城市，直接查看當地時間、溫度、風速與資料來源。</p>
@@ -253,7 +285,7 @@
             <li>資料來源清楚標示，不讓畫面失效。</li>
           </ul>
         </article>
-        <article class="module-card" data-reveal>
+        <article class="module-card ui-card award-card" data-reveal>
           <span class="module-card__index">05</span>
           <h3>手機也能用</h3>
           <p>選單、切頁、字體大小與降低動態都針對手機版重新整理。</p>
@@ -262,7 +294,7 @@
             <li>CTA 與圖片不再互相覆蓋。</li>
           </ul>
         </article>
-        <article class="module-card" data-reveal>
+        <article class="module-card ui-card award-card" data-reveal>
           <span class="module-card__index">06</span>
           <h3>影像補充</h3>
           <p>影片與圖片作為補充內容，即使影片沒載入也能正常閱讀。</p>
@@ -275,35 +307,45 @@
     </section>
 
     <section id="gallery" class="gallery-section" aria-labelledby="gallery-title">
-      <div class="section-heading" data-reveal>
+      <div class="section-heading award-section-heading" data-reveal>
         <p class="eyebrow">圖片展示</p>
         <h2 id="gallery-title">用幾張圖把網站的氣氛講清楚</h2>
         <p>這些圖片讓網站比較有記憶點：城市、控制台、貓咪助手都放在同一個世界觀裡，但不讓畫面變得太幼稚。</p>
       </div>
-      <div class="gallery-layout" data-gallery>
-        <figure class="gallery-preview" data-reveal>
+      <div class="gallery-layout award-gallery" data-gallery>
+        <figure class="gallery-preview ui-card award-media-card" data-reveal>
+          <div class="award-card-meta" aria-hidden="true">
+            <span>Gallery</span>
+            <span>Featured Frame</span>
+          </div>
           <img src="assets/images/cat-observer-cartoon-wide.png" alt="動畫風格黑貓站在小船上觀察城市。"
             data-gallery-image class="cartoonized">
           <figcaption data-gallery-caption>貓咪像是陪你看城市資料的小助手，畫面重點仍然放在環境與資訊。</figcaption>
         </figure>
         <div class="gallery-controls" data-reveal>
-          <button class="photo-card is-active" type="button" data-gallery-card data-image="assets/images/cat-observer-cartoon-wide.png"
+          <button class="photo-card ui-card is-active" type="button" data-gallery-card data-image="assets/images/cat-observer-cartoon-wide.png"
             data-caption="貓咪像是陪你看城市資料的小助手，畫面重點仍然放在環境與資訊。" aria-pressed="true">
             <span>01</span>
             <strong>城市觀測</strong>
             <small>導覽入口</small>
           </button>
-          <button class="photo-card" type="button" data-gallery-card data-image="assets/images/cat-weather-cartoon.png"
+          <button class="photo-card ui-card" type="button" data-gallery-card data-image="assets/images/cat-weather-cartoon.png"
             data-caption="天氣控制台把城市、時間與天氣放在同一個容易閱讀的畫面。" aria-pressed="false">
             <span>02</span>
             <strong>資料控制台</strong>
             <small>城市狀態</small>
           </button>
-          <button class="photo-card" type="button" data-gallery-card data-image="assets/images/cat-hero-cartoon.png"
+          <button class="photo-card ui-card" type="button" data-gallery-card data-image="assets/images/cat-hero-cartoon.png"
             data-caption="首頁主圖用比較溫暖的光感，讓資料網站看起來更親近。" aria-pressed="false">
             <span>03</span>
             <strong>場域入口</strong>
             <small>第一視覺</small>
+          </button>
+          <button class="photo-card ui-card" type="button" data-gallery-card data-image="assets/images/cat-3d-billboard-portal.png"
+            data-caption="3D 貓咪像從城市觀測窗探出來，讓首頁多一個更有記憶點的入口畫面。" aria-pressed="false">
+            <span>04</span>
+            <strong>3D 觀測窗</strong>
+            <small>喵喵喵</small>
           </button>
         </div>
       </div>
@@ -314,13 +356,13 @@
         <div class="panel-heading">
           <p class="eyebrow">快速導覽</p>
           <h2 id="assistant-title">想改畫面，直接用說的</h2>
-          <p>你可以輸入「切到展示頁」、「背景改成白色」、「字體大一點」。網站會先判斷指令是否安全，再幫你更新畫面。</p>
+          <p>輸入「切到展示頁」、「背景改成白色」、「字體大一點」幫您更新成你喜歡的畫面OwO。</p>
         </div>
         <form class="chat-form" data-chat-form>
           <label for="chat-message">輸入控制或提問</label>
           <div class="chat-row">
             <input id="chat-message" name="message" type="text" autocomplete="off" maxlength="180"
-              placeholder="例如：背景改成白色、切到技術頁、3D 場域怎麼做出來的">
+              placeholder="背景改成白色、切到技術頁、幫我切換字體為標楷體">
             <button class="button button--primary" type="submit">送出</button>
           </div>
         </form>
@@ -347,7 +389,6 @@
             <option value="48.8566,2.3522" data-name="巴黎" data-tz="Europe/Paris">巴黎 Paris</option>
           </select>
         </div>
-        <button class="button button--secondary" type="button" data-weather-button>重新整理城市訊號</button>
         <dl class="weather-data" aria-live="polite">
           <div><dt>城市</dt><dd data-weather-place>台北</dd></div>
           <div><dt>當地時間</dt><dd data-weather-time>--</dd></div>
@@ -361,21 +402,21 @@
     <section id="remotion" class="remotion-strip" aria-labelledby="remotion-title">
       <div class="section-copy" data-reveal>
         <p class="eyebrow">動態影像</p>
-        <h2 id="remotion-title">一座城市觀測站的開場故事</h2>
+        <h2 id="remotion-title">一座城市的開場故事</h2>
         <p>
-          這個網站想像成一間夜裡還亮著燈的小型觀測站：貓咪不是主角，而是陪你整理城市訊號的值班員。
-          影片負責把城市、天氣、控制台和導覽員串成同一個世界，讓每一頁看起來不是獨立的截圖，而是一段可以被探索的旅程。
+          這個網站想像成一間夜裡還亮著燈的小型觀測站：<br>貓咪不是主角，而是陪你整理城市訊號的值班員。<br><br>
+          影片負責把城市、天氣、控制台和導覽員串成同一個世界，<br>讓每一頁看起來不是獨立的截圖，而是一段可以被探索的旅程。
         </p>
         <p>
-          當你切換頁面時，就像從入口走進觀測室、資料桌、影像牆，最後抵達簡報桌；快速導覽則是這間觀測站裡最安靜的操作員。
+          當你切換頁面，就像從入口走進各個入口，<br>快速導覽則是這間觀測站裡的操作員。
         </p>
       </div>
       <figure class="video-placeholder" data-reveal>
-        <video controls autoplay muted loop playsinline poster="assets/remotion/cat-loop-still.png" aria-label="Remotion 主循環素材">
+        <video controls preload="none" playsinline poster="assets/remotion/cat-loop-still.png" aria-label="Remotion 主循環素材">
           <source src="assets/remotion/cat-loop.mp4" type="video/mp4">
           你的瀏覽器不支援此影片格式。
         </video>
-        <figcaption>片段摘要：觀測站亮起、城市資料流動、貓咪值班員把訊號交給網站導覽。</figcaption>
+        <figcaption>觀測站亮起時、城市流動、貓咪觀測員將帶你去各個地方。</figcaption>
       </figure>
     </section>
 
@@ -389,22 +430,22 @@
         <article class="story-card" data-reveal>
           <span class="story-card__kicker">01</span>
           <h3>先逛內容</h3>
-          <p>從首頁、介紹、特色一路切到展示頁，像看一個有互動效果的網站。</p>
+          <p>從首頁、介紹、特色一路切到展示頁，<br>像看一個有互動效果的網站。</p>
         </article>
         <article class="story-card" data-reveal>
           <span class="story-card__kicker">02</span>
           <h3>再試控制</h3>
-          <p>到控制頁輸入自然語言，讓網站幫你切頁、換背景、調字體或更新跑馬燈。</p>
+          <p>到控制頁輸入自然語言，讓網站幫你切頁、<br>換背景、調字體或更新跑馬燈。</p>
         </article>
         <article class="story-card" data-reveal>
           <span class="story-card__kicker">03</span>
           <h3>換一種氛圍</h3>
-          <p>同樣的內容可以切成未來科技或溫暖風格；背景可改色，但不會把整個主題打掉。</p>
+          <p>同樣的內容可以切成未來科技或溫暖風格，<br>背景可改色，但不會把整個主題打掉。</p>
         </article>
         <article class="story-card" data-reveal>
           <span class="story-card__kicker">04</span>
           <h3>手機直接操作</h3>
-          <p>手機版用左側選單整理頁面和控制項，避免按鈕擠在第一眼畫面裡。</p>
+          <p>手機版用左側選單整理頁面和控制項，<br>避免按鈕擠在第一眼畫面裡。</p>
         </article>
         <article class="story-card" data-reveal>
           <span class="story-card__kicker">05</span>
@@ -568,7 +609,7 @@
               <header><span>07</span><h3>Remotion 影片素材</h3></header>
               <p>Remotion 用 React frame timeline 產出輔助影片；主網站不依賴 render 成功，影片缺失時仍可用 poster 與文字摘要。</p>
               <figure class="note-media note-media--video">
-                <video controls preload="metadata" poster="assets/remotion/build-process-still.png">
+                <video controls preload="none" poster="assets/remotion/build-process-still.png">
                   <source src="assets/remotion/build-process.mp4" type="video/mp4">
                   你的瀏覽器不支援影片播放。
                 </video>
@@ -682,6 +723,6 @@
     }
   }
   </script>
-  <script type="module" src="assets/js/main.js?v=20260601-1"></script>
+  <script type="module" src="assets/js/main.js?v=20260601-4"></script>
 </body>
 </html>

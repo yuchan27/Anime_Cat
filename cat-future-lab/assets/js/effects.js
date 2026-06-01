@@ -2,18 +2,26 @@ let gsapInstance;
 let scrollTriggerInstance;
 
 const reduceMotion = () => document.documentElement.classList.contains('reduce-motion');
+const coarsePointer = () => window.matchMedia('(pointer: coarse)').matches;
+const narrowViewport = () => window.matchMedia('(max-width: 900px)').matches;
+const reducedPerformance = () => document.documentElement.classList.contains('reduced-performance');
+const skipDecorativeEffects = () => (
+  reduceMotion() ||
+  reducedPerformance() ||
+  coarsePointer() ||
+  narrowViewport()
+);
 
 export async function initGsapEffects() {
-  if (reduceMotion() || document.documentElement.classList.contains('reduced-performance')) return;
+  if (skipDecorativeEffects()) return;
+  if (document.body.classList.contains('page-mode')) return;
 
   const gsap = await loadGsap();
   if (!gsap) return;
 
-  if (!document.body.classList.contains('page-mode')) {
-    initScrollPanels(gsap);
-    initParallax(gsap);
-    initModuleEntrance(gsap);
-  }
+  initScrollPanels(gsap);
+  initParallax(gsap);
+  initModuleEntrance(gsap);
   initHoverTilt(gsap);
   initHeroPointerDrift(gsap);
   initTickerPulse(gsap);
