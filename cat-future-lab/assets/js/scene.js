@@ -11,13 +11,18 @@ export async function initCatScene() {
 }
 
 function initThreeScene(canvas, THREE) {
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  const renderer = new THREE.WebGLRenderer({
+    canvas,
+    antialias: false,
+    alpha: true,
+    powerPreference: 'low-power'
+  });
   const getReducedState = () => (
     document.documentElement.classList.contains('reduce-motion') ||
     document.documentElement.classList.contains('reduced-performance')
   );
   const updatePixelRatio = () => {
-    const maxRatio = getReducedState() ? 1 : 1.5;
+    const maxRatio = getReducedState() ? 1 : 1.25;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, maxRatio));
   };
   updatePixelRatio();
@@ -42,11 +47,11 @@ function initThreeScene(canvas, THREE) {
   core.scale.set(1.06, 0.92, 1.06);
   lab.add(core);
 
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(1.82, 0.025, 12, 180), materials.cyan);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(1.82, 0.025, 10, 108), materials.cyan);
   ring.rotation.x = Math.PI / 2;
   lab.add(ring);
 
-  const tiltedRing = new THREE.Mesh(new THREE.TorusGeometry(2.28, 0.018, 12, 180), materials.coral);
+  const tiltedRing = new THREE.Mesh(new THREE.TorusGeometry(2.28, 0.018, 10, 108), materials.coral);
   tiltedRing.rotation.set(Math.PI / 2.4, 0.4, 0.1);
   lab.add(tiltedRing);
 
@@ -71,7 +76,7 @@ function initThreeScene(canvas, THREE) {
   lab.add(rightEye);
 
   const tailSignal = new THREE.Mesh(
-    new THREE.TorusGeometry(0.62, 0.045, 14, 90, Math.PI * 1.35),
+    new THREE.TorusGeometry(0.62, 0.045, 10, 70, Math.PI * 1.35),
     materials.coral
   );
   tailSignal.position.set(1.32, -0.34, -0.18);
@@ -87,7 +92,7 @@ function initThreeScene(canvas, THREE) {
   lab.add(antenna);
 
   const reducedScene = document.documentElement.classList.contains('reduced-performance');
-  const particles = createParticleOrbit(reducedScene ? 42 : 84, materials.line, THREE);
+  const particles = createParticleOrbit(reducedScene ? 20 : 48, materials.line, THREE);
   scene.add(particles);
   const sparkRings = createSparkRings(THREE);
   lab.add(sparkRings);
@@ -101,7 +106,7 @@ function initThreeScene(canvas, THREE) {
     new THREE.Vector3(-1.9, -0.4, -1.2)
   ]);
   const ribbon = new THREE.Mesh(
-    new THREE.TubeGeometry(ribbonCurve, 140, 0.042, 10, true),
+    new THREE.TubeGeometry(ribbonCurve, 84, 0.042, 8, true),
     materials.ribbon
   );
   lab.add(ribbon);
@@ -123,6 +128,25 @@ function initThreeScene(canvas, THREE) {
     focus: { speed: 0.46, light: 12, tint: 0x51d6d0 }
   };
   let activeMode = modes.calm;
+  let sceneInViewport = true;
+  let scenePageActive = true;
+
+  const updateScenePageActive = () => {
+    scenePageActive = !document.body.classList.contains('page-mode') ||
+      document.body.dataset.currentPage === 'intro';
+  };
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      sceneInViewport = entries.some((entry) => entry.isIntersecting && entry.intersectionRatio > 0.05);
+    }, { threshold: [0, 0.05, 0.2] });
+    observer.observe(canvas);
+  }
+
+  updateScenePageActive();
+  const pageObserver = new MutationObserver(updateScenePageActive);
+  pageObserver.observe(document.body, { attributes: true, attributeFilter: ['data-current-page', 'class'] });
+  document.addEventListener('visibilitychange', updateScenePageActive, { passive: true });
 
   const resize = () => {
     const rect = canvas.parentElement.getBoundingClientRect();
@@ -146,6 +170,7 @@ function initThreeScene(canvas, THREE) {
 
   window.addEventListener('resize', resize, { passive: true });
   window.addEventListener('pointermove', (event) => {
+    if (!scenePageActive || document.hidden) return;
     latestPointer = { x: event.clientX, y: event.clientY };
     if (pointerRaf) return;
     pointerRaf = requestAnimationFrame(() => {
@@ -175,17 +200,25 @@ function initThreeScene(canvas, THREE) {
 
   const clock = new THREE.Clock();
   let lastReducedState = getReducedState();
-  const animate = () => {
+  let lastFrameAt = 0;
+  const animate = (now = 0) => {
     const reducedNow = getReducedState();
     if (reducedNow !== lastReducedState) {
       lastReducedState = reducedNow;
       updatePixelRatio();
     }
-    if (document.hidden) {
+    if (document.hidden || !sceneInViewport || !scenePageActive) {
+      window.setTimeout(() => requestAnimationFrame(animate), 250);
+      return;
+    }
+    const targetFps = reducedNow ? 20 : 42;
+    if (now - lastFrameAt < 1000 / targetFps) {
       requestAnimationFrame(animate);
       return;
     }
-    const reduce = document.documentElement.classList.contains('reduce-motion');
+    lastFrameAt = now;
+
+    const reduce = reducedNow || document.documentElement.classList.contains('reduce-motion');
     const elapsed = clock.getElapsedTime();
     const speed = reduce ? 0 : activeMode.speed;
     const attraction = lureMode && pointerInside && !reduce ? 1 : 0;
@@ -260,21 +293,21 @@ function createSparkRings(THREE) {
   const group = new THREE.Group();
 
   const ringA = new THREE.Mesh(
-    new THREE.TorusGeometry(2.85, 0.012, 10, 160),
+    new THREE.TorusGeometry(2.85, 0.012, 8, 96),
     new THREE.MeshBasicMaterial({ color: 0x51d6d0, transparent: true, opacity: 0.68 })
   );
   ringA.rotation.set(Math.PI / 2.5, 0.1, 0);
   group.add(ringA);
 
   const ringB = new THREE.Mesh(
-    new THREE.TorusGeometry(3.2, 0.008, 10, 160),
+    new THREE.TorusGeometry(3.2, 0.008, 8, 96),
     new THREE.MeshBasicMaterial({ color: 0xf36f52, transparent: true, opacity: 0.55 })
   );
   ringB.rotation.set(Math.PI / 2.2, 0.8, 0.5);
   group.add(ringB);
 
   const ringC = new THREE.Mesh(
-    new THREE.TorusGeometry(2.45, 0.006, 8, 120),
+    new THREE.TorusGeometry(2.45, 0.006, 8, 84),
     new THREE.MeshBasicMaterial({ color: 0xdce86a, transparent: true, opacity: 0.64 })
   );
   ringC.rotation.set(Math.PI / 2.8, -0.5, 0.2);
@@ -293,6 +326,26 @@ function initCanvasFallback(canvas) {
   let speed = modes.calm;
   let frame = 0;
   let lureMode = false;
+  let sceneInViewport = true;
+  let scenePageActive = true;
+  let lastFrameAt = 0;
+
+  const updateScenePageActive = () => {
+    scenePageActive = !document.body.classList.contains('page-mode') ||
+      document.body.dataset.currentPage === 'intro';
+  };
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      sceneInViewport = entries.some((entry) => entry.isIntersecting && entry.intersectionRatio > 0.05);
+    }, { threshold: [0, 0.05, 0.2] });
+    observer.observe(canvas);
+  }
+
+  updateScenePageActive();
+  const pageObserver = new MutationObserver(updateScenePageActive);
+  pageObserver.observe(document.body, { attributes: true, attributeFilter: ['data-current-page', 'class'] });
+  document.addEventListener('visibilitychange', updateScenePageActive, { passive: true });
 
   const resize = () => {
     const rect = canvas.parentElement.getBoundingClientRect();
@@ -321,8 +374,21 @@ function initCanvasFallback(canvas) {
   resize();
   setMode('calm');
 
-  const draw = () => {
-    const reduce = document.documentElement.classList.contains('reduce-motion');
+  const draw = (now = 0) => {
+    const reduced = document.documentElement.classList.contains('reduce-motion') ||
+      document.documentElement.classList.contains('reduced-performance');
+    if (document.hidden || !sceneInViewport || !scenePageActive) {
+      window.setTimeout(() => requestAnimationFrame(draw), 250);
+      return;
+    }
+    const targetFps = reduced ? 18 : 36;
+    if (now - lastFrameAt < 1000 / targetFps) {
+      requestAnimationFrame(draw);
+      return;
+    }
+    lastFrameAt = now;
+
+    const reduce = reduced;
     const rect = canvas.getBoundingClientRect();
     const w = rect.width;
     const h = rect.height;

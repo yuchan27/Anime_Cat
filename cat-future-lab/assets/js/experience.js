@@ -9,7 +9,13 @@ import {
 import { getReadableTextColor, handleAIAction, pageIdFromHash } from './aiActions.js';
 import { getState, subscribeState, updateState } from './state.js';
 
-const THEMES = ['future', 'cat'];
+const THEMES = ['future', 'cat', 'metal'];
+const THEME_LABELS = {
+  future: '未來科技',
+  cat: '溫暖',
+  metal: '金屬'
+};
+const AUTO_THEME_DELAY_MS = 10000;
 
 export function initExperienceShell() {
   applyVisualState(getState());
@@ -44,42 +50,71 @@ function initThemeGate() {
   document.body.classList.remove('gate-exiting');
 
   const buttons = Array.from(gate.querySelectorAll('[data-theme-choice]'));
+  let selected = false;
+  let autoTimer = 0;
+
+  const chooseTheme = async (button) => {
+    if (selected) return;
+    selected = true;
+    window.clearTimeout(autoTimer);
+
+    const theme = THEMES.includes(button?.dataset.themeChoice) ? button.dataset.themeChoice : 'future';
+    buttons.forEach((item) => { item.disabled = true; });
+    button?.classList.add('is-selected');
+    handleAIAction({ action: 'setTheme', theme }, { persist: true });
+    updateState({
+      currentPage: 'home',
+      backgroundPreset: 'default',
+      customBackgroundColor: undefined,
+      customTextColor: undefined
+    }, { persist: true });
+
+    if (theme === 'cat') {
+      await runCatLoader(gate);
+    } else if (theme === 'metal') {
+      await runMetalLoader(gate);
+    } else {
+      await runFutureLoader(gate);
+    }
+
+    document.body.classList.add('gate-exiting');
+    gate.classList.add('is-hidden');
+    window.setTimeout(() => {
+      gate.remove();
+      document.body.classList.remove('gate-open', 'gate-exiting');
+      markPageReady();
+    }, 820);
+  };
+
   buttons.forEach((button) => {
-    button.addEventListener('click', async () => {
-      const theme = THEMES.includes(button.dataset.themeChoice) ? button.dataset.themeChoice : 'cat';
-      buttons.forEach((item) => { item.disabled = true; });
-      button.classList.add('is-selected');
-      handleAIAction({ action: 'setTheme', theme }, { persist: true });
-      updateState({
-        currentPage: 'home',
-        backgroundPreset: 'default',
-        customBackgroundColor: undefined,
-        customTextColor: undefined
-      }, { persist: true });
-
-      if (theme === 'future') {
-        await runFutureLoader(gate);
-      } else {
-        await runCatLoader(gate);
-      }
-
-      document.body.classList.add('gate-exiting');
-      gate.classList.add('is-hidden');
-      window.setTimeout(() => {
-        gate.remove();
-        document.body.classList.remove('gate-open', 'gate-exiting');
-        markPageReady();
-      }, 820);
-    }, { once: true });
+    button.addEventListener('click', () => chooseTheme(button), { once: true });
   });
+
+  const fallbackButton = buttons.find((button) => button.dataset.themeChoice === 'future') || buttons[0];
+  autoTimer = window.setTimeout(() => chooseTheme(fallbackButton), AUTO_THEME_DELAY_MS);
 }
 
 function initThemeSwitch() {
+  const buttons = Array.from(document.querySelectorAll('[data-theme-option]'));
+  if (!buttons.length) return;
+
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const theme = button.dataset.themeOption;
+      if (!THEMES.includes(theme) || theme === getState().theme) return;
+      handleAIAction({ action: 'setTheme', theme });
+      document.body.classList.add('theme-switching');
+      window.setTimeout(() => document.body.classList.remove('theme-switching'), 1600);
+    });
+  });
+}
+
+function initLegacyThemeSwitch() {
   const button = document.querySelector('[data-theme-switch]');
   if (!button) return;
 
   button.addEventListener('click', () => {
-    const next = getState().theme === 'future' ? 'cat' : 'future';
+    const next = getNextTheme(getState().theme);
     handleAIAction({ action: 'setTheme', theme: next });
     document.body.classList.add('theme-switching');
     window.setTimeout(() => document.body.classList.remove('theme-switching'), 1600);
@@ -286,9 +321,14 @@ function initSwipeNavigation(shell) {
   });
 }
 
+function getNextTheme(theme) {
+  const index = THEMES.indexOf(theme);
+  return THEMES[(index + 1) % THEMES.length] || THEMES[0];
+}
+
 function applyVisualState(state) {
   const root = document.documentElement;
-  const tokens = THEME_TOKEN_MAP[state.theme] || THEME_TOKEN_MAP.cat;
+  const tokens = THEME_TOKEN_MAP[state.theme] || THEME_TOKEN_MAP.future;
   const preset = BACKGROUND_PRESET_MAP[state.backgroundPreset] || BACKGROUND_PRESET_MAP.default;
   const customColor = state.customBackgroundColor;
   const bgMain = customColor || resolvePresetBg(preset.bgMain, tokens);
@@ -302,6 +342,7 @@ function applyVisualState(state) {
 
   root.classList.toggle('theme-future', state.theme === 'future');
   root.classList.toggle('theme-cat', state.theme === 'cat');
+  root.classList.toggle('theme-metal', state.theme === 'metal');
   document.body.dataset.theme = state.theme;
   document.body.dataset.backgroundPreset = state.backgroundPreset;
   document.body.dataset.customBackground = state.customBackgroundColor ? 'true' : 'false';
@@ -339,9 +380,24 @@ function applyVisualState(state) {
     '--panel-blur': shape.panelBlur
   });
 
+  document.querySelectorAll('[data-theme-option]').forEach((button) => {
+    const theme = button.dataset.themeOption;
+    const label = THEME_LABELS[theme] || theme;
+    const active = theme === state.theme;
+    button.hidden = active;
+    button.classList.toggle('is-active', active);
+    button.setAttribute('aria-pressed', String(active));
+    button.setAttribute('aria-label', active ? `目前是${label}主題` : `切換成${label}主題`);
+  });
+
   document.querySelectorAll('[data-theme-switch]').forEach((button) => {
-    button.textContent = state.theme === 'future' ? '溫暖' : '未來科技';
-    button.setAttribute('aria-label', state.theme === 'future' ? '切換成溫暖主題' : '切換成未來科技主題');
+    const nextTheme = getNextTheme(state.theme);
+    const currentLabel = THEME_LABELS[state.theme] || '目前風格';
+    const nextLabel = THEME_LABELS[nextTheme] || nextTheme;
+    button.textContent = currentLabel;
+    button.classList.add('is-active');
+    button.title = `目前是${currentLabel}，點擊切換成${nextLabel}`;
+    button.setAttribute('aria-label', `目前是${currentLabel}主題，點擊切換成${nextLabel}主題`);
   });
 
   document.querySelectorAll('[data-font-size]').forEach((button) => {
@@ -387,6 +443,27 @@ function runCatLoader(gate) {
   });
 }
 
+function runMetalLoader(gate) {
+  const bar = gate.querySelector('[data-loader-bar]');
+  const count = gate.querySelector('[data-loader-count]');
+  const cat = gate.querySelector('.loader-cat');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+    document.documentElement.classList.contains('reduced-performance');
+
+  gate.classList.add('is-metal-loading');
+  return animateProgress({
+    duration: reduced ? 280 : 720,
+    onUpdate: (progress) => {
+      if (bar) bar.style.width = `${progress}%`;
+      if (count) count.textContent = `${progress}%`;
+      if (cat) {
+        cat.style.left = `calc(${Math.min(progress, 96)}% - 76px)`;
+        cat.style.filter = `drop-shadow(0 0 ${Math.round(6 + progress * 0.08)}px rgba(216, 221, 230, 0.55))`;
+      }
+    }
+  });
+}
+
 function runFutureLoader(gate) {
   const canvas = gate.querySelector('[data-tech-loader-canvas]');
   const bar = gate.querySelector('[data-loader-bar]');
@@ -411,8 +488,8 @@ function runFutureLoader(gate) {
       resolve();
       return;
     }
-    const ratio = Math.min(window.devicePixelRatio || 1, 2);
-    const duration = 2200;
+    const ratio = Math.min(window.devicePixelRatio || 1, 1.25);
+    const duration = 1280;
     const startedAt = performance.now();
     let particles = [];
     const textBlock = ensureFutureLoaderText(gate);
@@ -427,7 +504,7 @@ function runFutureLoader(gate) {
       canvas.style.height = `${height}px`;
       ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
 
-      const targetCount = Math.min(260, Math.max(160, Math.round(width * 0.14)));
+      const targetCount = Math.min(120, Math.max(72, Math.round(width * 0.07)));
       particles = createLoaderParticles(targetCount, width, height);
       textBounds = getFutureTextBounds(textBlock);
     };

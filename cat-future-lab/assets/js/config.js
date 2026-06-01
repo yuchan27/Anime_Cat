@@ -103,6 +103,24 @@ export const THEME_TOKEN_MAP = {
     clay: '#8e5b44',
     line: 'rgba(63,42,53,0.14)',
     lineStrong: 'rgba(63,42,53,0.62)'
+  },
+  metal: {
+    bgMain: '#080b10',
+    bgPanel: 'rgba(13,18,25,0.9)',
+    textMain: '#f8fbff',
+    textMuted: 'rgba(232,238,247,0.84)',
+    accentMain: '#f0c77a',
+    accentSecondary: '#d8dde6',
+    borderSubtle: 'rgba(240,199,122,0.34)',
+    ink: '#f8fbff',
+    paper: '#080b10',
+    moss: '#f0c77a',
+    cyan: '#d8dde6',
+    coral: '#ff9f63',
+    violet: '#aeb7c3',
+    clay: '#f0c77a',
+    line: 'rgba(240,199,122,0.2)',
+    lineStrong: 'rgba(248,251,255,0.82)'
   }
 };
 
@@ -196,7 +214,7 @@ export const SHAPE_MODE_LABELS = Object.fromEntries(
 );
 
 export const FONT_SCALE_MAP = {
-  xl: 1.25,
+  xl: 1.24,
   lg: 1.12,
   md: 1,
   sm: 0.88
@@ -214,6 +232,7 @@ export const FONT_FAMILY_MAP = {
   jhenghei: '"Microsoft JhengHei", "Noto Sans TC", sans-serif',
   noto: '"Noto Sans TC", "Chivo", sans-serif',
   system: 'system-ui, "Segoe UI", "Noto Sans TC", sans-serif',
+  kai: '"DFKai-SB", "BiauKai", "KaiTi", "標楷體", "Noto Serif TC", serif',
   serif: '"Noto Serif TC", "PMingLiU", serif',
   mono: '"JetBrains Mono", "Cascadia Mono", "Noto Sans TC", monospace'
 };
@@ -249,7 +268,9 @@ export const COLOR_WORD_MAP = {
   香檳金: '#d7c27a',
   橘色: '#fff1df',
   紅色: '#fff0ed',
-  灰色: '#f4f4f5'
+  灰色: '#f4f4f5',
+  銀色: '#d8dde6',
+  金屬灰: '#8f98a8'
 };
 
 export const SECTION_EXPLAINERS = {
@@ -261,8 +282,8 @@ export const SECTION_EXPLAINERS = {
   about: '影像頁播放 Remotion 輸出的 mp4；如果影片無法播放，poster 與文字摘要仍保留完整資訊。',
   contact: '控制頁包含快速導覽與城市天氣。導覽員會先嘗試理解自然語言，再正規化為安全 JSON Action，由 Action Router 更新 AppState。',
   presentation: '簡報頁是最後一個 SPA panel，notes.js 負責左右切換與自適應版面；PPT 下載以 lazy import 載入 pptxgenjs。',
-  background: '背景控制走 setBackground action，只改背景色或 preset，不改使用者一開始選的「未來」或「溫暖」主題。',
-  theme: '主題控制走 THEME_TOKEN_MAP。未來主題偏高級科技產品，溫暖主題保留柔和貓咪元素；背景色變更不等於切主題。',
+  background: '背景控制走 setBackground action，只改背景色或 preset，不改使用者一開始選的「未來」、「溫暖」或「金屬」主題。',
+  theme: '主題控制走 THEME_TOKEN_MAP。未來主題偏高級科技產品，溫暖主題保留柔和貓咪元素，金屬主題使用拉絲紋理與銀色高光；背景色變更不等於切主題。',
   font: '字體大小走 FONT_SCALE_MAP 與 --font-scale，字體家族走 FONT_FAMILY_MAP；標題、內文、按鈕會按比例縮放，不會全部變同一個大小。',
   shape: '形狀控制會把自然語言轉成 sharp、soft、round、glass、solid 等預設視覺模式，透過 CSS variables 改圓角、陰影與面板質感。',
   marquee: '跑馬燈用 CSS animation 呈現，導覽員可透過 setMarquee 修改文字；低效能模式會放慢或降級動畫。',

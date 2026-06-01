@@ -48,11 +48,15 @@ const COLOR_ALIASES = {
   金色: '#d4af37',
   特殊金色: '#d4af37',
   香檳金: '#d7c27a',
+  銀色: '#d8dde6',
+  金屬灰: '#8f98a8',
   深藍: '#111827',
   深色: '#050505',
   柔和: '#f7f2ff',
   gold: '#d4af37',
   champagne: '#d7c27a',
+  silver: '#d8dde6',
+  steel: '#8f98a8',
   white: '#ffffff',
   black: '#050505',
   pink: '#ffd6e8',
@@ -71,6 +75,86 @@ const SECRET_PATTERNS = [
   /密鑰/,
   /密碼/
 ];
+
+const PLAIN_COLOR_ALIASES = {
+  '白色': '#ffffff',
+  '白': '#ffffff',
+  '黑色': '#050505',
+  '黑': '#050505',
+  '紅色': '#d92d20',
+  '紅': '#d92d20',
+  '深紅': '#991b1b',
+  '粉紅色': '#ffd6e8',
+  '粉紅': '#ffd6e8',
+  '藍色': '#2563eb',
+  '藍': '#2563eb',
+  '深藍': '#111827',
+  '綠色': '#16a34a',
+  '綠': '#16a34a',
+  '紫色': '#7c3aed',
+  '紫': '#7c3aed',
+  '黃色': '#facc15',
+  '黃': '#facc15',
+  '金色': '#d4af37',
+  '金屬金': '#c9a646',
+  '銀色': '#d8dde6',
+  '灰色': '#71717a',
+  '奶油色': '#fff8ed',
+  '奶油': '#fff8ed',
+  '米色': '#fff8ed'
+};
+
+function inferPlainChineseControls(text) {
+  const value = String(text || '').toLowerCase();
+  const compact = value.replace(/\s+/g, '');
+  const intent = {};
+
+  if (/(背景|底色|background|bg)/i.test(value)) {
+    const color = inferPlainChineseColor(value);
+    if (color) intent.backgroundColor = color;
+    else if (/(柔和|粉彩|soft|pastel)/i.test(value)) intent.backgroundPreset = 'soft';
+    else if (/(暖|溫暖|奶油|warm)/i.test(value)) intent.backgroundPreset = 'warm';
+    else if (/(冷|冷色|cool)/i.test(value)) intent.backgroundPreset = 'cool';
+    else if (/(深色|黑|dark)/i.test(value)) intent.backgroundPreset = 'dark';
+    else if (/(淺色|白|light)/i.test(value)) intent.backgroundPreset = 'light';
+  }
+
+  if (/(字體|字型|font|typeface)/i.test(value)) {
+    const size = normalizeFontSize(value);
+    const family = normalizeFontFamily(value);
+    if (size) intent.fontSize = size;
+    if (family) intent.fontFamily = family;
+  }
+
+  if (/(框框|卡片|邊框|形狀|圓形|圓角|直角|毛玻璃|玻璃|shape|round|rounded|sharp|glass)/i.test(value)) {
+    intent.shapeMode = normalizeShapeMode(value) || 'soft';
+  }
+
+  if (/(金屬|鋼|銀|chrome|metal|metallic|steel)/i.test(value) && /(風格|主題|模式|theme)/i.test(value)) {
+    intent.theme = 'metal';
+  } else if (/(未來|科技|future)/i.test(value) && /(風格|主題|模式|theme)/i.test(value)) {
+    intent.theme = 'future';
+  } else if (/(溫暖|貓|暖|cat|warm)/i.test(value) && /(風格|主題|模式|theme)/i.test(value)) {
+    intent.theme = 'cat';
+  }
+
+  if (/^(下一頁|下頁|next)$/.test(compact)) intent.pageAction = 'nextPage';
+  if (/^(上一頁|上頁|previous|prev)$/.test(compact)) intent.pageAction = 'previousPage';
+
+  return intent;
+}
+
+function inferPlainChineseColor(text) {
+  const value = String(text || '').toLowerCase();
+  const hex = value.match(/#?[0-9a-f]{6}/i)?.[0];
+  if (hex) return normalizeHexColor(hex);
+
+  for (const [word, color] of Object.entries(PLAIN_COLOR_ALIASES)) {
+    if (value.includes(word.toLowerCase())) return color;
+  }
+
+  return null;
+}
 
 export function coerceAIAction(rawAction, message = '') {
   const action = normalizeActionShape(rawAction);
@@ -122,7 +206,7 @@ export function coerceAIAction(rawAction, message = '') {
     return mode ? { action: 'setShapeMode', mode } : inferActionFromText(text);
   }
 
-  if (action.action === 'setMarquee') {
+  if (action.action === 'setMarquee' || action.action === 'setMarqueeText') {
     const value = String(action.text || action.value || '').trim();
     return value ? { action: 'setMarquee', text: value.slice(0, 120) } : inferActionFromText(text);
   }
@@ -247,7 +331,7 @@ function executeAction(action, options = {}) {
 
     case 'setTheme':
       updateState({ theme: action.theme }, { persist: shouldPersist });
-      return { ok: true, reply: action.theme === 'cat' ? '已切換為溫暖風格。' : '已切換為未來風格。' };
+      return { ok: true, reply: `已切換為${getThemeLabel(action.theme)}風格。` };
 
     case 'setFontSize':
       updateState({ fontSize: action.size }, { persist: shouldPersist });
@@ -338,6 +422,7 @@ function normalizeActionShape(rawAction) {
       case 'setShapeMode':
         return { action: 'setShapeMode', mode: value };
       case 'setMarquee':
+      case 'setMarqueeText':
         return { action: 'setMarquee', text: value };
       case 'setPresentationMode':
         return { action: 'setPresentationMode', mode: value };
@@ -387,6 +472,7 @@ function inferActionFromText(message, state = getState()) {
   const marquee = inferMarquee(text);
   if (marquee) return { action: 'setMarquee', text: marquee };
 
+  if (/(金屬|鋼|銀色|鉻|霧面|metal|metallic|steel|chrome)/i.test(text) && /(風格|主題|切換|換成|感)/.test(text)) return { action: 'setTheme', theme: 'metal' };
   if (/(未來|科技|法式)/.test(text) && /(風格|主題|切換|換成)/.test(text)) return { action: 'setTheme', theme: 'future' };
   if (/(溫暖|貓咪|可愛|療癒)/.test(text) && /(風格|主題|切換|換成)/.test(text)) return { action: 'setTheme', theme: 'cat' };
 
@@ -444,6 +530,7 @@ export function inferActionsFromText(message, state = getState()) {
     used.add(action.action);
     actions.push(action);
   };
+  const plainControls = inferPlainChineseControls(text);
 
   const directPage = inferDirectPageCommand(text);
   if (directPage) {
@@ -461,7 +548,17 @@ export function inferActionsFromText(message, state = getState()) {
 
   const marquee = inferMarquee(text);
   if (marquee) push({ action: 'setMarquee', text: marquee });
+  if (plainControls.pageAction) push({ action: plainControls.pageAction });
+  if (plainControls.theme) push({ action: 'setTheme', theme: plainControls.theme });
+  if (plainControls.fontSize) push({ action: 'setFontSize', size: plainControls.fontSize });
+  if (plainControls.fontFamily) push({ action: 'setFontFamily', family: plainControls.fontFamily });
+  if (plainControls.shapeMode) push({ action: 'setShapeMode', mode: plainControls.shapeMode });
+  if (plainControls.backgroundColor) push({ action: 'setBackground', color: plainControls.backgroundColor });
+  if (plainControls.backgroundPreset) push({ action: 'setBackground', preset: plainControls.backgroundPreset });
 
+  if (/(金屬|鋼|銀色|鉻|霧面|metal|metallic|steel|chrome)/i.test(text) && /(風格|主題|切換|換成|感)/.test(text)) {
+    push({ action: 'setTheme', theme: 'metal' });
+  }
   if (/(未來|科技|法式)/.test(text) && /(風格|主題|切換|換成)/.test(text)) {
     push({ action: 'setTheme', theme: 'future' });
   }
@@ -545,6 +642,8 @@ function inferColorFromText(text) {
   if (hex) return normalizeHexColor(hex);
 
   const normalized = String(text || '').toLowerCase();
+  const plainColor = inferPlainChineseColor(normalized);
+  if (plainColor) return plainColor;
   const allColors = { ...COLOR_WORD_MAP, ...COLOR_ALIASES };
   for (const [word, color] of Object.entries(allColors)) {
     if (normalized.includes(String(word).toLowerCase())) return color;
@@ -575,6 +674,10 @@ function normalizePageId(value) {
 function normalizeTheme(value) {
   const text = String(value || '').toLowerCase();
   if (isKnownTheme(text)) return text;
+  if (/金屬|鋼|銀|chrome|metal|metallic|steel/.test(text)) return 'metal';
+  if (/未來|科技|future/.test(text)) return 'future';
+  if (/溫暖|貓咪|貓|warm|cat/.test(text)) return 'cat';
+  if (/metal|metallic|steel|chrome|金屬|鋼|銀色|鉻|霧面/.test(text)) return 'metal';
   if (/future|未來|科技|法式/.test(text)) return 'future';
   if (/cat|貓|溫暖|可愛/.test(text)) return 'cat';
   return null;
@@ -583,6 +686,10 @@ function normalizeTheme(value) {
 function normalizeFontSize(value) {
   const text = String(value || '').toLowerCase();
   if (isKnownFontSize(text)) return text;
+  if (/特大|超大|extra\s*large|xl/.test(text)) return 'xl';
+  if (/大一點|放大|大型|大字|大\b|large|lg/.test(text)) return 'lg';
+  if (/中等|中型|中\b|medium|md/.test(text)) return 'md';
+  if (/小一點|縮小|小型|小\b|small|sm/.test(text)) return 'sm';
   if (/特大|超大|最大|xl/.test(text)) return 'xl';
   if (/大一點|放大|大|lg|large/.test(text)) return 'lg';
   if (/中|預設|正常|md|medium/.test(text)) return 'md';
@@ -593,6 +700,13 @@ function normalizeFontSize(value) {
 function normalizeFontFamily(value) {
   const text = String(value || '').toLowerCase();
   if (isKnownFontFamily(text)) return text;
+  if (/標楷|標楷體|dfkai|kai\s?ti|kaiti/.test(text)) return 'kai';
+  if (/新細明體|細明體|pmingliu|mingliu|明體|宋體/.test(text)) return 'serif';
+  if (/微軟正黑|正黑|jhenghei|microsoft\s*jhenghei|msjh/.test(text)) return 'jhenghei';
+  if (/思源黑|noto\s*sans|noto/.test(text)) return 'noto';
+  if (/系統|system|segoe/.test(text)) return 'system';
+  if (/等寬|程式碼|mono|code|monospace/.test(text)) return 'mono';
+  if (/預設|default/.test(text)) return 'default';
   if (/微軟正黑體|正黑體|msjh|jhenghei|microsoft\s*jhenghei/.test(text)) return 'jhenghei';
   if (/思源黑體|黑體|無襯線|sans|noto/.test(text)) return 'noto';
   if (/系統|system/.test(text)) return 'system';
@@ -605,6 +719,11 @@ function normalizeFontFamily(value) {
 function normalizeShapeMode(value) {
   const text = String(value || '').toLowerCase();
   if (isKnownShapeMode(text)) return text;
+  if (/毛玻璃|玻璃|glass|frost/.test(text)) return 'glass';
+  if (/圓形|圓角|變圓|框框.*圓|卡片.*圓|round|rounded|pill/.test(text)) return 'round';
+  if (/柔和|柔軟|soft/.test(text)) return 'soft';
+  if (/直角|銳利|sharp|square/.test(text)) return 'sharp';
+  if (/實心|不透明|solid/.test(text)) return 'solid';
   if (/毛玻璃|玻璃|透明|glass/.test(text)) return 'glass';
   if (/圓角|圓一點|圓|round/.test(text)) return 'round';
   if (/柔和|soft/.test(text)) return 'soft';
@@ -616,6 +735,16 @@ function normalizeShapeMode(value) {
 function normalizeBackgroundPreset(value) {
   const text = String(value || '').toLowerCase();
   if (isKnownBackgroundPreset(text)) return text;
+  if (/深色|暗色|黑|dark/.test(text)) return 'dark';
+  if (/淺色|亮色|白|light/.test(text)) return 'light';
+  if (/柔和|柔軟|soft/.test(text)) return 'soft';
+  if (/霓虹|neon/.test(text)) return 'neon';
+  if (/粉彩|pastel/.test(text)) return 'pastel';
+  if (/溫暖|暖|奶油|warm/.test(text)) return 'warm';
+  if (/冷色|冷|cool/.test(text)) return 'cool';
+  if (/極簡|minimal/.test(text)) return 'minimal';
+  if (/實驗室|lab/.test(text)) return 'lab';
+  if (/貓房|catroom/.test(text)) return 'catRoom';
   if (/深色|黑|dark/.test(text)) return 'dark';
   if (/淺色|白|light/.test(text)) return 'light';
   if (/柔和|soft/.test(text)) return 'soft';
@@ -643,9 +772,18 @@ function describeAction(action, state) {
   if (action.action === 'unknown') return action.message || '我沒有找到可執行操作。';
   if (action.action === 'getCurrentProgress') return buildProgressReply(state);
   if (action.action === 'setBackground') return action.color ? `準備把背景改成 ${action.color}。` : `準備套用 ${action.preset} 背景。`;
+  if (action.action === 'setTheme') return `準備切換成${getThemeLabel(action.theme)}風格。`;
   if (action.action === 'setFontFamily') return `準備把字體切換為「${FONT_FAMILY_LABELS[action.family] || action.family}」。`;
   if (action.action === 'goToPage') return `準備切到「${getPageById(action.target)?.label || action.target}」。`;
   return '已轉成可執行的網站控制 action。';
+}
+
+function getThemeLabel(theme) {
+  return {
+    future: '未來',
+    cat: '溫暖',
+    metal: '金屬'
+  }[theme] || theme;
 }
 
 function describeActionSequence(actions, state) {
@@ -695,7 +833,9 @@ function splitCompoundActions(rawAction) {
   if (rawAction.setShapeMode || rawAction.shapeMode) {
     actions.push({ action: 'setShapeMode', mode: rawAction.setShapeMode || rawAction.shapeMode });
   }
-  if (rawAction.setMarquee || rawAction.marquee) actions.push({ action: 'setMarquee', text: rawAction.setMarquee || rawAction.marquee });
+  if (rawAction.setMarquee || rawAction.setMarqueeText || rawAction.marquee) {
+    actions.push({ action: 'setMarquee', text: rawAction.setMarquee || rawAction.setMarqueeText || rawAction.marquee });
+  }
   if (rawAction.setPresentationMode || rawAction.presentationMode) {
     actions.push({ action: 'setPresentationMode', mode: rawAction.setPresentationMode || rawAction.presentationMode });
   }

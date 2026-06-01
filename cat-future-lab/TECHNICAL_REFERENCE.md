@@ -30,8 +30,8 @@
 
 ## 3. API 設計
 
-- `POST /api/chat`
-  - 前端送文字到 server，再由 server 呼叫 Google AI Studio。
+- `POST /api/ai-navigator`
+  - 前端送文字到 server，由 server 產生安全 JSON action。
   - 模型 fallback chain：`gemini-2.5-flash -> gemini-2.0-flash -> gemini-1.5-flash`。
 - `GET /api/weather?lat=...&lng=...`
   - 走 Open-Meteo，即時溫度/風速。

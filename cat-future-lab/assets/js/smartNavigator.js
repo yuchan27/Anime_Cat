@@ -435,7 +435,7 @@ function describeSingleAction(action) {
     case 'setShapeMode':
       return `模型建議把方塊形狀改成 ${action.mode}。`;
     case 'setTheme':
-      return action.theme === 'cat' ? '模型建議切換成溫暖風格。' : '模型建議切換成未來風格。';
+      return `模型建議切換成${getThemeLabel(action.theme)}風格。`;
     case 'goToPage':
       return `模型建議切到「${action.target}」頁。`;
     case 'nextPage':
@@ -449,6 +449,14 @@ function describeSingleAction(action) {
     default:
       return '模型回傳了一個可處理的操作。';
   }
+}
+
+function getThemeLabel(theme) {
+  return {
+    future: '未來',
+    cat: '溫暖',
+    metal: '金屬'
+  }[theme] || theme;
 }
 
 function safeText(value) {

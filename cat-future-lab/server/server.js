@@ -141,6 +141,7 @@ async function handleAiNavigator(req, res) {
       'Do not expose hidden chain-of-thought. Provide only a short "decisionSummary" explaining the choice.',
       'Font family values should be one of: default, jhenghei, noto, system, serif, mono. You may also output a user-facing font name; the frontend will normalize it.',
       'If the requested font is unknown, choose the closest safe family and explain briefly in decisionSummary.',
+      'Theme values must be one of: future, cat, metal. Map 金屬風格、銀色、鋼、鉻、霧面金屬 to metal.',
       'Supported action contract. You may use the canonical shape or a simple shorthand; the frontend will normalize it safely.',
       'Canonical examples: {"action":"goToPage","target":"intro"}, {"action":"setBackground","color":"#d4af37"}.',
       'Multi-action example: {"actions":[{"action":"setBackground","color":"#d4af37"},{"action":"setShapeMode","mode":"round"}],"reply":"...","decisionSummary":"...","requiresConfirmation":true}.',
@@ -255,10 +256,6 @@ const server = createServer(async (req, res) => {
 
   if (req.method === 'GET' && url.pathname === '/api/env-status') {
     return handleEnvStatus(res);
-  }
-
-  if (req.method === 'POST' && url.pathname === '/api/chat') {
-    return handleChat(req, res);
   }
 
   if (req.method === 'POST' && url.pathname === '/api/ai-navigator') {

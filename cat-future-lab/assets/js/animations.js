@@ -25,7 +25,7 @@ export async function initPageAnimations() {
 
   introTimeline
     .add({
-      targets: '[data-animate="hero"] .eyebrow',
+      targets: '[data-animate="hero"] .award-kicker, [data-animate="hero"] .eyebrow',
       translateY: [18, 0],
       opacity: [0, 1],
       duration: 500
