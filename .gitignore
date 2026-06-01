@@ -1,27 +1,39 @@
+# Environment
 .env
-cat-future-lab/.env
+**/.env
+
+# Dependencies
 node_modules/
+**/node_modules/
+
+# Build outputs
 dist/
 build/
 out/
 coverage/
 .cache/
+**/dist/
+**/build/
+**/out/
+**/coverage/
+**/.cache/
+
+# Logs
 *.log
-cat-future-lab/.server-health.*
+server-health.*
+.server-health.*
+
+# Remotion / generated media
 cat-future-lab/assets/remotion/*.mp4
 cat-future-lab/assets/remotion/*.webm
 cat-future-lab/assets/remotion/*.mov
 cat-future-lab/assets/remotion/*.png
-cat-future-lab/remotion/node_modules/
 cat-future-lab/remotion/.cache/
 cat-future-lab/remotion/out/
 cat-future-lab/remotion/dist/
-cat-future-lab/remotion/*.log
 
 # Local-only course / handoff artifacts
-/講義/
-/image/
-/*.pptx
+講義/
+image/
+*.pptx
 *.tmp
-*.temp
-Thumbs.db
