@@ -189,9 +189,9 @@ function initThreeScene(canvas, THREE) {
     activeMode = modes[mode] ?? modes.calm;
     accent.intensity = activeMode.light;
     ribbon.material.color.setHex(activeMode.tint);
-    document.documentElement.dataset.sceneMode = modes[mode] ? mode : 'calm';
+    document.documentElement.dataset.activeSceneMode = modes[mode] ? mode : 'calm';
     if (canvas.parentElement) {
-      canvas.parentElement.dataset.sceneMode = modes[mode] ? mode : 'calm';
+      canvas.parentElement.dataset.activeSceneMode = modes[mode] ? mode : 'calm';
     }
     updateModeButtons(mode);
   };
@@ -413,9 +413,9 @@ function initCanvasFallback(canvas) {
 
   const setMode = (mode) => {
     activeMode = modes[mode] ?? modes.calm;
-    document.documentElement.dataset.sceneMode = modes[mode] ? mode : 'calm';
+    document.documentElement.dataset.activeSceneMode = modes[mode] ? mode : 'calm';
     if (canvas.parentElement) {
-      canvas.parentElement.dataset.sceneMode = modes[mode] ? mode : 'calm';
+      canvas.parentElement.dataset.activeSceneMode = modes[mode] ? mode : 'calm';
     }
     updateModeButtons(mode);
   };
