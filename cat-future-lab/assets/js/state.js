@@ -56,13 +56,22 @@ export function updateState(patch, options = {}) {
 
 export function resetState(options = {}) {
   const preserved = {};
+
   if (options.preserveTheme) preserved.theme = state.theme;
   if (options.preservePage) preserved.currentPage = state.currentPage;
-  const shouldPersist = options.persist !== false;
+
+  const shouldPersist = options.persist === true;
+  const shouldClearPersisted = options.clearPersisted === true;
 
   Object.assign(state, DEFAULT_STATE, preserved);
   deriveState();
-  if (shouldPersist) persistSettings();
+
+  if (shouldClearPersisted) {
+    clearStoredSettings();
+  } else if (shouldPersist) {
+    persistSettings();
+  }
+
   notify();
   return getState();
 }
@@ -205,4 +214,21 @@ function persistSettings() {
   };
   document.cookie = `${SETTINGS_COOKIE}=${encodeURIComponent(JSON.stringify(payload))}; Max-Age=${SETTINGS_MAX_AGE}; Path=/; SameSite=Lax`;
   hasPersistedSettingsFlag = true;
+}
+
+export function clearStoredSettings() {
+  if (typeof document === 'undefined') return;
+
+  const cookieNames = [
+    SETTINGS_COOKIE,
+    'catlab-settings-v3',
+    'catlab-settings-v2',
+    'catlab-settings'
+  ];
+
+  cookieNames.forEach((name) => {
+    document.cookie = `${name}=; Max-Age=0; Path=/; SameSite=Lax`;
+  });
+
+  hasPersistedSettingsFlag = false;
 }

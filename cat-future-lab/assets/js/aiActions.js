@@ -331,8 +331,13 @@ function executeAction(action, options = {}) {
       window.dispatchEvent(new CustomEvent('catlab:pptrequest'));
       return { ok: true, reply: '已切到簡報頁並準備 PPT。' };
     case 'resetSettings':
-      resetState({ persist: shouldPersist });
-      return { ok: true, reply: '已還原預設設定。' };
+      resetState({
+        preserveTheme: true,
+        preservePage: true,
+        clearPersisted: true,
+        persist: false
+      });
+  return { ok: true, reply: '已清除儲存設定並還原預設，但保留目前風格。' };
     case 'unknown':
       return { ok: true, reply: action.message || '沒有足夠資訊產生安全 action，因此先不改畫面。' };
     default:
