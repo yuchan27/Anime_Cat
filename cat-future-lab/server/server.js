@@ -401,6 +401,19 @@ function normalizeNavigatorPayload(payload, message) {
 }
 
 function buildNavigatorFallback(message, model, latencyMs) {
+  const inferredPage = inferPageTarget(message);
+  if (inferredPage) {
+    return {
+      action: { action: 'goToPage', target: inferredPage },
+      reply: `模型暫時無法回應，所以改用保底判斷：已辨識為切換到「${getPageLabel(inferredPage)}」。`,
+      decisionSummary: '保底模式依照頁面關鍵字產生 goToPage action；仍會由前端 Action Router 驗證與執行。',
+      requiresConfirmation: false,
+      preview: {},
+      model,
+      latencyMs
+    };
+  }
+
   const inferredColor = inferBackgroundColor(message);
   if (inferredColor) {
     return buildBackgroundNavigatorPayload(inferredColor, model, latencyMs);
@@ -590,6 +603,37 @@ function inferBackgroundColor(message) {
   ];
 
   return colorMap.find(([pattern]) => pattern.test(text))?.[1] || null;
+}
+
+function inferPageTarget(message) {
+  const text = String(message || '').trim().toLowerCase();
+  if (!text) return null;
+
+  const pageRules = [
+    ['presentation', /(最後一頁|簡報頁|技術簡報|看簡報|簡報|報告|ppt|presentation|notes)/i],
+    ['contact', /(控制頁|導覽頁|快速導覽|智慧導覽|ai\s*控制|assistant|contact)/i],
+    ['about', /(影像頁|影片頁|remotion|影片|影像|about)/i],
+    ['gallery', /(展示頁|作品頁|圖片頁|展示|作品|gallery)/i],
+    ['tech', /(技術頁|技術|實作|架構|three|gsap|anime|modules)/i],
+    ['features', /(特色頁|功能頁|功能介紹|特色|功能|亮點|features|stories)/i],
+    ['intro', /(介紹頁|場域頁|3d|模型|介紹|intro|scene)/i],
+    ['home', /(首頁|主頁|封面|回首頁|回到首頁|home|hero)/i]
+  ];
+
+  return pageRules.find(([, pattern]) => pattern.test(text))?.[0] || null;
+}
+
+function getPageLabel(pageId) {
+  return {
+    home: '首頁',
+    intro: '介紹',
+    features: '特色',
+    tech: '技術',
+    gallery: '展示',
+    about: '影像',
+    contact: '控制',
+    presentation: '簡報'
+  }[pageId] || pageId;
 }
 
 function hasTextColorIntent(message) {

@@ -123,9 +123,36 @@ function initThreeScene(canvas, THREE) {
   let pointerInside = false;
   let lureMode = false;
   const modes = {
-    calm: { speed: 0.72, light: 18, tint: 0x7766d8 },
-    play: { speed: 1.35, light: 32, tint: 0xf36f52 },
-    focus: { speed: 0.46, light: 12, tint: 0x51d6d0 }
+    calm: {
+      speed: 0.52,
+      light: 15,
+      tint: 0x7766d8,
+      pointer: 0.48,
+      ring: 0.7,
+      pulse: 0.45,
+      signal: 0.55,
+      camera: 0.55
+    },
+    play: {
+      speed: 2.15,
+      light: 46,
+      tint: 0xf36f52,
+      pointer: 1.35,
+      ring: 1.55,
+      pulse: 1.45,
+      signal: 1.65,
+      camera: 1.15
+    },
+    focus: {
+      speed: 0.16,
+      light: 8,
+      tint: 0x51d6d0,
+      pointer: 0.12,
+      ring: 0.2,
+      pulse: 0.12,
+      signal: 0.15,
+      camera: 0.22
+    }
   };
   let activeMode = modes.calm;
   let sceneInViewport = true;
@@ -162,6 +189,10 @@ function initThreeScene(canvas, THREE) {
     activeMode = modes[mode] ?? modes.calm;
     accent.intensity = activeMode.light;
     ribbon.material.color.setHex(activeMode.tint);
+    document.documentElement.dataset.sceneMode = modes[mode] ? mode : 'calm';
+    if (canvas.parentElement) {
+      canvas.parentElement.dataset.sceneMode = modes[mode] ? mode : 'calm';
+    }
     updateModeButtons(mode);
   };
 
@@ -222,41 +253,44 @@ function initThreeScene(canvas, THREE) {
     const elapsed = clock.getElapsedTime();
     const speed = reduce ? 0 : activeMode.speed;
     const attraction = lureMode && pointerInside && !reduce ? 1 : 0;
+    const pointerPower = reduce ? 0 : activeMode.pointer;
+    const cameraPower = reduce ? 0 : activeMode.camera;
 
-    lab.rotation.y += ((pointer.x * 0.28) - lab.rotation.y) * 0.045;
-    lab.rotation.x += ((-pointer.y * 0.12) - lab.rotation.x) * 0.045;
-    lab.position.x += ((pointer.x * 0.34 * attraction) - lab.position.x) * 0.06;
-    lab.position.y += ((-pointer.y * 0.18 * attraction) - lab.position.y) * 0.06;
+    lab.rotation.y += ((pointer.x * 0.28 * pointerPower) - lab.rotation.y) * 0.045;
+    lab.rotation.x += ((-pointer.y * 0.12 * pointerPower) - lab.rotation.x) * 0.045;
+    lab.position.x += ((pointer.x * 0.34 * attraction * pointerPower) - lab.position.x) * 0.06;
+    lab.position.y += ((-pointer.y * 0.18 * attraction * pointerPower) - lab.position.y) * 0.06;
     core.rotation.y += 0.007 * speed;
     core.rotation.x += 0.0032 * speed;
-    ring.rotation.z += 0.008 * speed;
-    tiltedRing.rotation.z -= 0.005 * speed;
-    ribbon.rotation.y += 0.004 * speed;
-    ribbon.rotation.x = Math.sin(elapsed * activeMode.speed * 0.7) * 0.16;
-    tailSignal.rotation.z = -0.9 + Math.sin(elapsed * 2.2 * activeMode.speed) * 0.22;
-    leftEar.rotation.z = 0.28 + Math.sin(elapsed * 3.1 * activeMode.speed) * 0.09 + pointer.x * 0.035 * attraction;
-    rightEar.rotation.z = -0.28 - Math.sin(elapsed * 2.8 * activeMode.speed + 0.7) * 0.09 + pointer.x * 0.035 * attraction;
+    core.scale.setScalar(1 + Math.sin(elapsed * activeMode.speed * 1.4) * 0.018 * activeMode.pulse);
+    ring.rotation.z += 0.008 * speed * activeMode.ring;
+    tiltedRing.rotation.z -= 0.005 * speed * activeMode.ring;
+    ribbon.rotation.y += 0.004 * speed * activeMode.ring;
+    ribbon.rotation.x = Math.sin(elapsed * activeMode.speed * 0.7) * 0.16 * activeMode.pulse;
+    tailSignal.rotation.z = -0.9 + Math.sin(elapsed * 2.2 * activeMode.speed) * 0.22 * activeMode.signal;
+    leftEar.rotation.z = 0.28 + Math.sin(elapsed * 3.1 * activeMode.speed) * 0.09 * activeMode.signal + pointer.x * 0.035 * attraction * pointerPower;
+    rightEar.rotation.z = -0.28 - Math.sin(elapsed * 2.8 * activeMode.speed + 0.7) * 0.09 * activeMode.signal + pointer.x * 0.035 * attraction * pointerPower;
     leftEye.scale.y += (((attraction ? 4.2 : 1) - leftEye.scale.y) * 0.12);
     rightEye.scale.y += (((attraction ? 4.2 : 1) - rightEye.scale.y) * 0.12);
     sparkRings.children.forEach((child, idx) => {
-      child.rotation.y += (0.0035 + idx * 0.0012) * speed;
-      child.rotation.x += (0.002 + idx * 0.0008) * speed;
+      child.rotation.y += (0.0035 + idx * 0.0012) * speed * activeMode.ring;
+      child.rotation.x += (0.002 + idx * 0.0008) * speed * activeMode.ring;
     });
 
-    camera.position.x += ((pointer.x * 0.58) - camera.position.x) * 0.02;
-    camera.position.y += ((1.15 + pointer.y * -0.26 + Math.sin(elapsed * 0.7) * 0.08) - camera.position.y) * 0.02;
+    camera.position.x += ((pointer.x * 0.58 * cameraPower) - camera.position.x) * 0.02;
+    camera.position.y += ((1.15 + pointer.y * -0.26 * cameraPower + Math.sin(elapsed * 0.7) * 0.08 * activeMode.pulse) - camera.position.y) * 0.02;
     camera.lookAt(0, 0, 0);
 
     antenna.children.forEach((bar, index) => {
-      bar.scale.y = 0.7 + Math.sin(elapsed * activeMode.speed * 2 + index) * 0.18;
+      bar.scale.y = 0.7 + Math.sin(elapsed * activeMode.speed * 2 + index) * 0.18 * activeMode.signal;
     });
 
     particles.children.forEach((particle) => {
       particle.userData.angle += particle.userData.speed * speed;
       particle.position.x = Math.cos(particle.userData.angle) * particle.userData.radius;
       particle.position.z = Math.sin(particle.userData.angle) * particle.userData.radius;
-      particle.position.y = particle.userData.baseY + Math.sin(elapsed + particle.userData.angle) * 0.18;
-      particle.scale.setScalar(0.72 + Math.sin(elapsed * 2 + particle.userData.angle * 2.1) * 0.22);
+      particle.position.y = particle.userData.baseY + Math.sin(elapsed + particle.userData.angle) * 0.18 * activeMode.pulse;
+      particle.scale.setScalar(0.72 + Math.sin(elapsed * 2 + particle.userData.angle * 2.1) * 0.22 * activeMode.signal);
     });
 
     renderer.render(scene, camera);
@@ -319,11 +353,29 @@ function createSparkRings(THREE) {
 function initCanvasFallback(canvas) {
   const ctx = canvas.getContext('2d');
   const modes = {
-    calm: 0.8,
-    play: 1.45,
-    focus: 0.42
+    calm: {
+      speed: 0.52,
+      lineWidth: 7,
+      dash: [22, 28],
+      alpha: 0.68,
+      wobble: 0.55
+    },
+    play: {
+      speed: 2.05,
+      lineWidth: 11,
+      dash: [36, 10],
+      alpha: 1,
+      wobble: 1.35
+    },
+    focus: {
+      speed: 0.16,
+      lineWidth: 5,
+      dash: [10, 44],
+      alpha: 0.42,
+      wobble: 0.18
+    }
   };
-  let speed = modes.calm;
+  let activeMode = modes.calm;
   let frame = 0;
   let lureMode = false;
   let sceneInViewport = true;
@@ -360,7 +412,11 @@ function initCanvasFallback(canvas) {
   };
 
   const setMode = (mode) => {
-    speed = modes[mode] ?? modes.calm;
+    activeMode = modes[mode] ?? modes.calm;
+    document.documentElement.dataset.sceneMode = modes[mode] ? mode : 'calm';
+    if (canvas.parentElement) {
+      canvas.parentElement.dataset.sceneMode = modes[mode] ? mode : 'calm';
+    }
     updateModeButtons(mode);
   };
 
@@ -392,25 +448,27 @@ function initCanvasFallback(canvas) {
     const rect = canvas.getBoundingClientRect();
     const w = rect.width;
     const h = rect.height;
-    const t = reduce ? 0 : frame * 0.026 * speed;
+    const t = reduce ? 0 : frame * 0.026 * activeMode.speed;
     frame += 1;
 
     ctx.clearRect(0, 0, w, h);
     drawGrid(ctx, w, h);
     ctx.save();
     ctx.translate(w / 2, h / 2 + 10);
-    ctx.rotate(Math.sin(t * 0.7) * 0.035);
+    ctx.rotate(Math.sin(t * 0.7) * 0.035 * activeMode.wobble);
 
     ctx.strokeStyle = '#51d6d0';
-    ctx.lineWidth = 8;
-    ctx.setLineDash([28, 18]);
+    ctx.globalAlpha = activeMode.alpha;
+    ctx.lineWidth = activeMode.lineWidth;
+    ctx.setLineDash(activeMode.dash);
     ctx.beginPath();
     ctx.ellipse(0, 0, Math.min(w, h) * 0.3, Math.min(w, h) * 0.18, t * 0.25, 0, Math.PI * 2);
     ctx.stroke();
+    ctx.globalAlpha = 1;
 
     ctx.setLineDash([]);
     ctx.strokeStyle = '#f36f52';
-    ctx.lineWidth = 7;
+    ctx.lineWidth = Math.max(4, activeMode.lineWidth - 1);
     ctx.beginPath();
     ctx.arc(92, 56, 48, Math.PI * 0.35, Math.PI * 1.68);
     ctx.stroke();
@@ -435,7 +493,7 @@ function initCanvasFallback(canvas) {
     ctx.stroke();
 
     ctx.strokeStyle = '#11131f';
-    ctx.lineWidth = lureMode ? 7 : 10;
+    ctx.lineWidth = lureMode ? Math.max(5, activeMode.lineWidth - 2) : activeMode.lineWidth + 2;
     ctx.lineCap = 'round';
     ctx.beginPath();
     if (lureMode) {

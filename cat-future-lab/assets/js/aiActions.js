@@ -24,8 +24,8 @@ const PAGE_ALIASES = {
   intro: ['intro', '介紹', '場域', '3d', '3D', '模型'],
   features: ['features', '特色', '功能', '亮點'],
   tech: ['tech', '技術', '技術頁', '實作', '架構', 'three', 'gsap', 'anime'],
-  gallery: ['gallery', '展示', '影像', '作品', '圖片'],
-  about: ['about', '關於', '影片', 'remotion'],
+  gallery: ['gallery', '展示', '作品', '圖片'],
+  about: ['about', '關於', '影像', '影像頁', '影片', 'remotion'],
   contact: ['contact', '控制', '導覽', 'ai', 'api', '快速導覽'],
   presentation: ['presentation', '簡報', '報告', 'ppt', 'notes', '筆記', '最後']
 };
@@ -82,8 +82,12 @@ export function coerceAIAction(rawAction, message = '') {
   }
 
   switch (action.action) {
-    case 'goToPage':
-      return { action: 'goToPage', target: normalizePageId(action.target || action.page || action.value) || 'home' };
+    case 'goToPage': {
+      const target = normalizePageId(action.target || action.page || action.value);
+      return target
+        ? { action: 'goToPage', target }
+        : (text ? inferActionFromText(text) : { action: 'unknown', message: '頁面 action 缺少合法 target，因此沒有切換頁面。' });
+    }
     case 'setTheme': {
       const theme = normalizeTheme(action.theme || action.value);
       return theme ? { action: 'setTheme', theme } : inferActionFromText(text);
