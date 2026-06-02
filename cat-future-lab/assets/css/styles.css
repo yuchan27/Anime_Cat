@@ -1,4 +1,4 @@
-/* Cleaned full stylesheet generated from the uploaded CSS. Repeated overridden declarations were removed; theme/media overrides are intentionally preserved. */
+/* Cleaned stylesheet integrated from the uploaded CSS. Superseded temporary overrides were removed; confirmed responsive fixes were merged as formal sections. */
 @import url("https://fonts.googleapis.com/css2?family=Chivo:wght@400;600;800&family=Noto+Sans+TC:wght@400;500;700&display=swap");
 
 :root {
@@ -8474,7 +8474,7 @@ body.page-mode .photo-card small {
   }
 }
 
-/* --- Cat Future Lab final integrated layout fixes --- */
+/* --- Cat Future Lab integrated final fixes: presentation deck, cards, custom background --- */
 
 /* 簡報頁上方說明文字：桌機能一行就一行 */
 body.page-mode .report-section .section-heading {
@@ -9011,17 +9011,23 @@ html.theme-future body.page-mode .book-turn-sheet.is-animating::after {
   }
 }
 
-/* --- Warm theme modules page: keep original 3x2 layout and preserve shadows --- */
-/* Scope: only #modules in warm/cat theme. It does not affect #stories, #gallery, or #notes. */
+/* =========================================================
+   Warm Theme Modules Layout
+   保留技術頁原本 3x2 卡片排列，並補足陰影安全距離
+   ========================================================= */
 
+/* 恢復技術頁原本區塊排版，不再把卡片拉成橫向大卡 */
 html.theme-cat body.page-mode #modules.module-band {
   display: block !important;
   overflow-x: hidden !important;
   overflow-y: auto !important;
+
+  /* 只多留一點右側與底部安全距離給陰影，不改整體布局 */
   padding-right: clamp(1.5rem, 4vw, 4rem) !important;
   padding-bottom: calc(6rem + env(safe-area-inset-bottom)) !important;
 }
 
+/* 標題區恢復一般直向排版，不再改成左右 grid */
 html.theme-cat body.page-mode #modules .section-heading,
 html.theme-cat body.page-mode #modules .award-section-heading {
   display: block !important;
@@ -9041,44 +9047,42 @@ html.theme-cat body.page-mode #modules .award-filter-row {
   margin-top: clamp(0.8rem, 1.4vw, 1.2rem) !important;
 }
 
+/* 恢復 3 + 3 卡片布局，只加陰影安全空間 */
 html.theme-cat body.page-mode #modules .module-grid {
   width: min(1180px, calc(100% - 2rem)) !important;
   margin: 0 auto !important;
+
   display: grid !important;
   grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   gap: clamp(1rem, 1.6vw, 1.35rem) !important;
-  border: 0 !important;
+
+  /* 關鍵：讓右邊與底部陰影顯示，不被父層裁掉 */
   overflow: visible !important;
   padding-right: 1rem !important;
   padding-bottom: 1rem !important;
 }
 
+/* 卡片恢復一般卡片比例，不再被拉成超高或橫向 */
 html.theme-cat body.page-mode #modules .module-card {
   display: block !important;
   height: auto !important;
   min-height: clamp(14rem, 21vh, 17rem) !important;
   max-height: none !important;
+
   padding: clamp(1.15rem, 1.55vw, 1.45rem) !important;
   overflow: visible !important;
-  border: 1px solid color-mix(in srgb, var(--accent-main) 34%, var(--border-subtle)) !important;
+
   border-radius: 1.1rem !important;
   box-sizing: border-box !important;
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.38)),
-    color-mix(in srgb, var(--bg-panel) 92%, transparent) !important;
+
+  /* 只保留邊界陰影效果 */
   box-shadow:
     12px 12px 0 color-mix(in srgb, var(--text-main) 88%, transparent) !important;
 }
 
-html.theme-cat body.page-mode #modules .module-card:nth-child(3n),
-html.theme-cat body.page-mode #modules .module-card:nth-child(n + 4) {
-  border-right: 1px solid color-mix(in srgb, var(--accent-main) 34%, var(--border-subtle)) !important;
-  border-bottom: 1px solid color-mix(in srgb, var(--accent-main) 34%, var(--border-subtle)) !important;
-}
-
+/* 取消前面把卡片拉開用的 grid rows / gap 影響 */
 html.theme-cat body.page-mode #modules .module-card h3 {
   margin: clamp(1.2rem, 2vw, 1.6rem) 0 0.65rem !important;
-  line-height: 1.18 !important;
 }
 
 html.theme-cat body.page-mode #modules .module-card p {
@@ -9092,23 +9096,7 @@ html.theme-cat body.page-mode #modules .module-card ul {
   line-height: 1.65 !important;
 }
 
-html.theme-cat body.page-mode #modules .module-card li {
-  margin: 0.28rem 0 !important;
-}
-
-html.theme-cat body.page-mode #modules .module-card__index {
-  width: fit-content !important;
-  min-width: 2.6rem !important;
-  min-height: 2.6rem !important;
-  display: inline-grid !important;
-  place-items: center !important;
-  margin-bottom: clamp(0.8rem, 1.2vw, 1.1rem) !important;
-  border: 1px solid color-mix(in srgb, var(--accent-main) 52%, transparent) !important;
-  border-radius: 0.55rem !important;
-  color: var(--accent-main) !important;
-  font-weight: 900 !important;
-}
-
+/* 保留底部裝飾線，但不要讓文字碰到它 */
 html.theme-cat body.page-mode #modules .module-card::after {
   display: block !important;
   content: "" !important;
@@ -9119,34 +9107,14 @@ html.theme-cat body.page-mode #modules .module-card::after {
   background: color-mix(in srgb, var(--accent-main) 38%, transparent) !important;
 }
 
-/* --- Scene page: caption readability and mobile 2x2 controls --- */
-/* Scope: only #scene. */
-
-body.page-mode #scene.scene-section .scene-canvas-wrap figcaption,
-body.page-mode #scene.scene-section .scene-canvas-wrap figcaption * {
-  color: #ffffff !important;
-}
-
-body.page-mode #scene.scene-section .scene-canvas-wrap figcaption {
-  opacity: 1 !important;
-  background:
-    linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.72),
-      rgba(0, 0, 0, 0.48),
-      rgba(0, 0, 0, 0.28)
-    ) !important;
-  text-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.8),
-    0 0 10px rgba(255, 255, 255, 0.18) !important;
-}
-
+/* 中寬度照原本 RWD：2 欄 */
 @media (max-width: 1180px) {
   html.theme-cat body.page-mode #modules .module-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }
 
+/* 手機照原本 RWD：1 欄 */
 @media (max-width: 720px) {
   html.theme-cat body.page-mode #modules.module-band {
     padding-inline: clamp(1rem, 4vw, 1.25rem) !important;
@@ -9165,100 +9133,1318 @@ body.page-mode #scene.scene-section .scene-canvas-wrap figcaption {
   html.theme-cat body.page-mode #modules .module-card {
     min-height: auto !important;
   }
+}
 
-  body.page-mode #scene.scene-section {
-    display: block !important;
-    min-height: auto !important;
-    height: auto !important;
+
+/* =========================================================
+   Notes Page 03 Compact Panels
+   簡報第 03 頁卡片高度貼近內容，減少多餘留白
+   ========================================================= */
+
+body.page-mode .note-slide[data-title^="03"] {
+  align-content: start !important;
+  gap: clamp(0.7rem, 1vw, 0.95rem) !important;
+  overflow-y: hidden !important;
+}
+
+body.page-mode .note-slide[data-title^="03"] .note-columns {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  align-items: stretch !important;
+  align-content: start !important;
+  gap: clamp(0.9rem, 1.2vw, 1.15rem) !important;
+  margin-top: clamp(0.75rem, 1vw, 0.95rem) !important;
+  padding-right: 0.45rem !important;
+  padding-bottom: 0.45rem !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+}
+
+body.page-mode .note-slide[data-title^="03"] .note-panel {
+  display: block !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  align-self: stretch !important;
+  padding: clamp(0.85rem, 1.15vw, 1.05rem) !important;
+  overflow: visible !important;
+}
+
+body.page-mode .note-slide[data-title^="03"] .note-panel h4 {
+  margin: 0 0 clamp(0.55rem, 0.8vw, 0.75rem) !important;
+  line-height: 1.2 !important;
+}
+
+body.page-mode .note-slide[data-title^="03"] .note-panel ul {
+  margin: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  line-height: 1.55 !important;
+}
+
+body.page-mode .note-slide[data-title^="03"] .note-panel li + li {
+  margin-top: 0.18rem !important;
+}
+
+/* 手機單欄 */
+@media (max-width: 860px) {
+  body.page-mode .note-slide[data-title^="03"] .note-columns {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* =========================================================
+   Notes Pages 11 / 12 Equal Rows
+   統一標題列、描述框與清單框高度
+   ========================================================= */
+
+body.page-mode .note-slide[data-title^="11"],
+body.page-mode .note-slide[data-title^="12"] {
+  display: grid !important;
+  grid-template-rows:
+    minmax(4.2rem, auto)
+    minmax(7.2rem, auto)
+    minmax(7.8rem, auto) !important;
+  align-content: start !important;
+  gap: clamp(0.75rem, 1vw, 1rem) !important;
+  overflow-y: hidden !important;
+  padding-bottom: clamp(1rem, 1.4vw, 1.25rem) !important;
+}
+
+/* 標題列統一高度 */
+body.page-mode .note-slide[data-title^="11"] header,
+body.page-mode .note-slide[data-title^="12"] header {
+  min-height: 4.2rem !important;
+  height: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  margin: 0 !important;
+}
+
+/* 編號與標題垂直置中 */
+body.page-mode .note-slide[data-title^="11"] header span,
+body.page-mode .note-slide[data-title^="12"] header span {
+  flex: 0 0 auto !important;
+}
+
+body.page-mode .note-slide[data-title^="11"] header h3,
+body.page-mode .note-slide[data-title^="12"] header h3 {
+  line-height: 1.08 !important;
+}
+
+/* 上方描述框統一高度 */
+body.page-mode .note-slide[data-title^="11"] > p,
+body.page-mode .note-slide[data-title^="12"] > p {
+  min-height: 7.2rem !important;
+  height: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  margin: 0 !important;
+  padding:
+    clamp(0.85rem, 1.1vw, 1.05rem)
+    clamp(1rem, 1.25vw, 1.2rem) !important;
+  line-height: 1.55 !important;
+  overflow: visible !important;
+}
+
+/* 下方清單框統一高度 */
+body.page-mode .note-slide[data-title^="11"] > ul,
+body.page-mode .note-slide[data-title^="12"] > ul {
+  min-height: 7.8rem !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding:
+    clamp(0.82rem, 1.05vw, 1rem)
+    clamp(1rem, 1.25vw, 1.2rem)
+    clamp(0.82rem, 1.05vw, 1rem)
+    1.5rem !important;
+  line-height: 1.55 !important;
+  overflow: visible !important;
+}
+
+/* 右下陰影預留空間，避免框線或陰影被切 */
+body.page-mode .note-slide[data-title^="11"] > p,
+body.page-mode .note-slide[data-title^="12"] > p,
+body.page-mode .note-slide[data-title^="11"] > ul,
+body.page-mode .note-slide[data-title^="12"] > ul {
+  box-sizing: border-box !important;
+  width: calc(100% - 0.55rem) !important;
+}
+
+/* 手機版不要硬固定高度 */
+@media (max-width: 860px) {
+  body.page-mode .note-slide[data-title^="11"],
+  body.page-mode .note-slide[data-title^="12"] {
+    grid-template-rows: auto auto auto !important;
     overflow-y: auto !important;
-    overflow-x: hidden !important;
-    padding:
-      clamp(1rem, 4vw, 1.35rem)
-      clamp(1rem, 4vw, 1.35rem)
-      calc(6.5rem + env(safe-area-inset-bottom)) !important;
   }
 
-  body.page-mode #scene.scene-section .section-copy {
+  body.page-mode .note-slide[data-title^="11"] header,
+  body.page-mode .note-slide[data-title^="12"] header,
+  body.page-mode .note-slide[data-title^="11"] > p,
+  body.page-mode .note-slide[data-title^="12"] > p,
+  body.page-mode .note-slide[data-title^="11"] > ul,
+  body.page-mode .note-slide[data-title^="12"] > ul {
+    min-height: 0 !important;
     width: 100% !important;
-    max-width: none !important;
-    margin: 0 !important;
   }
+}
 
-  body.page-mode #scene.scene-section .section-copy h2 {
-    font-size: clamp(1.9rem, 8vw, 2.65rem) !important;
-    line-height: 1.15 !important;
-    margin-bottom: 0.85rem !important;
-  }
+/* =========================================================
+   Scene Canvas Caption Layout
+   讓 3D 場景說明文字固定貼齊容器底部
+   ========================================================= */
 
-  body.page-mode #scene.scene-section .section-copy p {
-    line-height: 1.85 !important;
-    margin-bottom: 0.85rem !important;
-  }
+body.page-mode #scene.scene-section .scene-canvas-wrap {
+  display: grid !important;
+  grid-template-rows: minmax(0, 1fr) auto !important;
+  height: min(67vh, 660px) !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
 
-  body.page-mode #scene.scene-section .scene-controls {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 0.65rem !important;
-    width: 100% !important;
-    margin: 1rem 0 1rem !important;
-    position: relative !important;
-    z-index: 5 !important;
-  }
+/* canvas 吃掉文字框上方剩餘空間 */
+body.page-mode #scene.scene-section .scene-canvas-wrap canvas,
+body.page-mode #scene.scene-section #cat-scene {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  display: block !important;
+}
 
-  body.page-mode #scene.scene-section .scene-mode-button,
-  body.page-mode #scene.scene-section .scene-mode-button--lure {
-    width: 100% !important;
-    min-width: 0 !important;
-    min-height: 3.45rem !important;
-    padding: 0.62rem 0.72rem !important;
-    display: grid !important;
-    align-content: center !important;
-    justify-content: start !important;
-    text-align: left !important;
-    white-space: normal !important;
-  }
+/* figcaption 固定在底部，不再浮在中間 */
+body.page-mode #scene.scene-section .scene-canvas-wrap figcaption {
+  grid-row: 2 !important;
+  align-self: end !important;
+  margin: 0 !important;
+  border-top: 2px solid currentColor !important;
+  color: #ffffff !important;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.76),
+      rgba(0, 0, 0, 0.54),
+      rgba(0, 0, 0, 0.36)
+    ) !important;
+  opacity: 1 !important;
+}
 
-  body.page-mode #scene.scene-section .scene-mode-button strong {
-    display: block !important;
-    font-size: 0.9rem !important;
-    line-height: 1.15 !important;
-  }
+/* 確保裡面的文字也吃白色 */
+body.page-mode #scene.scene-section .scene-canvas-wrap figcaption,
+body.page-mode #scene.scene-section .scene-canvas-wrap figcaption * {
+  color: #ffffff !important;
+}
 
-  body.page-mode #scene.scene-section .scene-mode-button span {
-    display: block !important;
-    font-size: 0.72rem !important;
-    line-height: 1.25 !important;
-    margin-top: 0.12rem !important;
-  }
-
+/* 手機版維持自然高度，避免 3D 區塊太高卡住 */
+@media (max-width: 720px) {
   body.page-mode #scene.scene-section .scene-canvas-wrap {
-    width: 100% !important;
-    max-width: none !important;
-    margin: 0.85rem 0 0 !important;
-    position: relative !important;
-    z-index: 1 !important;
-    overflow: hidden !important;
-    border-radius: 0 !important;
+    height: auto !important;
+    display: grid !important;
+    grid-template-rows: auto auto !important;
   }
 
   body.page-mode #scene.scene-section .scene-canvas-wrap canvas,
   body.page-mode #scene.scene-section #cat-scene {
-    display: block !important;
-    width: 100% !important;
-    height: clamp(280px, 58vh, 520px) !important;
-    max-height: none !important;
+    height: clamp(240px, 48vh, 430px) !important;
   }
 
   body.page-mode #scene.scene-section .scene-canvas-wrap figcaption {
     position: static !important;
-    display: block !important;
-    padding: 0.75rem 0.9rem !important;
-    line-height: 1.55 !important;
+    grid-row: 2 !important;
   }
 }
 
-/* --- Style gate: initial title color --- */
+/* =========================================================
+   Remotion Storyline Font Scaling
+   下方四張故事卡跟隨全站字級設定
+   ========================================================= */
 
-.style-gate .loader-card > p {
-  color: #f4d98f;
+body.page-mode .remotion-storyline article {
+  gap: calc(0.72rem * var(--font-scale)) !important;
+  padding: calc(0.8rem * var(--font-scale)) !important;
+}
+
+body.page-mode .remotion-storyline strong {
+  font-size: calc(1rem * var(--font-scale)) !important;
+  line-height: 1.35 !important;
+}
+
+body.page-mode .remotion-storyline span {
+  font-size: calc(0.92rem * var(--font-scale)) !important;
+  line-height: 1.62 !important;
+}
+
+/* 圖片卡裡如果有其他文字，也一起吃 font-scale */
+body.page-mode .remotion-storyline article p,
+body.page-mode .remotion-storyline article small,
+body.page-mode .remotion-storyline article figcaption {
+  font-size: calc(0.92rem * var(--font-scale)) !important;
+  line-height: 1.62 !important;
+}
+
+/* 字變大時卡片高度要能跟著撐開，不要切文字 */
+body.page-mode .remotion-storyline article {
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+/* 字變大時圖片稍微縮一點，避免整張卡爆版 */
+body.page-mode[data-font-size="lg"] .remotion-storyline img,
+body.page-mode[data-font-size="xl"] .remotion-storyline img {
+  aspect-ratio: 4 / 2.75 !important;
+}
+
+/* 手機版維持穩定 */
+@media (max-width: 860px) {
+  body.page-mode .remotion-storyline {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.page-mode .remotion-storyline article {
+    padding: 1rem !important;
+  }
+}
+
+/* =========================================================
+   Mobile Gallery / Stories Title Wrapping
+   修正手機版圖片展示與怎麼使用區塊標題裁切
+   ========================================================= */
+
+@media (max-width: 720px) {
+  body.page-mode #gallery.gallery-section,
+  body.page-mode #stories.story-band {
+    overflow-x: hidden !important;
+    padding-inline: clamp(1rem, 4vw, 1.35rem) !important;
+  }
+
+  body.page-mode #gallery .section-heading,
+  body.page-mode #stories .section-heading {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-inline: 0 !important;
+    overflow: visible !important;
+  }
+
+  body.page-mode #gallery .section-heading h2,
+  body.page-mode #stories .section-heading h2,
+  body.page-mode #gallery-title,
+  body.page-mode #stories-title {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+
+    /* 關鍵：允許中文標題正常斷行 */
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+    text-wrap: balance !important;
+
+    /* 手機標題縮一點，避免一行塞不下 */
+    font-size: clamp(2rem, 8.2vw, 3rem) !important;
+    line-height: 1.16 !important;
+    letter-spacing: -0.03em !important;
+
+    overflow: visible !important;
+    text-overflow: clip !important;
+  }
+
+  body.page-mode #gallery .section-heading p,
+  body.page-mode #stories .section-heading p {
+    width: 100% !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+    line-height: 1.7 !important;
+  }
+}
+
+/* 更窄手機再縮一點 */
+@media (max-width: 430px) {
+  body.page-mode #gallery .section-heading h2,
+  body.page-mode #stories .section-heading h2,
+  body.page-mode #gallery-title,
+  body.page-mode #stories-title {
+    font-size: clamp(1.85rem, 7.4vw, 2.45rem) !important;
+    line-height: 1.18 !important;
+  }
+}
+
+
+/* =========================================================
+   Global Responsive Layout
+   全站流體響應式規則：不依賴手機型號，依 viewport 自動收斂
+   ========================================================= */
+
+:root {
+  --responsive-page-x: clamp(1rem, 4vw, 4rem);
+  --responsive-page-y: clamp(1.25rem, 5vh, 5rem);
+  --responsive-card-gap: clamp(0.85rem, 2.6vw, 1.35rem);
+  --responsive-radius: clamp(0.75rem, 2vw, 1.25rem);
+}
+
+/* 全域禁止被子元素撐出橫向捲軸 */
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
+/* 任何頁面容器都不應該超出 viewport */
+body.page-mode,
+body.page-mode [data-page-shell],
+body.page-mode .page-panel {
+  max-width: 100vw;
+  overflow-x: clip;
+}
+
+/* 文字預設允許換行，避免中文長標題切掉 */
+body.page-mode h1,
+body.page-mode h2,
+body.page-mode h3,
+body.page-mode p,
+body.page-mode li,
+body.page-mode strong,
+body.page-mode span {
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   Tablet / Small Desktop：先把大型布局收斂
+   ========================================================= */
+
+@media (max-width: 1024px) {
+  body.page-mode .hero,
+  body.page-mode .scene-section,
+  body.page-mode .module-band,
+  body.page-mode .gallery-section,
+  body.page-mode .assistant-section,
+  body.page-mode .remotion-strip,
+  body.page-mode .report-section {
+    width: 100%;
+    max-width: 100vw;
+    padding-inline: var(--responsive-page-x);
+  }
+
+  body.page-mode .site-header {
+    max-width: 100vw;
+    overflow-x: clip;
+  }
+
+  body.page-mode .header-actions {
+    gap: clamp(0.35rem, 1.5vw, 0.55rem);
+  }
+
+  body.page-mode .wheel-nav {
+    display: none;
+  }
+}
+
+/* =========================================================
+   Mobile Core：真正手機版，不看型號，只看可用寬度
+   ========================================================= */
+
+@media (max-width: 720px) {
+  :root {
+    --responsive-page-x: clamp(1rem, 4.2vw, 1.35rem);
+    --responsive-page-y: clamp(1.15rem, 4.5vh, 2rem);
+    --responsive-card-gap: clamp(0.8rem, 3.2vw, 1rem);
+  }
+
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip !important;
+  }
+
+  body.page-mode [data-page-shell] {
+    width: 100%;
+    max-width: 100vw;
+    min-width: 0;
+  }
+
+  body.page-mode .page-panel {
+    width: 100%;
+    max-width: 100vw;
+    min-width: 0;
+    overflow-x: clip !important;
+    overflow-y: auto;
+  }
+
+  /* 共用 section 手機基本規格 */
+  body.page-mode .hero,
+  body.page-mode .scene-section,
+  body.page-mode .module-band,
+  body.page-mode .gallery-section,
+  body.page-mode .assistant-section,
+  body.page-mode .remotion-strip,
+  body.page-mode .report-section {
+    width: 100%;
+    max-width: 100vw;
+    min-width: 0;
+    margin-inline: 0;
+    padding:
+      var(--responsive-page-y)
+      var(--responsive-page-x)
+      calc(6.5rem + env(safe-area-inset-bottom));
+    overflow-x: clip !important;
+    overflow-y: auto;
+  }
+
+  /* 手機標題通用：自動縮放 + 自動斷行 */
+  body.page-mode h1,
+  body.page-mode h2 {
+    max-width: 100%;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+  }
+
+  body.page-mode h1 {
+    font-size: clamp(2.45rem, 12.5vw, 4rem);
+  }
+
+  body.page-mode h2 {
+    font-size: clamp(2rem, 8.5vw, 3rem);
+  }
+
+  body.page-mode h3 {
+    font-size: clamp(1.35rem, 6.5vw, 2rem);
+    line-height: 1.18;
+  }
+
+  body.page-mode p,
+  body.page-mode li {
+    font-size: clamp(0.98rem, 4.2vw, 1.12rem);
+    line-height: 1.75;
+  }
+
+  /* =======================================================
+     Header 手機版：避免右側按鈕撐爆
+     ======================================================= */
+
+  body.page-mode .site-header {
+    width: 100%;
+    max-width: 100vw;
+    min-width: 0;
+    overflow: visible;
+  }
+
+  body.page-mode .site-brand {
+    min-width: 0;
+  }
+
+  body.page-mode .site-brand span,
+  body.page-mode .site-brand strong {
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  body.page-mode .page-controls {
+    max-width: 100vw;
+    overflow: visible;
+  }
+
+  /* =======================================================
+     Home / Hero 首頁：從桌機雙欄改成單欄
+     ======================================================= */
+
+  body.page-mode #hero.hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) !important;
+    align-items: start;
+    justify-items: stretch;
+    gap: clamp(1.1rem, 4vw, 1.6rem);
+    min-height: auto;
+    height: auto;
+  }
+
+  body.page-mode #hero .hero__copy,
+  body.page-mode #hero .signal-panel {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-inline: 0;
+    justify-self: stretch;
+  }
+
+  body.page-mode #hero .award-kicker {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    overflow: visible;
+    white-space: normal;
+  }
+
+  body.page-mode #hero .award-kicker span,
+  body.page-mode #hero .award-kicker .ui-badge {
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  body.page-mode #hero h1 {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    font-size: clamp(2.55rem, 13vw, 4rem);
+    line-height: 0.98;
+  }
+
+  body.page-mode #hero .hero-title-line {
+    width: 100%;
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  body.page-mode #hero .hero-title-line--sub {
+    font-size: 0.72em;
+    line-height: 1.05;
+  }
+
+  body.page-mode #hero .hero__lead {
+    width: 100%;
+    max-width: 100%;
+    font-size: clamp(1rem, 4.8vw, 1.2rem);
+    line-height: 1.75;
+  }
+
+  body.page-mode #hero .hero__actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  body.page-mode #hero .hero__actions .button {
+    width: 100%;
+    min-width: 0;
+  }
+
+  body.page-mode #hero .award-scorebar {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  body.page-mode #hero .award-scorebar > div {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* =======================================================
+     Scene 介紹頁：文字、按鈕、Canvas 自動排版
+     ======================================================= */
+
+  body.page-mode #scene.scene-section {
+    display: block;
+    height: auto;
+    min-height: auto;
+  }
+
+  body.page-mode #scene .section-copy {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  body.page-mode #scene .scene-controls {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+    margin: 1rem 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  body.page-mode #scene .scene-mode-button,
+  body.page-mode #scene .scene-mode-button--lure {
+    width: 100%;
+    min-width: 0;
+    min-height: 3.35rem;
+    padding: 0.62rem 0.72rem;
+    display: grid;
+    align-content: center;
+    justify-content: start;
+    white-space: normal;
+    text-align: left;
+  }
+
+  body.page-mode #scene .scene-mode-button strong {
+    display: block;
+    font-size: clamp(0.85rem, 3.7vw, 0.95rem);
+    line-height: 1.15;
+  }
+
+  body.page-mode #scene .scene-mode-button span {
+    display: block;
+    font-size: clamp(0.68rem, 3.1vw, 0.76rem);
+    line-height: 1.25;
+    margin-top: 0.12rem;
+  }
+
+  body.page-mode #scene .scene-canvas-wrap {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    display: grid;
+    grid-template-rows: auto auto;
+    margin-top: 0.85rem;
+    overflow: hidden;
+  }
+
+  body.page-mode #scene .scene-canvas-wrap canvas,
+  body.page-mode #scene #cat-scene {
+    width: 100%;
+    height: clamp(240px, 50vh, 430px);
+    display: block;
+  }
+
+  body.page-mode #scene .scene-canvas-wrap figcaption,
+  body.page-mode #scene .scene-canvas-wrap figcaption * {
+    color: #ffffff;
+  }
+
+  body.page-mode #scene .scene-canvas-wrap figcaption {
+    position: static;
+    display: block;
+    padding: 0.75rem 0.9rem;
+    line-height: 1.55;
+    background:
+      linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.76),
+        rgba(0, 0, 0, 0.54),
+        rgba(0, 0, 0, 0.36)
+      );
+  }
+
+  /* =======================================================
+     Modules / Stories / Gallery：自動單欄，標題不切
+     ======================================================= */
+
+  body.page-mode #modules .section-heading,
+  body.page-mode #stories .section-heading,
+  body.page-mode #gallery .section-heading {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-inline: 0;
+  }
+
+  body.page-mode #modules .module-grid,
+  body.page-mode #stories .story-grid,
+  body.page-mode #stories .remotion-storyline,
+  body.page-mode #gallery .gallery-layout,
+  body.page-mode #gallery .gallery-controls {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--responsive-card-gap);
+  }
+
+  body.page-mode #modules .module-card,
+  body.page-mode #stories .story-card,
+  body.page-mode #stories .remotion-storyline article,
+  body.page-mode #gallery .gallery-preview,
+  body.page-mode #gallery .photo-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  body.page-mode #gallery .gallery-preview img,
+  body.page-mode #stories .remotion-storyline img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+}
+
+/* =========================================================
+   Very Narrow Phones：更窄螢幕自動再縮
+   ========================================================= */
+
+@media (max-width: 430px) {
+  body.page-mode h1 {
+    font-size: clamp(2.25rem, 12vw, 3.45rem);
+  }
+
+  body.page-mode h2 {
+    font-size: clamp(1.85rem, 7.7vw, 2.55rem);
+  }
+
+  body.page-mode #hero .hero__lead {
+    font-size: clamp(0.98rem, 4.5vw, 1.12rem);
+  }
+
+  body.page-mode #scene .scene-controls {
+    gap: 0.55rem;
+  }
+
+  body.page-mode #scene .scene-mode-button {
+    padding-inline: 0.62rem;
+  }
+}
+
+/* =========================================================
+   Mobile Remotion Layout
+   修正手機版動態影像頁文字與影片裁切
+   ========================================================= */
+
+@media (max-width: 720px) {
+  body.page-mode #remotion.remotion-strip {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    min-width: 0 !important;
+
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+
+    padding:
+      clamp(1.25rem, 4.5vw, 1.65rem)
+      clamp(1rem, 4.2vw, 1.35rem)
+      calc(6.8rem + env(safe-area-inset-bottom)) !important;
+  }
+
+  body.page-mode #remotion.remotion-strip .section-copy {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  body.page-mode #remotion.remotion-strip .section-copy .eyebrow {
+    margin-bottom: 0.7rem !important;
+    white-space: normal !important;
+  }
+
+  body.page-mode #remotion.remotion-strip .section-copy h2,
+  body.page-mode #remotion.remotion-strip #remotion-title {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+
+    font-size: clamp(2rem, 8.6vw, 3rem) !important;
+    line-height: 1.14 !important;
+    letter-spacing: -0.035em !important;
+
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+    text-wrap: balance !important;
+
+    margin: 0 0 0.95rem !important;
+    overflow: visible !important;
+  }
+
+  body.page-mode #remotion.remotion-strip .section-copy p {
+    width: 100% !important;
+    max-width: 100% !important;
+
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    font-size: clamp(1rem, 4.45vw, 1.15rem) !important;
+    line-height: 1.82 !important;
+
+    margin: 0 0 1rem !important;
+    overflow: visible !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+  }
+
+  /* 手機版把 <br> 當成普通空白，避免文字被切成太高太長 */
+  body.page-mode #remotion.remotion-strip .section-copy br {
+    display: none !important;
+  }
+
+  /* 影片必須排在文字後面，不可以蓋到文字 */
+  body.page-mode #remotion.remotion-strip .video-placeholder {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 1.15rem 0 0 !important;
+    position: relative !important;
+    z-index: 1 !important;
+
+    overflow: hidden !important;
+  }
+
+  body.page-mode #remotion.remotion-strip .video-placeholder video {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    aspect-ratio: 16 / 9 !important;
+    object-fit: cover !important;
+  }
+
+  body.page-mode #remotion.remotion-strip .video-placeholder figcaption {
+    position: static !important;
+    display: block !important;
+
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    padding: 0.85rem 0.95rem !important;
+    line-height: 1.65 !important;
+
+    white-space: normal !important;
+    overflow: visible !important;
+  }
+}
+
+/* 更窄手機再微調標題，避免一行太大 */
+@media (max-width: 430px) {
+  body.page-mode #remotion.remotion-strip .section-copy h2,
+  body.page-mode #remotion.remotion-strip #remotion-title {
+    font-size: clamp(1.85rem, 8vw, 2.45rem) !important;
+    line-height: 1.18 !important;
+  }
+
+  body.page-mode #remotion.remotion-strip .section-copy p {
+    font-size: clamp(0.98rem, 4.25vw, 1.08rem) !important;
+    line-height: 1.78 !important;
+  }
+}
+
+/* =========================================================
+   Mobile Notes / Presentation Layout
+   手機版簡報改為單頁直向閱讀；桌機書本效果不受影響
+   ========================================================= */
+
+@media (max-width: 760px) {
+  /* 簡報頁本身：改成自然垂直捲動，不再硬塞進桌機高度 */
+  body.page-mode #notes.report-section,
+  body.page-mode .report-section.page-panel {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    padding:
+      clamp(1.2rem, 4.5vw, 1.6rem)
+      clamp(1rem, 4vw, 1.35rem)
+      calc(6.8rem + env(safe-area-inset-bottom)) !important;
+  }
+
+  /* 上方標題區：不要再用桌機左右 grid */
+  body.page-mode #notes .section-heading,
+  body.page-mode .report-section .section-heading {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 0 1.15rem !important;
+    overflow: visible !important;
+  }
+
+  body.page-mode #notes .section-heading::after,
+  body.page-mode .report-section .section-heading::after {
+    display: block !important;
+    margin-top: 0.65rem !important;
+    text-align: left !important;
+    font-size: clamp(0.78rem, 3.4vw, 0.95rem) !important;
+    line-height: 1.4 !important;
+  }
+
+  body.page-mode #notes .section-heading h2,
+  body.page-mode .report-section .section-heading h2,
+  body.page-mode #notes-title {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+    text-wrap: balance !important;
+    font-size: clamp(2rem, 8.6vw, 3rem) !important;
+    line-height: 1.14 !important;
+    letter-spacing: -0.035em !important;
+  }
+
+  body.page-mode #notes .section-heading p,
+  body.page-mode .report-section .section-heading p {
+    width: 100% !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+    font-size: clamp(0.95rem, 4vw, 1.08rem) !important;
+    line-height: 1.7 !important;
+  }
+
+  /* 整本書：手機取消 PAGE / BOOK 側邊字與桌機固定尺寸 */
+  body.page-mode #notes .notes-deck,
+  body.page-mode .report-section .notes-deck {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    isolation: auto !important;
+  }
+
+  body.page-mode #notes .notes-deck::before,
+  body.page-mode #notes .notes-deck::after,
+  body.page-mode .report-section .notes-deck::before,
+  body.page-mode .report-section .notes-deck::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  /* 工具列：手機改成 3 欄 + 兩顆下載按鈕滿版 */
+  body.page-mode #notes .notes-deck__toolbar,
+  body.page-mode .report-section .notes-deck__toolbar {
+    display: grid !important;
+    grid-template-columns: 3.25rem minmax(0, 1fr) 3.25rem !important;
+    gap: 0.65rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 0 1rem !important;
+    overflow: visible !important;
+  }
+
+  body.page-mode #notes .notes-deck__toolbar::after,
+  body.page-mode .report-section .notes-deck__toolbar::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  body.page-mode #notes .notes-deck__toolbar .icon-button,
+  body.page-mode .report-section .notes-deck__toolbar .icon-button {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 3.2rem !important;
+    padding: 0.5rem !important;
+  }
+
+  body.page-mode #notes .notes-deck__counter,
+  body.page-mode .report-section .notes-deck__counter {
+    width: 100% !important;
+    min-width: 0 !important;
+    display: grid !important;
+    place-items: center !important;
+    font-size: clamp(1.1rem, 5vw, 1.5rem) !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+  }
+
+  body.page-mode #notes .notes-deck__toolbar .button,
+  body.page-mode .report-section .notes-deck__toolbar .button {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 3.2rem !important;
+    padding: 0.75rem 1rem !important;
+    font-size: clamp(0.95rem, 4vw, 1.08rem) !important;
+  }
+
+  /* viewport：手機不要固定高度，不要把 slide 壓扁 */
+  body.page-mode #notes .notes-deck__viewport,
+  body.page-mode .report-section .notes-deck__viewport {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+    border-radius: 1.05rem !important;
+    cursor: grab !important;
+  }
+
+  body.page-mode #notes .notes-deck__viewport::before,
+  body.page-mode .report-section .notes-deck__viewport::before {
+    display: none !important;
+    content: none !important;
+  }
+
+  /* track 保持橫向滑動，但高度改由內容撐開 */
+  body.page-mode #notes .notes-deck__track,
+  body.page-mode .report-section .notes-deck__track {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: flex-start !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* slide：手機版改成單頁卡片，不再用桌機雙頁 / 固定高度 */
+  body.page-mode #notes .note-slide,
+  body.page-mode .report-section .note-slide {
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: clamp(1rem, 4.2vw, 1.35rem) !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+    contain: none !important;
+    box-sizing: border-box !important;
+  }
+
+  body.page-mode #notes .note-slide[aria-hidden="true"],
+  body.page-mode .report-section .note-slide[aria-hidden="true"] {
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  body.page-mode #notes .note-slide[aria-hidden="false"],
+  body.page-mode .report-section .note-slide[aria-hidden="false"] {
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  /* slide header：標題不要被貓咪游標或編號擠爆 */
+  body.page-mode #notes .note-slide header,
+  body.page-mode .report-section .note-slide header {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 0.65rem !important;
+    min-height: 0 !important;
+    margin: 0 0 0.85rem !important;
+  }
+
+  body.page-mode #notes .note-slide header span,
+  body.page-mode .report-section .note-slide header span {
+    flex: 0 0 auto !important;
+    width: 2.45rem !important;
+    height: 2.45rem !important;
+    display: inline-grid !important;
+    place-items: center !important;
+    font-size: 0.85rem !important;
+  }
+
+  body.page-mode #notes .note-slide h3,
+  body.page-mode .report-section .note-slide h3 {
+    min-width: 0 !important;
+    margin: 0 !important;
+    font-size: clamp(1.65rem, 7vw, 2.35rem) !important;
+    line-height: 1.14 !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  /* 上方描述框 */
+  body.page-mode #notes .note-slide > p,
+  body.page-mode .report-section .note-slide > p {
+    width: calc(100% - 0.45rem) !important;
+    max-width: 100% !important;
+    min-height: 0 !important;
+    height: auto !important;
+    margin: 0 0 0.9rem !important;
+    padding: 0.85rem 0.95rem !important;
+    font-size: clamp(0.95rem, 4vw, 1.08rem) !important;
+    line-height: 1.65 !important;
+    overflow: visible !important;
+  }
+
+  /* KPI / Columns：手機一律單欄，避免 SPA / State / Proxy 被壓扁 */
+  body.page-mode #notes .note-kpi-grid,
+  body.page-mode #notes .note-columns,
+  body.page-mode .report-section .note-kpi-grid,
+  body.page-mode .report-section .note-columns {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 0.85rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 0 0.9rem !important;
+    padding: 0 0.45rem 0.45rem 0 !important;
+    overflow: visible !important;
+  }
+
+  body.page-mode #notes .note-kpi,
+  body.page-mode #notes .note-panel,
+  body.page-mode .report-section .note-kpi,
+  body.page-mode .report-section .note-panel {
+    width: calc(100% - 0.45rem) !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 0.85rem 0.95rem !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+  }
+
+  body.page-mode #notes .note-kpi strong,
+  body.page-mode .report-section .note-kpi strong,
+  body.page-mode #notes .note-panel h4,
+  body.page-mode .report-section .note-panel h4 {
+    font-size: clamp(1.05rem, 4.8vw, 1.25rem) !important;
+    line-height: 1.25 !important;
+  }
+
+  body.page-mode #notes .note-kpi span,
+  body.page-mode .report-section .note-kpi span {
+    font-size: clamp(0.92rem, 3.9vw, 1rem) !important;
+    line-height: 1.55 !important;
+  }
+
+  body.page-mode #notes .note-panel ul,
+  body.page-mode .report-section .note-panel ul {
+    margin: 0 !important;
+    padding-left: 1.2rem !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* 獨立 ul 清單：不要浮上去蓋住 KPI */
+  body.page-mode #notes .note-slide > ul,
+  body.page-mode .report-section .note-slide > ul {
+    position: static !important;
+    display: block !important;
+    width: calc(100% - 0.45rem) !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0.9rem 0 0 !important;
+    padding:
+      0.85rem
+      0.95rem
+      0.85rem
+      1.45rem !important;
+    font-size: clamp(0.92rem, 3.9vw, 1rem) !important;
+    line-height: 1.62 !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+  }
+
+  body.page-mode #notes .note-slide li,
+  body.page-mode .report-section .note-slide li {
+    margin: 0.25rem 0 !important;
+    line-height: 1.62 !important;
+  }
+
+  /* 圖片 / 影片型 slide：手機不要被裁切 */
+  body.page-mode #notes .note-media,
+  body.page-mode .report-section .note-media {
+    width: calc(100% - 0.45rem) !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0.9rem 0 0 !important;
+    overflow: hidden !important;
+  }
+
+  body.page-mode #notes .note-media img,
+  body.page-mode #notes .note-media video,
+  body.page-mode .report-section .note-media img,
+  body.page-mode .report-section .note-media video {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    object-fit: cover !important;
+  }
+
+  body.page-mode #notes .note-media figcaption,
+  body.page-mode .report-section .note-media figcaption {
+    position: static !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 0.8rem 0.95rem !important;
+    font-size: clamp(0.9rem, 3.8vw, 1rem) !important;
+    line-height: 1.6 !important;
+    overflow: visible !important;
+  }
+
+  /* 手機關掉翻頁紙張覆蓋層，避免動畫 clone 蓋住內容 */
+  body.page-mode #notes .book-turn-sheet,
+  body.page-mode .report-section .book-turn-sheet {
+    display: none !important;
+  }
+}
+
+/* 超窄手機再縮一點 */
+@media (max-width: 420px) {
+  body.page-mode #notes .note-slide,
+  body.page-mode .report-section .note-slide {
+    padding: 0.9rem !important;
+  }
+
+  body.page-mode #notes .note-slide h3,
+  body.page-mode .report-section .note-slide h3 {
+    font-size: clamp(1.45rem, 6.6vw, 2rem) !important;
+  }
+
+  body.page-mode #notes .note-slide > p,
+  body.page-mode .report-section .note-slide > p {
+    font-size: clamp(0.9rem, 3.9vw, 1rem) !important;
+  }
 }

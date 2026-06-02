@@ -142,9 +142,9 @@ async function handleAiNavigator(req, res) {
       'Font families: default, jhenghei, noto, system, serif, mono.',
       'Shape modes: sharp, soft, round, glass, solid. Map 正方形, 方形, 直角, 外框改成正方形 to sharp. Map 卡片變圓 to round. Map 毛玻璃 to glass.',
       'Background may use color hex or preset: default, dark, light, soft, neon, pastel, warm, cool, minimal, lab, catRoom.',
-      'Map 背景改成特殊金色 to {"action":"setBackground","color":"#d4af37"}.',
+      'Map 背景改成黑色 to {"action":"setBackground","color":"#050505"}. Map 背景改成特殊金色 to {"action":"setBackground","color":"#b88a2a"}.',
       'Map 字改成黑色 or 文字改成黑色 to {"action":"setTextColor","color":"#050505"}.',
-      'Canonical example: {"actions":[{"action":"setBackground","color":"#d4af37"},{"action":"setShapeMode","mode":"sharp"}],"reply":"準備套用變更。","decisionSummary":"使用安全 action，不執行 CSS。","requiresConfirmation":true,"preview":{"color":"#d4af37"}}',
+      'Canonical example: {"actions":[{"action":"setBackground","color":"#050505"}],"reply":"準備把背景改成黑色。","decisionSummary":"使用安全 action，不執行 CSS。","requiresConfirmation":true,"preview":{"label":"黑色背景","color":"#050505"}}',
       'Response shape: {"action":{...} or "actions":[...],"reply":"Traditional Chinese reply","decisionSummary":"short Traditional Chinese explanation","requiresConfirmation":true|false,"preview":{"label":"optional","color":"optional hex"}}',
       `Current state: ${JSON.stringify(sanitizeNavigatorState(state))}`,
       `User message: ${cleanMessage}`
@@ -367,6 +367,12 @@ function normalizeNavigatorPayload(payload, message) {
   if (repairedVisualAction) actions = [repairedVisualAction];
 
   actions = actions.map((action) => {
+    if (action.action === 'goToPage') {
+      const target = normalizePageTarget(action.target || action.page || action.value) || inferPageTarget(message);
+      return target
+        ? { action: 'goToPage', target }
+        : { action: 'unknown', message: '頁面 action 缺少合法 target，因此沒有切換頁面。' };
+    }
     if (action.action === 'setBackground' && action.color) {
       const hex = normalizeHex(action.color);
       preview.color = preview.color || hex || action.color;
@@ -609,6 +615,9 @@ function inferPageTarget(message) {
   const text = String(message || '').trim().toLowerCase();
   if (!text) return null;
 
+  const direct = normalizePageTarget(text);
+  if (direct) return direct;
+
   const pageRules = [
     ['presentation', /(最後一頁|簡報頁|技術簡報|看簡報|簡報|報告|ppt|presentation|notes)/i],
     ['contact', /(控制頁|導覽頁|快速導覽|智慧導覽|ai\s*控制|assistant|contact)/i],
@@ -621,6 +630,51 @@ function inferPageTarget(message) {
   ];
 
   return pageRules.find(([, pattern]) => pattern.test(text))?.[0] || null;
+}
+
+function normalizePageTarget(value) {
+  const text = String(value || '').trim().toLowerCase();
+  if (!text) return null;
+  if (['home', 'intro', 'features', 'tech', 'gallery', 'about', 'contact', 'presentation'].includes(text)) return text;
+
+  const aliasMap = {
+    hero: 'home',
+    scene: 'intro',
+    stories: 'features',
+    modules: 'tech',
+    remotion: 'about',
+    assistant: 'contact',
+    notes: 'presentation',
+    '首頁': 'home',
+    '主頁': 'home',
+    '封面': 'home',
+    '介紹': 'intro',
+    '介紹頁': 'intro',
+    '場域': 'intro',
+    '特色': 'features',
+    '特色頁': 'features',
+    '功能': 'features',
+    '功能頁': 'features',
+    '技術': 'tech',
+    '技術頁': 'tech',
+    '展示': 'gallery',
+    '展示頁': 'gallery',
+    '作品': 'gallery',
+    '作品頁': 'gallery',
+    '影像': 'about',
+    '影像頁': 'about',
+    '影片': 'about',
+    '影片頁': 'about',
+    '控制': 'contact',
+    '控制頁': 'contact',
+    '導覽': 'contact',
+    '導覽頁': 'contact',
+    '簡報': 'presentation',
+    '簡報頁': 'presentation',
+    '報告': 'presentation'
+  };
+
+  return aliasMap[text] || null;
 }
 
 function getPageLabel(pageId) {
@@ -641,15 +695,37 @@ function hasTextColorIntent(message) {
 }
 
 function buildBackgroundNavigatorPayload(color, model, latencyMs) {
+  const normalizedColor = normalizeHex(color) || color;
+  const label = getBackgroundColorLabel(normalizedColor);
   return {
-    action: { action: 'setBackground', color },
-    reply: `我先把這個要求判定為背景色調整，並挑了一個偏香檳與古銅之間的特殊金色 ${color}。你可以先看預覽，滿意再套用。`,
+    action: { action: 'setBackground', color: normalizedColor },
+    reply: `我先把這個要求判定為背景色調整，準備套用「${label}」${normalizedColor}。你可以先看預覽，滿意再套用。`,
     decisionSummary: '判斷到背景與顏色意圖，因此產生 setBackground 提案；保留目前主題，只改背景表層。',
     requiresConfirmation: true,
-    preview: { label: '特殊金色背景', color },
+    preview: { label, color: normalizedColor },
     model,
     latencyMs
   };
+}
+
+function getBackgroundColorLabel(color) {
+  const normalized = normalizeHex(color);
+  const labels = {
+    '#050505': '黑色背景',
+    '#111827': '深色背景',
+    '#ffffff': '白色背景',
+    '#ffd6e8': '粉紅色背景',
+    '#fff8ed': '奶油色背景',
+    '#eff6ff': '冷色背景',
+    '#d8f3dc': '綠色背景',
+    '#efe7ff': '紫色背景',
+    '#b88a2a': '特殊金色背景',
+    '#d4af37': '金色背景',
+    '#d7c27a': '香檳金背景',
+    '#d8dde6': '銀色背景'
+  };
+
+  return labels[normalized] || '自訂背景色';
 }
 
 function buildSimpleDecisionSummary(action, message) {
